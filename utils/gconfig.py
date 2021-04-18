@@ -66,7 +66,7 @@ class ConfigParser(object):
             return int(ret)
         except:
             return 0
-        
+
     def get_float(self, name):
         """Get an int value from current config set."""
         ret = self._get(self._options, name)
@@ -85,7 +85,6 @@ class ConfigParser(object):
         f = open(file_name)
         lines = f.readlines()
         f.close()
-
 
         current_option = 'DEFAULTS'
         for line in lines:
@@ -170,6 +169,7 @@ class ConfigParser(object):
 
 
 class DefaultConfigParser(ConfigParser):
+    """支持缺省设置，支持模块嵌套的配置文件解析器。"""
     Defaults = {}
 
     def __init__(self, default_values=None):
@@ -180,7 +180,7 @@ class DefaultConfigParser(ConfigParser):
         else:
             self.Defaults = {}
 
-    def read(self, file_name, params):
+    def read(self, file_name, params=None):
         if not file_name:
             return
 
@@ -204,7 +204,7 @@ class DefaultConfigParser(ConfigParser):
         current_root, _ = os.path.split(file_name)
         path_list.append(current_root)
 
-        # common cofig for all services
+        # common config for all services
         modules = self._get(root, 'defaults.default_module_list')
 
         if modules:
@@ -270,6 +270,7 @@ class DefaultConfigParser(ConfigParser):
 
         return value
 
+
 # Test Codes
 if __name__ == "__main__":
     default_values = {
@@ -285,7 +286,7 @@ if __name__ == "__main__":
     if platform.system() == 'Windows':
         filename = '../../../etc/gatekeeper.conf'
     else:
-        filename = '/home/guli/default.conf'
+        # filename = '/home/guli/default.conf'
         filename = '../../../deploy/config/default.cfg'
 
     parser.read(filename, p)

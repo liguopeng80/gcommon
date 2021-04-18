@@ -177,6 +177,12 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=False, file_h
         logger.addHandler(ch)
 
 
+def init_basic_config(level=logging.DEBUG):
+    format = '%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s'
+    logging.basicConfig(level=level, format=format)
+    return logging.getLogger()
+
+
 # Test Codes
 if __name__ == "__main__":
     init_logger()
