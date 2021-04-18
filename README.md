@@ -1,11 +1,15 @@
-# Common python libraries 
+# Common Python Libraries #
 
-```bash
-git submodule add -b master git@github.com:liguopeng80/gcommon.git libs
-```
+## master - util & networking tools for server development ##
 
-# Utils Only #
 
 ```shell script
-git submodule add -b utils git@github.com:liguopeng80/gcommon.git libs/gcommon
+git submodule add -b master git@github.com:liguopeng80/gcommon.git src/gcommon
 ```
+
+## utils - without async tools ##
+
+```shell script
+git submodule add -b utils git@github.com:liguopeng80/gcommon.git src/gcommon
+```
+
