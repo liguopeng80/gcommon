@@ -58,6 +58,6 @@ if __name__ == "__main__":
 
     dt = datetime.datetime.now()
     print(dt)
-    ts = gtime.to_timestamp(dt)
+    ts = gtime.date_to_timestamp(dt)
     print(ts)
     print("Done")
