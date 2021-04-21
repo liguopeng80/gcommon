@@ -9,20 +9,20 @@ import datetime
 import platform
 
 
-def now_timestamp(in_milliseconds=False):
+def local_timestamp(in_milliseconds=False):
     if in_milliseconds:
         return int(time.time() * 1000)
     else:
         return int(time.time())
 
 
-def to_timestamp(dt):
+def date_to_timestamp(dt):
     """Return: POSIX-timestamp. (in seconds)"""
     posix_timestamp = time.mktime(dt.timetuple())
     return int(posix_timestamp)
 
 
-def from_timestamp(timestamp):
+def timestamp_to_date(timestamp):
     """
     Timestamp: POSIX-timestamp.
     POSIX timestamp: seconds from 1970.01.01 in UTC. 
@@ -47,7 +47,7 @@ def max_timestamp():
         max_year = 2999
 
     max_dt = datetime.datetime(max_year, 12, 31, 23, 59, 59, 999999)
-    return to_timestamp(max_dt)
+    return date_to_timestamp(max_dt)
 
 
 def past_seconds(time_started):
@@ -86,7 +86,22 @@ class TimeHelper(object):
             return True
 
 
+def utc_time_str():
+    """返回 UCT 标准时间，按照 Java 的方式格式化：2011-02-18T08:30:30Z"""
+    date_format = "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ"
+
+    now = datetime.datetime.utcnow()
+    millisecond = int(now.microsecond / 1000)
+
+    date_str = date_format % (now.year, now.month, now.day, now.hour, now.minute, now.second, millisecond)
+
+    return date_str
+
+
 # Test Codes
 if __name__ == "__main__":
     max_timestamp = max_timestamp()
     print('Done: %s' % max_timestamp)
+
+    print(utc_time_str())
+
