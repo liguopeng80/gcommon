@@ -100,8 +100,8 @@ class WebNavigator(object):
                 result = GErrors.ok
 
                 rtn = JsonObject()
-                rtn.result = result.code
-                rtn.result_desc = result.desc
+                rtn.code = result.code
+                rtn.message = result.desc
                 request.write(rtn.dumps())
                 logger.access('processed %s request from %s:%s: %s - result: %s',
                               method, request.client.host, request.client.port, path, rtn)
@@ -145,11 +145,11 @@ class WebNavigator(object):
 
                     result = JsonObject()
                     if isinstance(e, GExcept):
-                        result.result = e.cmd_error
-                        result.result_desc = e.message
+                        result.code = e.cmd_error
+                        result.message = e.message
                     else:
-                        result.result = GErrors.gen_server_internal.code
-                        result.result_desc = GErrors.gen_server_internal.desc
+                        result.code = GErrors.gen_server_internal.code
+                        result.message = GErrors.gen_server_internal.desc
 
                     return result
 
@@ -159,8 +159,8 @@ class WebNavigator(object):
 
         else:
             result = JsonObject()
-            result.result = GErrors.server_not_implemented.code
-            result.result_desc = GErrors.server_not_implemented.desc
+            result.code = GErrors.server_not_implemented.code
+            result.message = GErrors.server_not_implemented.desc
 
         request.setHeader('Content-Type', 'application/json')
         request.write(result.dumps().encode('utf-8'))

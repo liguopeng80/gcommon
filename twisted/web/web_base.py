@@ -168,13 +168,19 @@ class HttpWebBase(resource.Resource):
             return False
 
     @staticmethod
-    def return_result(error, **kws):
+    def return_result(result, *args, **kws):
         r = JsonObject()
-        r.result = error.code
-        r.result_desc = error.desc
 
-        for key, value in kws.items():
-            r[key] = value
+        r.code = result.code
+        r.message = result.desc
+
+        if args:
+            assert not kws
+            r["data"] = args
+        elif kws:
+            r.data = JsonObject()
+            for key, value in kws.items():
+                r.data[key] = value
 
         return r
 
