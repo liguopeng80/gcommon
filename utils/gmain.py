@@ -16,9 +16,11 @@ from gcommon.utils.gyaml import YamlConfigParser
 
 DEFAULT_CONFIG_FILE = 'default.yaml'
 
+PROJECT_ROOT = '../../../'
 PROJECT_LOG_DIR = '../../../log/'
-PROJECT_CONFIG_DIR = '../../../deploy'
+PROJECT_CONFIG_DIR = '../../../deploy/'
 
+ENV_PROJECT_ROOT = 'G_PROJECT_ROOT'
 ENV_CONFIG_FILE = 'G_COMMON_CONFIG_FILE'
 ENV_CONFIG_DIR = 'G_COMMON_CONFIG_DIR'
 ENV_LOG_DIR = 'G_COMMON_LOG_DIR'
