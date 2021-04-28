@@ -5,7 +5,7 @@
 """Utils for date and time."""
 
 import time
-import datetime
+from datetime import datetime, timedelta
 import platform
 
 
@@ -27,10 +27,10 @@ def timestamp_to_date(timestamp):
     Timestamp: POSIX-timestamp.
     POSIX timestamp: seconds from 1970.01.01 in UTC. 
     """
-    # datetime.datetime.utcfromtimestamp(timestamp)
+    # datetime.utcfromtimestamp(timestamp)
     
     posix_timestamp = timestamp
-    dt = datetime.datetime.fromtimestamp(posix_timestamp)
+    dt = datetime.fromtimestamp(posix_timestamp)
 
     return dt
 
@@ -46,7 +46,7 @@ def max_timestamp():
     else:
         max_year = 2999
 
-    max_dt = datetime.datetime(max_year, 12, 31, 23, 59, 59, 999999)
+    max_dt = datetime(max_year, 12, 31, 23, 59, 59, 999999)
     return date_to_timestamp(max_dt)
 
 
@@ -60,7 +60,7 @@ def past_seconds(time_started):
 
 
 def has_expired(expiration_time):
-    return datetime.datetime.now() > expiration_time
+    return datetime.now() > expiration_time
 
 
 class TimeHelper(object):
@@ -90,12 +90,44 @@ def utc_time_str():
     """返回 UCT 标准时间，按照 Java 的方式格式化：2011-02-18T08:30:30Z"""
     date_format = "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ"
 
-    now = datetime.datetime.utcnow()
+    now = datetime.utcnow()
     millisecond = int(now.microsecond / 1000)
 
     date_str = date_format % (now.year, now.month, now.day, now.hour, now.minute, now.second, millisecond)
 
     return date_str
+
+
+class DateUtil(object):
+    TIME_DAY_START = " 00:00:00"
+    TIME_DAY_END = " 23:59:59"
+
+    @staticmethod
+    def last_monday(dt: datetime):
+        monday = DateUtil.this_monday(dt)
+        last_monday = monday - timedelta(days=7)
+
+        return last_monday
+
+    @staticmethod
+    def last_sunday(dt: datetime):
+        monday = DateUtil.this_monday(dt)
+        last_sunday = monday - timedelta(seconds=1)
+
+        return last_sunday
+
+    @staticmethod
+    def this_monday(dt: datetime):
+        monday = dt - timedelta(
+            seconds=(((dt.weekday() * 24) + dt.hour) * 60 + dt.minute) * 60 + dt.second
+        )
+
+        return monday
+
+    @staticmethod
+    def this_sunday(dt: datetime):
+        sunday = DateUtil.this_monday(dt) + timedelta(days=7)
+        return sunday
 
 
 # Test Codes

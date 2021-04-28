@@ -5,6 +5,17 @@
 import inspect
 
 
+class ObjectWithLogger(object):
+    logger = None
+
+    @classmethod
+    def set_class_logger(cls, logger):
+        cls.logger = logger
+
+    def set_logger(self, logger):
+        self.logger = logger
+
+
 def copy_attributes(src, dest, *attributes):
     """Shallow copy attributes from src-obj to dest-obj."""
     for attr in attributes:
