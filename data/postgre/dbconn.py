@@ -8,6 +8,7 @@ import sqlalchemy
 
 class DatabaseManager(object):
     DEFAULT_ENCODING = 'utf8'
+    ECHO = False
 
     def __init__(self, username, password, server_addr='localhost', server_port=5432):
         self.username = username
@@ -21,7 +22,7 @@ class DatabaseManager(object):
         url = url.format(self.username, self.password, self.server_addr, self.server_port, db_name)
 
         # The return value of create_engine() is our connection object
-        db_conn = sqlalchemy.create_engine(url, echo=True, client_encoding=self.DEFAULT_ENCODING)
+        db_conn = sqlalchemy.create_engine(url, echo=self.ECHO, client_encoding=self.DEFAULT_ENCODING)
 
         # return db_conn
         return db_conn

@@ -51,6 +51,7 @@ class ApiRouter(object):
     def _wrapper(self, uri, method, **kwargs):
         return router(self.base_uri + uri, method=method, **kwargs)
 
+
 class HttpWebBase(resource.Resource):
     """ Base providing web service
         Base Web Service class, All service api should be here
@@ -107,11 +108,11 @@ class HttpWebBase(resource.Resource):
             d.addCallback(pass_through_cb(self._app.serve, path, request, method))
             return NOT_DONE_YET
         except TypeError as e:
-            result = HttpWebBase._return_result(GErrors.gen_bad_request, error_message=e.message)
+            result = HttpWebBase.return_result(GErrors.gen_bad_request, error_message=e.message)
         except NotImplementedError:
-            result = HttpWebBase._return_result(GErrors.gen_bad_request)
+            result = HttpWebBase.return_result(GErrors.gen_bad_request)
         except GExcept as e:
-            result = HttpWebBase._return_result(e.cmd_error, error_message=e.message)
+            result = HttpWebBase.return_result(e.cmd_error, error_message=e.message)
 
         logger.access('%s - result:%s',path, result.result)
 
@@ -167,7 +168,7 @@ class HttpWebBase(resource.Resource):
             return False
 
     @staticmethod
-    def _return_result(error, **kws):
+    def return_result(error, **kws):
         r = JsonObject()
         r.result = error.code
         r.result_desc = error.desc
