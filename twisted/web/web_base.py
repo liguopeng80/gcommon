@@ -5,7 +5,9 @@
 import logging
 import hashlib
 import binascii
-
+import urllib
+from datetime import datetime
+from urllib.parse import urljoin
 
 from twisted.web import resource
 from twisted.internet.defer import Deferred
@@ -20,6 +22,7 @@ from gcommon.error.gerror import *
 from .web_router import WebNavigator
 from .web_utils import WebConst
 from ...error import GErrors
+from ...utils.gurl import ensure_trailing_slash
 
 post_client = None
 
@@ -39,8 +42,8 @@ def router(url_pattern, **args):
 
 
 class ApiRouter(object):
-    def __init__(self, base_uri):
-        self.base_uri = base_uri
+    def __init__(self, base_url: str):
+        self.base_url = ensure_trailing_slash(base_url)
 
     def get(self, uri, **kwargs):
         return self._wrapper(uri, WebConst.REQUEST_METHOD_GET, **kwargs)
@@ -49,7 +52,8 @@ class ApiRouter(object):
         return self._wrapper(uri, WebConst.REQUEST_METHOD_POST, **kwargs)
 
     def _wrapper(self, uri, method, **kwargs):
-        return router(self.base_uri + uri, method=method, **kwargs)
+        url = urljoin(self.base_url, uri)
+        return router(url, method=method, **kwargs)
 
 
 class HttpWebBase(resource.Resource):
@@ -134,40 +138,6 @@ class HttpWebBase(resource.Resource):
         return req_message
 
     @staticmethod
-    def _parse_paging_params(request):
-        """ Get paging params from request, aka, page & size, only capable in method GET """
-        # Process param page
-        if WebConst.WEB_API_PARAM_LAST in request.args.keys():
-            page = int(request.args[WebConst.WEB_API_PARAM_LAST][0])
-        else:
-            page = WebConst.WEB_PAGING_DEFAULT_ID
-
-        # Process param size
-        if WebConst.WEB_API_PARAM_SIZE in request.args.keys():
-            size = int(request.args[WebConst.WEB_API_PARAM_SIZE][0])
-        else:
-            size = WebConst.WEB_PAGING_MAX_SIZE
-
-        return page, size
-
-    @staticmethod
-    def _parse_login_params(req_message):
-        email = req_message.user.email
-        password = req_message.user.password
-
-        terminal_type = req_message.terminal_type
-        device = req_message.device
-        return email, password, terminal_type, device
-
-    @staticmethod
-    def _verify_terminal_parameters(terminal_type, device):
-        if terminal_type not in ('device', 'browser'):
-            return False
-
-        if not (device and device.device_id and device.os and device.version and device.model):
-            return False
-
-    @staticmethod
     def return_result(result, *args, **kws):
         r = JsonObject()
 
@@ -181,6 +151,19 @@ class HttpWebBase(resource.Resource):
             r.data = JsonObject()
             for key, value in kws.items():
                 r.data[key] = value
+
+        return r
+
+    @staticmethod
+    def page_result(result, current_page, page_size, data):
+        r = JsonObject()
+
+        r.code = result.code
+        r.message = result.desc
+
+        r["data"] = data
+        r["pageSize"] = page_size
+        r["current"] = current_page
 
         return r
 

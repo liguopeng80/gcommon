@@ -15,7 +15,7 @@ from contextlib import contextmanager
 from gcommon.utils.gobject import ObjectWithLogger
 
 
-class DbEngine(ObjectWithLogger):
+class SqliteDbEngine(ObjectWithLogger):
     is_debug = False
 
     logger = logging.getLogger('db')
@@ -62,4 +62,4 @@ class DbEngine(ObjectWithLogger):
                 engine = create_engine(db_conn_str)
                 metadata.create_all(bind=engine)
 
-        return DbEngine(db_conn_str)
+        return SqliteDbEngine(db_conn_str)

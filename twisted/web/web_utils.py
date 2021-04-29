@@ -21,11 +21,11 @@ class WebConst(object):
     WEB_API_PARAM_QUERY = 'query'
     WEB_API_PARAM_STATUS = 'status'
     WEB_API_PARAM_ORDER = 'order'
-    WEB_API_PARAM_LAST = 'page'
-    WEB_API_PARAM_SIZE = 'size'
 
-    WEB_PAGING_DEFAULT_ID = 1
-    WEB_PAGING_MAX_SIZE = 50
+    PARAM_PAGE_SIZE = b'pageSize'
+    PARAM_CURRENT_PAGE = b'current'
+    DEFAULT_PAGE = 1
+    DEFAULT_PAGE_SIZE = 50
 
     MIME_TYPE_JSON = 'application/json'
 

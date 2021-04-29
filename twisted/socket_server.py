@@ -73,7 +73,7 @@ class SocketServer(LineReceiver):
 
         if self.state == self.Receive_Command:
             try:
-                command = self.factory.parser.parse(line)
+                command = self.factory.parser.parse_params(line)
                 
             except self.factory.parser.ParseError as e:
                 code, msg = e.args
