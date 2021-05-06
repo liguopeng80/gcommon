@@ -45,7 +45,7 @@ class WebNavigator(object):
 
                 method = router_opts.pop('method', None)
                 if method:
-                    methods = methods.add(method)
+                    methods.add(method)
 
                 self.add_url_rules(uri_path, item, methods)
 
