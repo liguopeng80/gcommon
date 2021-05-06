@@ -145,6 +145,13 @@ class YamlConfigParser(ConfigParser):
 
         self._options = self._parse_group(file_options, params)
 
+    def load_module(self, module_name, filename, params=None, encoding='utf-8', defaults=None):
+        config = YamlConfigParser(defaults=defaults)
+        config.read(filename, params, encoding)
+
+        self._options[module_name] = config._options
+        self._defaults[module_name] = config._defaults
+
 
 # Test Codes
 if __name__ == "__main__":
