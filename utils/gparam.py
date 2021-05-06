@@ -6,6 +6,7 @@ from functools import partial
 
 from gcommon.error import GErrors
 from gcommon.error.gerror import GExcept
+from gcommon.utils import gtime
 
 
 def param_not_null(name, value):
@@ -50,6 +51,21 @@ def param_simple_date(name, value, max_value=None, min_value=None):
         value = datetime.strptime(value, "%Y%m%d")
     except:
         raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not date" % (name, value))
+
+    if max_value is not None and value > max_value:
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) > max (%s)" % (name, value, max_value))
+
+    if min_value is not None and value < min_value:
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) < max (%s)" % (name, value, max_value))
+
+    return value
+
+
+def param_timestamp(name, value, max_value=None, min_value=None):
+    try:
+        value = gtime.timestamp_to_date((int(value)/1000))
+    except:
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not timestamp" % (name, value))
 
     if max_value is not None and value > max_value:
         raise GExcept(GErrors.gen_bad_request, "%s (v=%s) > max (%s)" % (name, value, max_value))
