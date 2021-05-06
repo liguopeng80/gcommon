@@ -146,7 +146,10 @@ class HttpWebBase(resource.Resource):
 
         if args:
             assert not kws
-            r["data"] = args
+            if len(args) > 1:
+                r["data"] = args
+            else:
+                r["data"] = args[0]
         elif kws:
             r.data = JsonObject()
             for key, value in kws.items():
