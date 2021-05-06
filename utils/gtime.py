@@ -104,30 +104,34 @@ class DateUtil(object):
 
     @staticmethod
     def last_monday(dt: datetime):
-        monday = DateUtil.this_monday(dt)
-        last_monday = monday - timedelta(days=7)
-
-        return last_monday
+        return DateUtil.this_monday(dt) - timedelta(days=7)
 
     @staticmethod
     def last_sunday(dt: datetime):
-        monday = DateUtil.this_monday(dt)
-        last_sunday = monday - timedelta(seconds=1)
-
-        return last_sunday
+        return DateUtil.this_sunday(dt) - timedelta(days=7)
 
     @staticmethod
     def this_monday(dt: datetime):
-        monday = dt - timedelta(
-            seconds=(((dt.weekday() * 24) + dt.hour) * 60 + dt.minute) * 60 + dt.second
-        )
-
-        return monday
+        monday = dt - timedelta(days=dt.weekday())
+        return monday.replace(hour=0, minute=0, second=0, microsecond=0)
 
     @staticmethod
     def this_sunday(dt: datetime):
-        sunday = DateUtil.this_monday(dt) + timedelta(days=7)
-        return sunday
+        sunday = dt + timedelta(days=7 - dt.weekday())
+        return sunday.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    @staticmethod
+    def next_monday(dt: datetime):
+        return DateUtil.this_monday(dt) + timedelta(days=7)
+
+    @staticmethod
+    def next_sunday(dt: datetime):
+        return DateUtil.this_sunday(dt) + timedelta(days=7)
+
+    @staticmethod
+    def middle_night(dt: datetime):
+        """to 23:59:59"""
+        return dt.replace(hour=23, minute=59, second=59, microsecond=999999)
 
 
 # Test Codes

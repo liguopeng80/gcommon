@@ -8,3 +8,10 @@ def remove_trailing_slash(path):
         path = path[:-1]
 
     return path
+
+
+def ensure_trailing_slash(path):
+    if path.endswith("/"):
+        return path
+
+    return path + "/"

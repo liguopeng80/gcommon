@@ -12,7 +12,7 @@ def log_server_started(logger, service_name, version):
 def log_function_call(logger):
     def _func_logger_decorator(func):
         def _func_logger(*args, **kws):
-            logger.debug("%s called", func.__name__)
+            logger.debug("%s (%s) called", func.__name__ , func.__code__)
             return func(*args, **kws)
         
         return _func_logger
