@@ -3,6 +3,8 @@
 # created: 2015-04-23
 
 import threading
+import traceback
+
 from twisted.internet import reactor
 from twisted.internet.defer import inlineCallbacks, DeferredList
 from twisted.internet.threads import deferToThread
@@ -49,6 +51,7 @@ class TwistedTaskPool(ObjectWithLogger):
     pool_size = 4
 
     def __init__(self, pool_size=0):
+        self.failed_tasks = []
         if pool_size:
             self.pool_size = pool_size
 
@@ -56,6 +59,7 @@ class TwistedTaskPool(ObjectWithLogger):
     def start(self, workers=None):
         assert not self.is_running
         self.is_running = True
+        self.failed_tasks = []
 
         if not workers:
             workers = [ThreadWorker(i) for i in range(self.pool_size)]
@@ -91,11 +95,20 @@ class TwistedTaskPool(ObjectWithLogger):
                 worker.cv.wait()
 
             task = worker.task
-            self.logger.info("worker, fetch task: %s", task)
+            self.logger.debug("worker, task fetched: %s", task)
             if not task:
                 break
 
-            self._do_work(worker)
+            try:
+                self._do_work(worker)
+            except Exception as e:
+                twisted_call(self.__on_task_failed, task, e)
+                self.logger.error("failed on task %s with error: \n%s", task, traceback.format_exc())
+            else:
+                self.logger.debug("worker, task processed: %s", task)
+
+    def __on_task_failed(self, task, exception):
+        self.failed_tasks.append((task, exception))
 
 
 def test():
@@ -107,7 +120,7 @@ def test():
         all_tasks = 100
 
         def _on_finished(self):
-            logger.info("stop reactor")
+            self.logger.info("stop reactor")
             reactor.stop()
 
         def _allocate_task(self, worker=None):
@@ -121,13 +134,17 @@ def test():
 
         def _do_work(self, worker):
             time.sleep(0.001)
-            logger.info("worker, process task: %s", worker.task)
+            self.logger.info("worker, process task: %s", worker.task)
+            if worker.task % 10 == 0:
+                raise RuntimeError('failure on task %s' % worker.task)
 
     pool = TestPool()
     pool.set_logger(logger)
 
     reactor.callWhenRunning(pool.start)
     reactor.run()
+
+    print(pool.failed_tasks)
 
 
 if __name__ == '__main__':
