@@ -183,6 +183,12 @@ def init_basic_config(level=logging.DEBUG):
     return logging.getLogger()
 
 
+def init_threading_config(level=logging.DEBUG):
+    format = '%(asctime)-15s [%(thread)08d] %(levelname)-3s %(name)-8s %(message)s'
+    logging.basicConfig(level=level, format=format)
+    return logging.getLogger()
+
+
 # Test Codes
 if __name__ == "__main__":
     init_logger()
