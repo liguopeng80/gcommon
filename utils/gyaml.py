@@ -124,6 +124,8 @@ class ConfigParser(object):
 
 
 class YamlConfigParser(ConfigParser):
+    args = []
+
     def read(self, filename, params=None, encoding='utf-8'):
         if not filename:
             return
