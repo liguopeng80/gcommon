@@ -15,22 +15,26 @@ from gcommon.utils.gyaml import YamlConfigParser
 
 
 DEFAULT_CONFIG_FILE = 'default.yaml'
+DEFAULT_SECRET_CONFIG_FILE = 'secret.default.yaml'
 
 PROJECT_ROOT = '../../../'
 PROJECT_LOG_DIR = '../../../log/'
 PROJECT_CONFIG_DIR = '../../../deploy/'
+PROJECT_SECRET_CONFIG_DIR = '../../../deploy/'
 
 ENV_PROJECT_ROOT = 'G_PROJECT_ROOT'
 ENV_CONFIG_FILE = 'G_COMMON_CONFIG_FILE'
 ENV_CONFIG_DIR = 'G_COMMON_CONFIG_DIR'
+ENV_SECRET_CONFIG_FILE = 'G_COMMON_SECRET_CONFIG_FILE'
+ENV_SECRET_CONFIG_DIR = 'G_COMMON_SECRET_CONFIG_DIR'
 ENV_LOG_DIR = 'G_COMMON_LOG_DIR'
 
 
-def parse_command_line(service_name, parser, all_args):
+def parse_command_line(service_name, parser, all_args, *, parse_service_options=None):
     """解析命令行参数。"""
     # set usage
     usage_text = """Start %(service)s server.
-    %(app)s [-c override_config_file] [-i instance] [-l log_folder] [-sid service_id]"""
+    %(app)s [-c override_config_file] [-i instance] [-l log_folder] [--sid service_id]"""
 
     usage_param = {
         'app': all_args[0],
@@ -43,6 +47,9 @@ def parse_command_line(service_name, parser, all_args):
     # add arguments
     parser.add_option('-c', '--config-file', dest='config_file',
                       action='store', default='', help='server config file')
+
+    parser.add_option('--secret-config', dest='secret_config_file',
+                      action='store', default='', help='server secret config file')
 
     parser.add_option('-s', '--service', dest='service',
                       action='store', default='', help='service name')
@@ -61,6 +68,9 @@ def parse_command_line(service_name, parser, all_args):
 
     parser.add_option('-d', '--debug', dest='debug',
                       action='store_true', default=False, help='enable debug')
+
+    if parse_service_options:
+        parse_service_options(parser)
 
     # parse command
     all_args = all_args[1:]
@@ -134,7 +144,34 @@ def get_config_file(options, default_config: JsonObject):
     return os.path.join(project_cfg_dir, DEFAULT_CONFIG_FILE)
 
 
-def init_main(*, service_name="", default_config: dict = None, thread_logger=False) -> YamlConfigParser:
+def get_secret_config_file(options, default_config: JsonObject):
+    """配置文件，优先顺序（配置参数，环境变量，工程目录）"""
+    # 命令行参数
+    if options.secret_config_file:
+        return options.secret_config_file
+
+    # 环境变量
+    config_file = genv.get_env(ENV_SECRET_CONFIG_FILE)
+    if config_file:
+        return config_file
+
+    config_dir = genv.get_env(ENV_SECRET_CONFIG_FILE)
+    if config_dir:
+        return os.path.join(config_dir, DEFAULT_SECRET_CONFIG_FILE)
+
+    # 程序指定配置
+    if default_config.secret_config_file:
+        return default_config.secret_config_file
+
+    if default_config.secret_config_dir:
+        return os.path.join(default_config.secret_config_dir, DEFAULT_SECRET_CONFIG_FILE)
+
+    # 默认配置
+    project_cfg_dir = genv.get_relative_folder(__file__, PROJECT_SECRET_CONFIG_DIR)
+    return os.path.join(project_cfg_dir, DEFAULT_SECRET_CONFIG_FILE)
+
+
+def init_main(*, service_name="", default_config: dict = None, thread_logger=False, parse_service_options=None) -> YamlConfigParser:
     """加载进程的基本配置，并初始化日志等设置"""
     if not service_name:
         full_service_name = sys.argv[0]
@@ -147,11 +184,10 @@ def init_main(*, service_name="", default_config: dict = None, thread_logger=Fal
 
     # 解析命令行参数
     parser = optparse.OptionParser()
-    options, args = parse_command_line(service_name, parser, sys.argv)
+    options, args = parse_command_line(service_name, parser, sys.argv, parse_service_options=parse_service_options)
 
     # 初始化日志服务
     log_folder = get_log_folder(options, default_config)
-
     glogger.init_logger(log_folder, thread_logger=thread_logger)
 
     # 加载进程配置（default_config 同样用作配置参数）
@@ -159,7 +195,12 @@ def init_main(*, service_name="", default_config: dict = None, thread_logger=Fal
     config = YamlConfigParser(default_config)
     config.read(config_file, default_config)
 
+    secret_config_file = get_secret_config_file(options, default_config)
+    if os.path.exists(secret_config_file):
+        config.load_module("secret", secret_config_file)
+
     config.args = args
+    config.options = options
 
     return config
 
