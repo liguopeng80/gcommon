@@ -134,7 +134,7 @@ def get_config_file(options, default_config: JsonObject):
     return os.path.join(project_cfg_dir, DEFAULT_CONFIG_FILE)
 
 
-def init_main(*, service_name="", default_config: dict = None) -> YamlConfigParser:
+def init_main(*, service_name="", default_config: dict = None, thread_logger=False) -> YamlConfigParser:
     """加载进程的基本配置，并初始化日志等设置"""
     if not service_name:
         full_service_name = sys.argv[0]
@@ -151,12 +151,15 @@ def init_main(*, service_name="", default_config: dict = None) -> YamlConfigPars
 
     # 初始化日志服务
     log_folder = get_log_folder(options, default_config)
-    glogger.init_logger(log_folder)
+
+    glogger.init_logger(log_folder, thread_logger=thread_logger)
 
     # 加载进程配置（default_config 同样用作配置参数）
     config_file = get_config_file(options, default_config)
     config = YamlConfigParser(default_config)
     config.read(config_file, default_config)
+
+    config.args = args
 
     return config
 

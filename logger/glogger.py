@@ -17,6 +17,9 @@ Default_Log_Root = '.'
 
 logger = logging.getLogger()
 
+LOG_FORMAT = '%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s'
+THREAD_LOG_FORMAT = '%(asctime)-15s [%(thread)08d] %(levelname)-3s %(name)-8s %(message)s'
+
 
 class StdIORedirector:
     """Redirect std-out/std-err to log file."""
@@ -112,7 +115,7 @@ def init_stdio_logger():
     init_logger(stdio_handler=True, file_handler=False)
 
 
-def init_logger(log_folder='', redirect_stdio=False, stdio_handler=False, file_handler=True):
+def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True, file_handler=True, thread_logger=False):
     # Create a new handler for "root logger" on console (stdout):
     # logging.basicConfig(level=logging.DEBUG, format='%(asctime)-15s %(name)-5s %(levelname)-5s %(message)s')
 
@@ -144,7 +147,7 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=False, file_h
 
     logger.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s')
+    formatter = logging.Formatter(THREAD_LOG_FORMAT if thread_logger else LOG_FORMAT)
 
     if file_handler:
         # interval = 1
@@ -178,14 +181,12 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=False, file_h
 
 
 def init_basic_config(level=logging.DEBUG):
-    format = '%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s'
-    logging.basicConfig(level=level, format=format)
+    logging.basicConfig(level=level, format=LOG_FORMAT)
     return logging.getLogger()
 
 
 def init_threading_config(level=logging.DEBUG):
-    format = '%(asctime)-15s [%(thread)08d] %(levelname)-3s %(name)-8s %(message)s'
-    logging.basicConfig(level=level, format=format)
+    logging.basicConfig(level=level, format=THREAD_LOG_FORMAT)
     return logging.getLogger()
 
 
