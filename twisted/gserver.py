@@ -3,6 +3,7 @@
 # creator: liguopeng@liguopeng.net
 import logging
 import optparse
+import os
 import sys
 import traceback
 
@@ -49,7 +50,10 @@ class SimpleServer(ObjectWithLogger):
         # 解析命令行
         parser = optparse.OptionParser()
 
-        options, args = gmain.parse_command_line(self.SERVICE_NAME, parser, sys.argv)
+        options, args = gmain.parse_command_line(
+            self.SERVICE_NAME, parser, sys.argv, parse_service_options=self.parse_service_options
+        )
+
         self.options, self.args = options, args
 
         self.verify_command_line(parser)
@@ -62,6 +66,9 @@ class SimpleServer(ObjectWithLogger):
 
         self.full_server_name = gproc.get_process_id(self.SERVICE_NAME, int(self.options.instance))
         self.unique_server_name = gproc.get_process_unique_id(self.SERVICE_NAME, int(self.options.instance))
+
+    def parse_service_options(self, parser: optparse.OptionParser):
+        pass
 
     def verify_command_line(self, parser):
         # if self.args:
@@ -85,6 +92,13 @@ class SimpleServer(ObjectWithLogger):
 
         if self.config_file:
             self.config.read(self.config_file, params)
+
+        secret_config_file = gmain.get_secret_config_file(self.options, default_config)
+        if os.path.exists(secret_config_file):
+            self.config.load_module("secret", secret_config_file)
+
+        self.config.args = self.args
+        self.config.options = self.options
 
         # todo: update service_root into cfg options
         self.config.service = JsonObject()
