@@ -125,6 +125,7 @@ class ConfigParser(object):
 
 class YamlConfigParser(ConfigParser):
     args = []
+    _config_root = ""
 
     def read(self, filename, params=None, encoding='utf-8'):
         if not filename:
@@ -132,6 +133,7 @@ class YamlConfigParser(ConfigParser):
 
         filename = os.path.join(os.getcwd(), filename)
         filename = os.path.abspath(filename)
+        self._config_root, _ = os.path.split(filename)
 
         # params is a dict object, which will be used to replace variables in
         # config file.
@@ -145,10 +147,21 @@ class YamlConfigParser(ConfigParser):
         with open(filename, encoding=encoding) as f:
             file_options = yaml.safe_load(f)
 
-        self._options = self._parse_group(file_options, params)
+        options = self._parse_group(file_options, params)
+        self._options = JsonObject(options)
 
     def load_module(self, module_name, filename, params=None, encoding='utf-8', defaults=None):
         config = YamlConfigParser(defaults=defaults)
+        config.read(filename, params, encoding)
+
+        self._options[module_name] = config._options
+        self._defaults[module_name] = config._defaults
+
+    def load_module_in_config_folder(self, module_name, filename="", params=None, encoding='utf-8', defaults=None):
+        config = YamlConfigParser(defaults=defaults)
+
+        filename = filename or (module_name + ".yaml")
+        filename = os.path.join(self._config_root, filename)
         config.read(filename, params, encoding)
 
         self._options[module_name] = config._options
