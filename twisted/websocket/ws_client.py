@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-02-09
+
 import traceback
+from abc import abstractmethod
 
 from autobahn.twisted.websocket import WebSocketClientFactory
 from autobahn.twisted.websocket import WebSocketClientProtocol
@@ -57,14 +59,17 @@ class WsJsonClientProtocol(WebSocketClientProtocol):
         data = message.dumps()
         self.sendMessage(data.encode('utf8'))
 
+    @abstractmethod
     def _on_transport_connected(self):
-        raise NotImplemented('for sub-class')
+        pass
 
+    @abstractmethod
     def _on_transport_closed(self):
-        raise NotImplemented('for sub-class')
+        pass
 
+    @abstractmethod
     def _on_message_received(self, message: JsonObject):
-        raise NotImplemented('sub-class')
+        pass
 
     def _close_transport(self):
         logger.info('[%06x], client closes the connection.', self.client_id)
