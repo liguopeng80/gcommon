@@ -88,6 +88,9 @@ def _param_enum(name, value, allowed_values):
 
 
 def param_digital(name, value: str):
+    if type(value) == int:
+        return
+
     if not value.isdigit():
         raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not a digital string" % (name, value))
 
@@ -95,6 +98,9 @@ def param_digital(name, value: str):
 
 
 def param_alnum(name, value: str):
+    if type(value) == int:
+        return
+
     if not value.isalnum():
         raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not a digital string" % (name, value))
 
