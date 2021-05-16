@@ -16,7 +16,7 @@ logger = logging.getLogger('server')
 
 CONFIG_FILE_NAME = 'default.conf'
 
-PROJECT_LOG_DIR = '../../../logs/'
+PROJECT_LOG_DIR = '../../../log/'
 PROJECT_CONFIG_DIR = '../../../etc/'
 
 ENV_LOG_DIR = 'ENV_LOG_DIR'
