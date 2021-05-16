@@ -20,6 +20,7 @@ from gcommon.utils.gyaml import YamlConfigParser
 
 class SimpleServer(ObjectWithLogger):
     SERVICE_NAME = 'undefined'
+    IS_MULTI_THREAD = False
     INSTANCE = 0
     VERSION = '0.0.0.0'
 
@@ -105,7 +106,7 @@ class SimpleServer(ObjectWithLogger):
         self.config.service.service_root = params["SERVICE_ROOT"]
 
     def init_logger(self):
-        server_base.init_logger(self.options)
+        server_base.init_logger(self.options, thread_logger=self.IS_MULTI_THREAD)
         self.logger = logging.getLogger(self.SERVICE_NAME)
 
     def get_config_params(self):
