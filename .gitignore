@@ -80,6 +80,7 @@ develop-eggs
 
 # python project
 .ropeproject
+.ipynb_checkpoints/
 
 ################################
 # C\C++ 
@@ -121,3 +122,10 @@ gatekeeper_test_starter_u2.py
 # code review
 ################################
 .reviewboardrc
+
+
+################################
+# secret
+################################
+secret.*.yaml
+secret.*.conf
