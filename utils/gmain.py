@@ -69,6 +69,9 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
     parser.add_option('-d', '--debug', dest='debug',
                       action='store_true', default=False, help='enable debug')
 
+    parser.add_option('--multi-thread', dest='multi_thread',
+                      action='store_true', default=False, help='is multi thread service')
+
     if parse_service_options:
         parse_service_options(parser)
 
@@ -188,7 +191,7 @@ def init_main(*, service_name="", default_config: dict = None, thread_logger=Fal
 
     # 初始化日志服务
     log_folder = get_log_folder(options, default_config)
-    glogger.init_logger(log_folder, thread_logger=thread_logger)
+    glogger.init_logger(log_folder, thread_logger=thread_logger or options.multi_thread)
 
     # 加载进程配置（default_config 同样用作配置参数）
     config_file = get_config_file(options, default_config)
