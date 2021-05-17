@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*- 
 # created: 2021-04-28
 # creator: liguopeng@liguopeng.net
+from abc import abstractmethod
+
 from gcommon.error import GErrors
 from gcommon.error.gerror import GExcept
 from gcommon.twisted.web.web_utils import WebConst
@@ -13,25 +15,22 @@ class WebParams(object):
     def __init__(self, request, paging=False):
         self.request = request
         if paging:
-            self.parse_paging_param(request)
+            self.parse_paging_param()
 
-    def parse_params(self, request, *params):
+    def parse_params(self, *params):
         for param in params:
             if type(param) == str:
-                self.parse(request, param)
+                self.parse(param)
+            elif type(param) == list:
+                self.parse(*param)
             else:
-                self.parse(request, **param)
+                self.parse(**param)
 
         return self
 
     def parse(self, param_name, attr_name=None, required=False, default=None, validator=None):
-        # body = request.content.read()
-        if type(param_name) is str:
-            param_name = param_name.encode('utf-8')
-
-        if param_name in self.request.args.keys():
-            param_value = self.request.args[param_name][0]
-            param_value = param_value.decode("utf-8")
+        param_value = self._get_attribute(param_name)
+        if param_value:
             if validator:
                 param_value = validator(param_name, param_value)
 
@@ -45,18 +44,39 @@ class WebParams(object):
         setattr(self, attr_name or param_name, param_value)
         return self
 
-    def parse_paging_param(self, request):
+    def parse_paging_param(self):
         """ Get paging params from request, aka, page & size, only capable in method GET """
         # Process param page size
-        if WebConst.PARAM_CURRENT_PAGE in request.args.keys():
-            self.current_page = int(request.args[WebConst.PARAM_CURRENT_PAGE][0])
+        current_page = self._get_attribute(WebConst.PARAM_CURRENT_PAGE)
+        if current_page:
+            self.current_page = int(current_page)
         else:
             self.current_page = WebConst.DEFAULT_PAGE
 
         # Process param size
-        if WebConst.PARAM_PAGE_SIZE in request.args.keys():
-            self.page_size = int(request.args[WebConst.PARAM_PAGE_SIZE][0])
+        page_size = self._get_attribute(WebConst.PARAM_PAGE_SIZE)
+        if page_size:
+            self.page_size = int(page_size)
         else:
             self.page_size = WebConst.DEFAULT_PAGE_SIZE
 
         return self
+
+    @abstractmethod
+    def _get_attribute(self, name):
+        pass
+
+
+class UrlParams(WebParams):
+    def _get_attribute(self, name):
+        if type(name) is str:
+            name = name.encode('utf-8')
+
+        if name in self.request.args.keys():
+            value = self.request.args[name][0]
+            return value.decode("utf-8")
+
+
+class JsonParams(WebParams):
+    def _get_attribute(self, name):
+        return self.request.get(name, None)
