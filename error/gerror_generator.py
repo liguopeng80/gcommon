@@ -8,7 +8,8 @@ import optparse
 import os
 import sys
 
-from .gerror_generator_source import error_defines
+Error_Defines = {}
+Domain_Base = 0
 
 
 def generate_error_defines_for_c(filename, prefix="Gcommon"):
@@ -20,11 +21,12 @@ def generate_error_defines_for_c(filename, prefix="Gcommon"):
         f.write("static const %sErrorEntry errorCodePage[] = {\n" % prefix)
 
         d = ''
-        for domain, code, description, _ in error_defines:
+        for domain, code, description, _ in Error_Defines:
+            assert code < Domain_Base
             if domain != d:
                 d = domain
                 f.write("\n")
-            f.write("\t{{{:0>6d}, \"{domain}\", \"{desc}\"}},\n".format(domain.value * 10000 + code,
+            f.write("\t{{{:d}, \"{domain}\", \"{desc}\"}},\n".format(domain.value * Domain_Base + code,
                                                                         domain=domain.name,
                                                                         desc=description))
 
@@ -46,12 +48,12 @@ def generate_error_defines_for_thrift(filename, prefix="Gcommon"):
         f.write("{\n")
 
         d = ''
-        for domain, code, description, _ in error_defines:
+        for domain, code, description, _ in Error_Defines:
             if domain != d:
                 d = domain
                 f.write("\n")
             f.write("\t{desc} = {err_code},\n".format(desc=description,
-                                                      err_code=domain.value * 10000 + code))
+                                                      err_code=domain.value * Domain_Base + code))
         f.write("}\n\n/* End of File */\n")
 
 
@@ -80,14 +82,16 @@ def generate_error_defines_for_python(filename):
 
         # write definition
         d = ''
-        for domain, code, name, message in error_defines:
+        for domain, code, name, message in Error_Defines:
+            assert code < Domain_Base
             if domain != d:
                 d = domain
                 f.write("\n")
 
-            err_code = domain.value * 10000 + code
+            err_code = domain.value * Domain_Base + code
 
-            pat = "    {:0>6d}: ('{name}', u'{msg}'),\n"
+            # pat = "    {:0>5d}: ('{name}', u'{msg}'),\n"
+            pat = "    {:d}: ('{name}', u'{msg}'),\n"
             f.write(pat.format(err_code, name=name, msg=message))
 
         # write definition end
@@ -100,12 +104,12 @@ def generate_error_defines_for_python(filename):
 
         # write dict
         d = ''
-        for domain, code, name, message in error_defines:
+        for domain, code, name, message in Error_Defines:
             if domain != d:
                 d = domain
                 f.write("\n")
 
-            err_code = domain.value * 10000 + code
+            err_code = domain.value * Domain_Base + code
 
             pat = "    {name} = {code}\n"
             f.write(pat.format(name=name, code=err_code))
@@ -120,13 +124,13 @@ def generate_error_defines_for_python(filename):
 
         # write definition
         d = ''
-        for domain, code, name, message in error_defines:
+        for domain, code, name, message in Error_Defines:
             if domain != d:
                 d = domain
                 f.write("\n")
 
-            err_code = domain.value * 10000 + code
-            pat = "    %s = GError.create(%07d, error_defines)\n"
+            err_code = domain.value * Domain_Base + code
+            pat = "    %s = GError.create(%d, error_defines)\n"
             f.write(pat % (name, err_code))
 
         # write definition end
@@ -172,10 +176,30 @@ def main(all_args, prefix="Gcommon"):
             parser.error("File type is not suppported yet.")
     elif filename == 'default':
         generate_error_defines_for_python('gerror_define.py')
-        generate_error_defines_for_thrift('%s_error_define.thrift' % options.prefix.lower())
+        # generate_error_defines_for_thrift('%s_error_define.thrift' % options.prefix.lower())
+
+
+def generate_gcommon_error_code():
+    global Error_Defines, Domain_Base
+    from gcommon.error.gerror_generator_source import error_defines, domain_base
+    Error_Defines = error_defines
+    Domain_Base = domain_base
+
+    main(sys.argv)
+
+
+def generate_user_defined_error_code(error_defines, domain_base):
+    global Error_Defines, Domain_Base
+    Error_Defines = error_defines
+    Domain_Base = domain_base
+
+    main(sys.argv)
 
 
 # Test Codes
 if __name__ == "__main__":
-    main(sys.argv)
-    print('Done')
+    if len(sys.argv) == 1:
+        generate_gcommon_error_code()
+    else:
+        main(sys.argv)
+        print('Done')

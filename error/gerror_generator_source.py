@@ -9,13 +9,18 @@ Domain = Enum(
     user=110,
     device=120,
 
-    rpc=500,
+    rpc=150,
 
-    internal=888,
-    protocol=999,
+    internal=188,
+    protocol=199,
+
+    third_party_base=900,
 )
 
 default_domain = EnumItem('general', 0, '')
+
+domain_base = 1000
+code_length = 6
 
 error_defines = (
     (default_domain, 0, 'ok', '操作成功'),
