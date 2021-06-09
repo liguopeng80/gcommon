@@ -69,7 +69,9 @@ class HTTPClient(object):
         """data is a dict or list"""
         data = json.dumps(data).encode('utf-8')
         url = bytes(url, 'utf-8')
-        return self.post(url, data, content_type=self.Content_Type_JSON, extra_headers=extra_headers, timeout=timeout)
+        extra_headers = extra_headers or {}
+        extra_headers.update({'content-type': self.Content_Type_JSON})
+        return self.post(url, data, **extra_headers)
 
     def put(self, url, data=None, **kwargs):
         return self.request('PUT', url, data=data, **kwargs)
