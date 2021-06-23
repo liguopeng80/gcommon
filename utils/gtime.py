@@ -98,6 +98,18 @@ def utc_time_str():
     return date_str
 
 
+def local_time_str():
+    """返回 UCT 标准时间，按照 Java 的方式格式化：2011-02-18T08:30:30Z"""
+    date_format = "%04d-%02d-%02dT%02d:%02d:%02d.%03d"
+
+    now = datetime.now()
+    millisecond = int(now.microsecond / 1000)
+
+    date_str = date_format % (now.year, now.month, now.day, now.hour, now.minute, now.second, millisecond)
+
+    return date_str
+
+
 class DateUtil(object):
     TIME_DAY_START = " 00:00:00"
     TIME_DAY_END = " 23:59:59"
