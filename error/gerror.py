@@ -14,6 +14,9 @@ class GError(object):
         name, desc = error_defines[code]
         return GError(code, name, desc)
 
+    def clone(self, name="", desc=""):
+        return GError(self.code, name or self.name, desc or self.desc)
+
 
 class GExcept(Exception):
     def __init__(self, error_obj: GError, message="", **kwargs):
