@@ -20,6 +20,12 @@ def web_response(result, *args, **kws):
     r.code = result.code
     r.message = result.desc
 
+    paginator = kws.get("paginator", None)
+    if paginator:
+        r["pageSize"] = paginator.page_size
+        r["current"] = paginator.current_page
+        kws.pop("paginator")
+
     if args:
         assert not kws
         if len(args) > 1:
@@ -36,6 +42,10 @@ def web_response(result, *args, **kws):
 
 def web_response_ok(*args, **kws):
     return web_response(GErrors.ok, *args, **kws)
+
+
+def web_response_paginator(paginator, *args, **kws):
+    return web_response(GErrors.ok, *args, paginator=paginator, **kws)
 
 
 def web_exception_response(error: GExcept, **kwargs):

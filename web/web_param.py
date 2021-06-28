@@ -8,14 +8,32 @@ from gcommon.error.gerror import GExcept
 from gcommon.web.web_utils import WebConst
 
 
+class Paginator(object):
+    def __init__(self, current_page=1, page_size=10):
+        self.current_page = current_page
+        self.page_size = page_size
+
+    @property
+    def offset(self):
+        if self.current_page < 1:
+            self.current_page = 1
+
+        return self.page_size * (self.current_page - 1)
+
+
 class WebParams(object):
     current_page = 1
     page_size = 10
 
     def __init__(self, request, paging=False):
         self.request = request
+
         if paging:
             self.parse_paging_param()
+
+    @property
+    def paginator(self):
+        return Paginator(self.current_page, self.page_size)
 
     def parse_params(self, *params):
         for param in params:
@@ -56,8 +74,9 @@ class WebParams(object):
         # Process param size
         page_size = self._get_attribute(WebConst.PARAM_PAGE_SIZE)
         if page_size:
-            self.page_size = int(page_size)
-        else:
+            self.page_size = min(WebConst.MAX_PAGE_SIZE, int(page_size))
+
+        if not page_size:
             self.page_size = WebConst.DEFAULT_PAGE_SIZE
 
         return self
@@ -80,3 +99,9 @@ class UrlParams(WebParams):
 class JsonParams(WebParams):
     def _get_attribute(self, name):
         return self.request.get(name, None)
+
+
+class TextUrlParams(WebParams):
+    def _get_attribute(self, name):
+        if name in self.request.args.keys():
+            return self.request.args[name]
