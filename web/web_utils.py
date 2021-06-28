@@ -29,6 +29,11 @@ class WebConst(object):
 
     MIME_TYPE_JSON = 'application/json'
 
+    GET = [REQUEST_METHOD_GET]
+    POST = [REQUEST_METHOD_POST]
+    PUT = [REQUEST_METHOD_PUT]
+    DELETE = [REQUEST_METHOD_DELETE]
+
 
 def set_options_methods(request, post=False, get=False, put=False, delete=False, allowed_methods=None):
     methods = ['OPTIONS']
