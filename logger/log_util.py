@@ -1,6 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-03-16
+import time
+import traceback
+
+from gcommon.utils import gtime
 
 
 def log_server_started(logger, service_name, version):
@@ -20,3 +24,23 @@ def log_function_call(logger):
     return _func_logger_decorator
 
 
+def log_callback(logger, name=None):
+    def _func_logger_decorator(func):
+        def _func_logger(*args, **kws):
+            func_name = name or func.__name__
+            start = time.time()
+
+            try:
+                result = func(*args, **kws)
+            except:
+                end = time.time()
+                stack = traceback.format_exc()
+                logger.error(f"{func_name} called, time used: {end - start:.3f}s - exception: {stack}")
+                raise
+            else:
+                end = time.time()
+                logger.info(f"{func_name} called, time used: {end - start:.3f}s")
+                return result
+
+        return _func_logger
+    return _func_logger_decorator
