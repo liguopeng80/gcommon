@@ -2,6 +2,8 @@
 # created: 2021-06-23
 # creator: liguopeng@liguopeng.net
 import logging
+import sys
+import traceback
 
 from quart import jsonify, Quart, json, Blueprint
 from quart import has_request_context, request
@@ -86,14 +88,15 @@ class ExceptionMiddleware(object):
             return resp
 
 
-def handle_bad_request(e):
+async def handle_bad_request(e):
     if isinstance(e, GExcept):
         resp = web_exception_response(e)
     else:
-        resp = web_error_response(GErrors.gen_server_internal, desc=str(e))
+        resp = web_error_response(GErrors.gen_server_internal, desc=str(e) or str(type(e)))
 
-    # logger.error("request: %s %s, response: %s",
-    #              request.method, request.path, resp.response.data.decode('utf-8'))
+    logger.error("request (from %s): %s %s - %s",
+                 request.remote_addr, request.method, request.full_path,
+                 traceback.format_exc())
     return resp
 
 
