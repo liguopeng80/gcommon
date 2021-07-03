@@ -46,11 +46,12 @@ class WebParams(object):
 
         return self
 
-    def parse(self, param_name, attr_name=None, required=False, default=None, validator=None):
+    def parse(self, param_name, attr_name=None, required=False, default=None,
+              validator=None, **validator_params):
         param_value = self._get_attribute(param_name)
         if param_value:
             if validator:
-                param_value = validator(param_name, param_value)
+                param_value = validator(param_name, param_value, **validator_params)
 
         elif default is not None:
             param_value = default
@@ -88,12 +89,22 @@ class WebParams(object):
 
 class UrlParams(WebParams):
     def _get_attribute(self, name):
+        """Twisted 等 web 库，request 请求的参数名和参数值都是 binary"""
         if type(name) is str:
             name = name.encode('utf-8')
 
         if name in self.request.args.keys():
             value = self.request.args[name][0]
             return value.decode("utf-8")
+
+    def _get_text_attribute(self, name):
+        """Flask 等 web 库，request 请求的参数名和参数值都是 str"""
+        if name in self.request.args.keys():
+            return self.request.args[name]
+
+    @classmethod
+    def switch_to_text_url_params(cls):
+        cls._get_attribute = cls._get_text_attribute
 
 
 class JsonParams(WebParams):
@@ -102,6 +113,8 @@ class JsonParams(WebParams):
 
 
 class TextUrlParams(WebParams):
+    """Flask 等 web 库，request 请求的参数名和参数值都是 str"""
     def _get_attribute(self, name):
         if name in self.request.args.keys():
             return self.request.args[name]
+
