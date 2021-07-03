@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 # created: 2021-04-28
 # creator: liguopeng@liguopeng.net
+import functools
 from datetime import datetime
 from functools import partial
 
@@ -87,9 +88,15 @@ def _param_enum(name, value, allowed_values):
     return value
 
 
-def param_digital(name, value: str):
+def param_digital(name, value: str, max_length=0, min_length=0):
     if type(value) == int:
         return
+
+    if max_length and len(value) > max_length:
+        raise GExcept(GErrors.gen_bad_request, f"max length: {max_length}")
+
+    if min_length and len(value) < min_length:
+        raise GExcept(GErrors.gen_bad_request, f"min length: {min_length}")
 
     if not value.isdigit():
         raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not a digital string" % (name, value))
@@ -105,3 +112,4 @@ def param_alnum(name, value: str):
         raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not a digital string" % (name, value))
 
     return value
+
