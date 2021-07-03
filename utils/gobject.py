@@ -3,6 +3,9 @@
 # Utility for objects management.
 
 import inspect
+import uuid
+
+from gcommon.utils import grand
 
 
 class ObjectWithLogger(object):
@@ -61,3 +64,9 @@ def clone_object(src, dest):
             continue
 
         dest[attr] = value
+
+
+class Entity(object):
+    """具有唯一 ID 的实体对象"""
+    def __init__(self, uid=""):
+        self.uid = uid or grand.uuid_string()
