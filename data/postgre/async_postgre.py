@@ -44,6 +44,9 @@ class DatabaseManager(object):
 
         return async_session_factory()
 
+    def create_session(self):
+        return self.async_session()
+
 
 if __name__ == '__main__':
     pass
