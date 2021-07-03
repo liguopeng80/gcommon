@@ -188,12 +188,12 @@ def generate_gcommon_error_code():
     main(sys.argv)
 
 
-def generate_user_defined_error_code(error_defines, domain_base):
+def generate_user_defined_error_code(error_defines, domain_base, prefix="Gcommon"):
     global Error_Defines, Domain_Base
     Error_Defines = error_defines
     Domain_Base = domain_base
 
-    main(sys.argv)
+    main(sys.argv, prefix=prefix)
 
 
 # Test Codes
