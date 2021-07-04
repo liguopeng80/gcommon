@@ -2,12 +2,11 @@
 # created: 2021-06-23
 # creator: liguopeng@liguopeng.net
 import logging
-import sys
 import traceback
 
 from quart import jsonify, Quart, json, Blueprint
 from quart import has_request_context, request
-from quart.logging import default_handler, serving_handler
+from quart.logging import default_handler
 
 from gcommon.error import GErrors
 from gcommon.error.gerror import GExcept, GError
