@@ -72,6 +72,11 @@ def web_error_response(error: GError, desc="", **kwargs):
     return jsonify(r)
 
 
+def web_assert(cond, error: GError, desc="", **kwargs):
+    if not cond:
+        raise GExcept(error, desc, **kwargs)
+
+
 class ExceptionMiddleware(object):
     def __init__(self, app):
         self.app = app
