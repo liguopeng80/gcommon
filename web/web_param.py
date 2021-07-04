@@ -56,7 +56,7 @@ class WebParams(object):
         elif default is not None:
             param_value = default
         elif required:
-            raise GExcept(GErrors.gen_bad_request, "%s is required" % param_name)
+            raise GExcept(GErrors.gen_bad_request, "param %s is required" % param_name)
         else:
             param_value = ""
 
