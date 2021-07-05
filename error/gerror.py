@@ -17,6 +17,10 @@ class GError(object):
     def clone(self, name="", desc=""):
         return GError(self.code, name or self.name, desc or self.desc)
 
+    def raise_if(self, cond, desc="", **kwargs):
+        if cond:
+            raise GExcept(self, desc, **kwargs)
+
 
 class GExcept(Exception):
     def __init__(self, error_obj: GError, message="", **kwargs):
