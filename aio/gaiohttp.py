@@ -76,6 +76,11 @@ def web_assert(cond, error: GError, desc="", **kwargs):
         raise GExcept(error, desc, **kwargs)
 
 
+def web_if(cond, error: GError, desc="", **kwargs):
+    if cond:
+        raise GExcept(error, desc, **kwargs)
+
+
 class ExceptionMiddleware(object):
     def __init__(self, app):
         self.app = app
@@ -106,7 +111,7 @@ async def handle_bad_request(e):
 
 async def log_request_and_response(response):
     """web 服务器的 access log"""
-    if request.is_json:
+    if request.is_json and request.content_length:
         request_body = await request.get_json()
         request_body = json.dumps(request_body, ensure_ascii=False)
     else:
@@ -124,6 +129,11 @@ async def log_request_and_response(response):
                   request_body, response_body)
 
     return response
+
+
+async def read_json_request():
+    data = await request.get_json()
+    return JsonObject(data)
 
 
 def create_quart_blueprint(name, import_name=""):
