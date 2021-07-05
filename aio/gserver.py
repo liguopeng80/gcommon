@@ -13,6 +13,7 @@ from gcommon.aio.gasync import maybe_async
 from gcommon.logger import log_util
 from gcommon.server import server_base
 from gcommon.utils import gproc, genv, gmain
+from gcommon.utils.gglobal import Global
 from gcommon.utils.gjsonobj import JsonObject
 from gcommon.utils.gobject import ObjectWithLogger
 from gcommon.utils.gyaml import YamlConfigParser
@@ -64,6 +65,7 @@ class SimpleServer(ObjectWithLogger):
 
         # 加载配置项
         self.load_server_config()
+        Global.set_config(self.config)
 
         self.full_server_name = gproc.get_process_id(self.SERVICE_NAME, int(self.options.instance))
         self.unique_server_name = gproc.get_process_unique_id(self.SERVICE_NAME, int(self.options.instance))
