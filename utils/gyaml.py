@@ -15,6 +15,8 @@ from gcommon.utils.gjsonobj import JsonObject
 
 
 class ConfigParser(object):
+    project_root = ""
+
     def __init__(self, defaults: dict = None):
         self._options = JsonObject()
         self._defaults = JsonObject(defaults or {})

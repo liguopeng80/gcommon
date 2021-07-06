@@ -147,6 +147,14 @@ def get_config_file(options, default_config: JsonObject):
     return os.path.join(project_cfg_dir, DEFAULT_CONFIG_FILE)
 
 
+def get_project_root():
+    project_root = genv.get_env(ENV_PROJECT_ROOT)
+    if not project_root:
+        project_root = genv.get_relative_folder(__file__, PROJECT_ROOT)
+
+    return project_root
+
+
 def get_secret_config_file(options, default_config: JsonObject):
     """配置文件，优先顺序（配置参数，环境变量，工程目录）"""
     # 命令行参数
@@ -204,6 +212,7 @@ def init_main(*, service_name="", default_config: dict = None, thread_logger=Fal
 
     config.args = args
     config.options = options
+    config.project_root = get_project_root()
 
     return config
 
