@@ -70,3 +70,22 @@ class Entity(object):
     """具有唯一 ID 的实体对象"""
     def __init__(self, uid=""):
         self.uid = uid or grand.uuid_string()
+
+
+def get_subclasses(base_class, context, func_get_name=None, allow_base=False):
+    """注册某个上下文中的所有子类"""
+    if inspect.ismodule(context):
+        names = dir(context)
+        context = {k: getattr(context, k) for k in names}
+
+    subclasses = []
+    for name, value in context.items():
+        if inspect.isclass(value) and issubclass(value, base_class):
+            if not allow_base and (value == base_class):
+                continue
+
+            if func_get_name:
+                name = func_get_name(value)
+            subclasses.append(value)
+
+    return subclasses
