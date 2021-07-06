@@ -89,3 +89,18 @@ def get_subclasses(base_class, context, func_get_name=None, allow_base=False):
             subclasses.append(value)
 
     return subclasses
+
+
+def get_instances_of(cls, context):
+    """从 context 中获取所有类型为 cls 的实例"""
+    if type(context) is not dict:
+        names = dir(context)
+        context = {k: getattr(context, k) for k in names}
+
+    objects = []
+    for name, value in context.items():
+        value_type = type(value)
+        if inspect.isclass(value_type) and issubclass(value_type, cls):
+            objects.append((name, value))
+
+    return objects
