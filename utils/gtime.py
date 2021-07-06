@@ -150,6 +150,13 @@ class DateUtil(object):
         return dt.replace(hour=23, minute=59, second=59, microsecond=999999)
 
 
+def date_str_for_id(dt: datetime = None):
+    if not dt:
+        dt = datetime.now()
+
+    return dt.strftime("%Y%m%d-%H%M%S")
+
+
 # Test Codes
 if __name__ == "__main__":
     max_timestamp = max_timestamp()
