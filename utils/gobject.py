@@ -68,8 +68,14 @@ def clone_object(src, dest):
 
 class Entity(object):
     """具有唯一 ID 的实体对象"""
+    uid = ""
+    _HAS_UID = True
+
     def __init__(self, uid=""):
-        self.uid = uid or grand.uuid_string()
+        if self._HAS_UID:
+            self.uid = uid or grand.uuid_string()
+        else:
+            self.uid = uid
 
 
 def get_subclasses(base_class, context, func_get_name=None, allow_base=False):
