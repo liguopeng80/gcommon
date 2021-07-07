@@ -30,7 +30,12 @@ class AsyncTimer(object):
 
         self._task = None
 
-    def start(self, seconds: int = 0, dt: datetime = None):
+    def set_handler(self, handler, *args, **kwargs):
+        self.timeout_handler = handler
+        self._args = args
+        self._kwargs = kwargs
+
+    def start(self, *, seconds: int = 0, dt: datetime = None):
         if self.status != self.Not_Started:
             return None
 
