@@ -74,8 +74,8 @@ class JsonObject(dict):
     def load_obj(obj, *names):
         return JsonObject({name: getattr(obj, name) for name in names})
 
-    def dumps(self, indent=None, ensure_ascii=True):
-        result = json.dumps(self, ensure_ascii=ensure_ascii, indent=indent)
+    def dumps(self, indent=None, ensure_ascii=True, sort_keys=False):
+        result = json.dumps(self, ensure_ascii=ensure_ascii, indent=indent, sort_keys=False)
 
         # if isinstance(result, str):
         #    result = result.encode('utf-8')
@@ -144,7 +144,12 @@ class JSONable(object):
             if json_value != "":
                 result[json_name] = json_value
 
+        self._extra_json_fields(result)
+
         return result
+
+    def _extra_json_fields(self, data: JsonObject):
+        return
 
     @classmethod
     def load_json(cls, json_string):
