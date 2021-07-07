@@ -48,9 +48,6 @@ class MqttListener(threading.Thread):
         # asyncio loop
         self.loop = asyncio.get_running_loop()
 
-    def listener(self):
-        self.start()
-
     def run(self) -> None:
         # 指定回调函数
         self.client.on_connect = self.on_connect
