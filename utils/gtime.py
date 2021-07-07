@@ -149,6 +149,23 @@ class DateUtil(object):
         """to 23:59:59"""
         return dt.replace(hour=23, minute=59, second=59, microsecond=999999)
 
+    @staticmethod
+    def one_day_before(dt: datetime = None):
+        if not dt:
+            dt = datetime.now()
+
+        return dt - timedelta(days=1)
+
+
+class DateDelta(object):
+    @staticmethod
+    def seconds_late(seconds):
+        return datetime.now() + timedelta(seconds=seconds)
+
+    @staticmethod
+    def seconds_before(seconds):
+        return datetime.now() - timedelta(seconds=seconds)
+
 
 def date_str_for_id(dt: datetime = None):
     if not dt:
