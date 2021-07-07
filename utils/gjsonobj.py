@@ -6,6 +6,8 @@
 import json
 import sys
 
+from gcommon.utils import gobject
+
 
 class JsonAttributeError(AttributeError): pass
 
@@ -68,6 +70,10 @@ class JsonObject(dict):
             else:
                 return JsonObject(j)
 
+    @staticmethod
+    def load_obj(obj, *names):
+        return JsonObject({name: getattr(obj, name) for name in names})
+
     def dumps(self, indent=None, ensure_ascii=True):
         result = json.dumps(self, ensure_ascii=ensure_ascii, indent=indent)
 
@@ -111,3 +117,41 @@ if __name__ == '__main__':
 
     user = JsonObject.loads(user.dumps())
     print(user, type(user))
+
+
+class JsonField(object):
+    def __init__(self, name, value=""):
+        self.name = name
+        self.value = value
+
+
+class JSONable(object):
+    """可以进行 json 序列化和反序列化的对象"""
+    def to_json(self):
+        """对象转换成 json """
+        result = JsonObject()
+
+        fields = gobject.get_instances_of(JsonField, self.__class__)
+        for name, value in fields:
+            obj_value = getattr(self, name)
+            if type(obj_value) == JsonField:
+                json_name = obj_value.name
+                json_value = obj_value.value
+            else:
+                json_name = value.name
+                json_value = obj_value
+
+            if json_value != "":
+                result[json_name] = json_value
+
+        return result
+
+    @classmethod
+    def load_json(cls, json_string):
+        data = JsonObject.load_obj(json_string)
+        obj = cls()
+
+        for name, value in data.items():
+            setattr(obj, name, value)
+
+        return obj
