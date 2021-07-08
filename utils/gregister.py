@@ -21,6 +21,11 @@ class Registry(object):
         """添加注册项目"""
         self._objects[name] = value
 
+    def unregister(self, name):
+        """添加注册项目"""
+        if name in self._objects:
+            del self._objects[name]
+
     def get(self, name):
         """查找注册项"""
         value = self._objects.get(name, self.default)
