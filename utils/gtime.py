@@ -59,6 +59,12 @@ def past_seconds(time_started):
     return diff
 
 
+def dt_past_seconds(dt: datetime):
+    """从参数表示的时间值开始，已经流逝的时间"""
+    diff = datetime.now() - dt
+    return diff.total_seconds()
+
+
 def has_expired(expiration_time):
     return datetime.now() > expiration_time
 
@@ -165,6 +171,15 @@ class DateDelta(object):
     @staticmethod
     def seconds_before(seconds):
         return datetime.now() - timedelta(seconds=seconds)
+
+    @staticmethod
+    def seconds_left(dt):
+        now = datetime.now()
+        if now <= dt:
+            return 0
+
+        diff = now - dt
+        return diff.total_seconds()
 
 
 def date_str_for_id(dt: datetime = None):
