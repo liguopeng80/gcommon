@@ -35,7 +35,7 @@ class AsyncTimer(object):
         self._args = args
         self._kwargs = kwargs
 
-    def start(self, *, seconds: int = 0, dt: datetime = None):
+    def start(self, *, seconds: float = 0, dt: datetime = None):
         if self.status != self.Not_Started:
             return None
 
@@ -46,7 +46,7 @@ class AsyncTimer(object):
         self._task = asyncio.ensure_future(self._job())
 
     @staticmethod
-    def _calc_timeout(seconds: int, dt: datetime):
+    def _calc_timeout(seconds: float, dt: datetime):
         if dt:
             seconds = (dt - datetime.now()).total_seconds()
             if seconds < 0:
@@ -63,7 +63,7 @@ class AsyncTimer(object):
             self.timeout_handler(*self._args, **self._kwargs)
 
     def restart(self, seconds: int = 0, dt: datetime = None):
-        self.seconds = self._calc_timeout(seconds, dt)
+        # self.seconds = self._calc_timeout(seconds, dt)
 
         if self.status == self.Started:
             self.cancel()
@@ -72,7 +72,7 @@ class AsyncTimer(object):
             pass
 
         self.status = self.Not_Started
-        self.start()
+        self.start(seconds=seconds, dt=dt)
 
         return self
 

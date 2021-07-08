@@ -55,6 +55,7 @@ async def post_json(url, data, **kwargs):
         async with session.post(url, json=data, **kwargs) as response:
             logger.debug("POST %s - %s", url, response.status)
             result = await response.json()
+            logger.debug("POST %s - %s", url, result)
             # result = await response.text()
             return result
 
