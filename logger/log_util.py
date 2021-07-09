@@ -15,15 +15,33 @@ def log_server_started(logger, service_name, version):
 
 def log_function_call(logger, detail=False):
     def _func_logger_decorator(func):
+        def _func_logger(*args, **kws):
+            if detail:
+                logger.debug("fn-called: %s, %s",
+                             func.__name__, func.__code__)
+            else:
+                if args:
+                    logger.debug("fn-called: %s, %s", func.__name__, args)
+                else:
+                    logger.debug("fn-called: %s", func.__name__)
+            return func(*args, **kws)
+
+        return _func_logger
+
+    return _func_logger_decorator
+
+
+def log_cls_function_call(logger, detail=False):
+    def _func_logger_decorator(func):
         def _func_logger(self, *args, **kws):
             if detail:
-                logger.debug("function called %s - %s, %s",
+                logger.debug("fn-called: %s - %s, %s",
                              func.__name__, self, func.__code__)
             else:
                 if args:
-                    logger.debug("function called %s - %s, %s", func.__name__, self, args)
+                    logger.debug("fn-called: %s - %s, %s", func.__name__, self, args)
                 else:
-                    logger.debug("function called %s- %s", func.__name__, self)
+                    logger.debug("fn-called: %s - %s", func.__name__, self)
             return func(self, *args, **kws)
         
         return _func_logger
