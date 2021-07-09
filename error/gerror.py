@@ -21,6 +21,17 @@ class GError(object):
         if cond:
             raise GExcept(self, desc, **kwargs)
 
+    def r(self, desc="", **kwargs):
+        raise GExcept(self, desc, **kwargs)
+
+    def equals(self, other):
+        if type(other) == GError:
+            return self.code == other.code
+        elif type(other) == GExcept:
+            return self.code == other.cmd_error
+        else:
+            return False
+
 
 class GExcept(Exception):
     def __init__(self, error_obj: GError, message="", **kwargs):
@@ -32,6 +43,14 @@ class GExcept(Exception):
         self.message = desc
 
         self.kwargs = kwargs
+
+    def __eq__(self, other):
+        if type(other) == GError:
+            return self.cmd_error == other.code
+        elif type(other) == GExcept:
+            return self.cmd_error == other.cmd_error
+        else:
+            return False
 
 
 class GInputError(GExcept):
