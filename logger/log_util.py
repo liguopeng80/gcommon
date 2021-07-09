@@ -13,11 +13,18 @@ def log_server_started(logger, service_name, version):
     logger.info('-' * 72)
 
 
-def log_function_call(logger):
+def log_function_call(logger, detail=False):
     def _func_logger_decorator(func):
-        def _func_logger(*args, **kws):
-            logger.debug("%s (%s) called", func.__name__ , func.__code__)
-            return func(*args, **kws)
+        def _func_logger(self, *args, **kws):
+            if detail:
+                logger.debug("function called %s - %s, %s",
+                             func.__name__, self, func.__code__)
+            else:
+                if args:
+                    logger.debug("function called %s - %s, %s", func.__name__, self, args)
+                else:
+                    logger.debug("function called %s- %s", func.__name__, self)
+            return func(self, *args, **kws)
         
         return _func_logger
     
