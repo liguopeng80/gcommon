@@ -188,11 +188,26 @@ class JSONable(object):
         return
 
     @classmethod
+    def create(cls):
+        return cls.load_dict({})
+
+    @classmethod
     def load_json(cls, json_string):
         data = JsonObject.load_obj(json_string)
-        obj = cls()
+        return cls()._copy_from_dict(data)
 
-        for name, value in data.items():
-            setattr(obj, name, value)
+    @classmethod
+    def load_dict(cls, data: dict):
+        return cls()._copy_from_dict(data)
 
-        return obj
+    def _copy_from_dict(self, data: dict):
+        fields = gobject.get_instances_of(JsonField, self.__class__)
+
+        for name, value in fields:
+            new_value = data.get(name, None)
+            if new_value is None:
+                new_value = value
+
+            setattr(self, name, new_value)
+
+        return self
