@@ -93,6 +93,42 @@ class JsonObject(dict):
             msg = 'Item:append - the old value is not list. Name: %s, Value: %s' % (name, value)
             raise JsonAttributeError(msg)
 
+    def copy_obj(self, obj, *names, default=None):
+        """从另一个对象拷贝指定名称的属性"""
+        for name in names:
+            if type(name) in (tuple, list):
+                if len(name) == 3:
+                    source_name = name[1] or name[0]
+                    self[name[0]] = getattr(obj, source_name, name[2])
+                elif len(name) == 2:
+                    source_name = name[1] or name[0]
+                    value = getattr(obj, source_name, None)
+                    if value is not None:
+                        self[name[0]] = value
+            else:
+                value = getattr(obj, name, None)
+                if value is not None:
+                    self[name] = value
+
+    @staticmethod
+    def clone_obj(obj, *names, default=None):
+        """创建 json 对象，从另一个对象拷贝指定名称的属性"""
+        json_obj = JsonObject()
+        for name in names:
+            if type(name) in (tuple, list):
+                if len(name) == 3:
+                    json_obj[name[0]] = getattr(obj, name[1], name[2])
+                elif len(name) == 2:
+                    value = getattr(obj, name[1], None)
+                    if value is not None:
+                        json_obj[name[0]] = value
+            else:
+                value = getattr(obj, name, None)
+                if value is not None:
+                    json_obj[name] = value
+
+        return json_obj
+
 
 if __name__ == '__main__':
     user_def = {'name': 'user123', 'password': '123456',
