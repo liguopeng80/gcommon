@@ -104,8 +104,10 @@ async def handle_bad_request(e):
         resp = web_error_response(GErrors.gen_server_internal, desc=str(e) or str(type(e)))
 
     logger.error("request (from %s): %s %s - %s",
-                 request.remote_addr, request.method, request.full_path,
+                  request.remote_addr, request.method, request.full_path,
                  traceback.format_exc())
+    # logger.error("request (from %s): %s %s - %s",
+    #             request.remote_addr, request.method, request.full_path, e)
     return resp
 
 

@@ -146,7 +146,7 @@ class SimpleServer(ObjectWithLogger):
             await maybe_async(self.init_server)
             await maybe_async(self.start_server)
         except Exception as e:
-            self.logger.error('server exception: %s', e)
+            self.logger.error('server exception: %s', traceback.format_exc())
             loop = asyncio.get_event_loop()
             loop.stop()
         else:
