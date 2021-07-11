@@ -39,7 +39,8 @@ def log_cls_function_call(logger, detail=False):
                              func.__name__, self, func.__code__)
             else:
                 if args:
-                    logger.debug("fn-called: %s - %s, %s", func.__name__, self, args)
+                    str_args = ", ".join([str(arg) for arg in args])
+                    logger.debug("fn-called: %s - %s, %s", func.__name__, self, str_args)
                 else:
                     logger.debug("fn-called: %s - %s", func.__name__, self)
             return func(self, *args, **kws)
@@ -47,6 +48,17 @@ def log_cls_function_call(logger, detail=False):
         return _func_logger
     
     return _func_logger_decorator
+
+
+def log_obj_function_call(func):
+    def _func_logger(self, *args, **kws):
+        if args:
+            str_args = ", ".join([str(arg) for arg in args])
+            self.logger.debug("fn-called: %s - %s, %s", func.__name__, self, str_args)
+        else:
+            self.logger.debug("fn-called: %s - %s", func.__name__, self)
+
+    return _func_logger
 
 
 def log_callback(logger, name=None):

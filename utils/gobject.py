@@ -3,19 +3,30 @@
 # Utility for objects management.
 
 import inspect
-import uuid
+import logging
+
 
 from gcommon.utils import grand
 
 
 class ObjectWithLogger(object):
     logger = None
+    _logger_name = ""
 
     @classmethod
-    def set_class_logger(cls, logger):
+    def set_class_logger(cls, logger=None):
+        """为类设置 logger"""
+        if not logger:
+            logger = logging.getLogger(cls._logger_name or cls.__name__)
+
         cls.logger = logger
 
-    def set_logger(self, logger):
+    def set_logger(self, logger=None):
+        """为对象设置 logger"""
+        if not logger:
+            name = getattr(self, "_logger_name", self.__class__.__name__)
+            logger = logging.getLogger(name)
+
         self.logger = logger
 
 
