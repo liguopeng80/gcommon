@@ -125,6 +125,9 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True, file_ha
     if not log_folder:
         log_folder = Default_Log_Root
 
+    if stdio_handler:
+        redirect_stdio = False
+
     logging.addLevelName(VERBOSE, 'VEB')
     logging.addLevelName(logging.DEBUG, 'DBG')
     logging.addLevelName(logging.INFO, 'INF')
@@ -172,6 +175,8 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True, file_ha
         if redirect_stdio:
             sys.stderr = StdIORedirector(StdIORedirector.STD_ERR)
             sys.stdout = StdIORedirector(StdIORedirector.STD_OUT)
+        elif stdio_handler:
+            pass
 
     if stdio_handler:
         ch = logging.StreamHandler()
