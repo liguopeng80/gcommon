@@ -58,6 +58,8 @@ def log_obj_function_call(func):
         else:
             self.logger.debug("fn-called: %s - %s", func.__name__, self)
 
+        return func(self, *args, **kws)
+
     return _func_logger
 
 
