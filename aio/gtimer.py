@@ -37,9 +37,11 @@ class AsyncTimer(object):
 
     def start(self, *, seconds: float = 0, dt: datetime = None):
         if self.status != self.Not_Started:
+            logger.error("cannot start timer %s", self)
             return None
 
         self.seconds = self._calc_timeout(seconds, dt)
+        logger.debug("start timer (%s) for %s seconds", self, self.seconds)
 
         # 启动异步函数
         self.status = self.Started
