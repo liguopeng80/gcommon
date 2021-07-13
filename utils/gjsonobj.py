@@ -161,13 +161,15 @@ if __name__ == '__main__':
 
 
 class JsonField(object):
-    def __init__(self, name, value=""):
+    def __init__(self, name, value="", *, validator=None, desc=""):
         self.name = name
         self.value = value
 
 
 class JSONable(object):
     """可以进行 json 序列化和反序列化的对象"""
+    object_description = ""
+
     def to_json(self):
         """对象转换成 json """
         result = JsonObject()
