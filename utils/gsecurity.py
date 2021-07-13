@@ -11,6 +11,10 @@ import OpenSSL
 import base64
 
 
+def md5(message: str):
+    return hashlib.md5(message.encode()).hexdigest()
+
+
 def secure_uuid():
     return uuid.UUID(bytes=OpenSSL.rand.bytes(16))
 
@@ -39,7 +43,7 @@ def auto_generate_password():
     return (str(secure_uuid())[:8]).lower()
 
 
-def slim_security_hash(str, key='1234567890'):
+def security_hash(str, key='1234567890'):
     key = bytearray(key.encode('ascii'))
     dig = hmac.new(key, msg=str, digestmod=hashlib.sha256).digest()
     return binascii.hexlify(dig)
