@@ -144,9 +144,9 @@ def create_quart_blueprint(name, import_name=""):
     return blueprint
 
 
-def create_quart_app(name):
+def create_quart_app(name, static_url_path="", static_folder=""):
     """创建 quart app，并注入 middleware"""
-    app = Quart(name)
+    app = Quart(name, static_folder=static_folder, static_url_path=static_url_path)
     app.register_error_handler(Exception, handle_bad_request)
     app.after_request(log_request_and_response)
 
