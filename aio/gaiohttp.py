@@ -4,9 +4,11 @@
 import logging
 import traceback
 
+import werkzeug
 from quart import jsonify, Quart, json, Blueprint
 from quart import has_request_context, request
 from quart.logging import default_handler
+from werkzeug.exceptions import NotFound
 
 from gcommon.error import GErrors
 from gcommon.error.gerror import GExcept, GError
@@ -103,16 +105,30 @@ async def handle_bad_request(e):
     else:
         resp = web_error_response(GErrors.gen_server_internal, desc=str(e) or str(type(e)))
 
-    logger.error("request (from %s): %s %s - %s",
-                  request.remote_addr, request.method, request.full_path,
-                 traceback.format_exc())
-    # logger.error("request (from %s): %s %s - %s",
-    #             request.remote_addr, request.method, request.full_path, e)
+    if type(e) == NotFound:
+        pass
+    else:
+        logger.error("request (from %s): %s %s - %s",
+                      request.remote_addr, request.method, request.full_path,
+                     traceback.format_exc())
+        # logger.error("request (from %s): %s %s - %s",
+        #             request.remote_addr, request.method, request.full_path, e)
     return resp
 
 
 async def log_request_and_response(response):
     """web 服务器的 access log"""
+    if type(request.routing_exception) == NotFound:
+        logger.access("404 - request (from %s): %s %s",
+                      request.remote_addr, request.method, request.full_path)
+        return response
+
+    if request.path.find("/s/") > 0:
+        # 静态文件，不记录
+        logger.access("%s - request (from %s): %s %s", response.stauts_code,
+                      request.remote_addr, request.method, request.full_path)
+        return response
+
     if request.is_json and request.content_length:
         request_body = await request.get_json()
         request_body = json.dumps(request_body, ensure_ascii=False)
