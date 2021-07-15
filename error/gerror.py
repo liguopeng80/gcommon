@@ -19,10 +19,10 @@ class GError(object):
 
     def raise_if(self, cond, desc="", **kwargs):
         if cond:
-            raise GExcept(self, desc, **kwargs)
+            raise GExcept(self, desc or self.desc, **kwargs)
 
     def r(self, desc="", **kwargs):
-        raise GExcept(self, desc, **kwargs)
+        raise GExcept(self, desc or self.desc, **kwargs)
 
     def equals(self, other):
         if type(other) == GError:
@@ -31,6 +31,10 @@ class GError(object):
             return self.code == other.cmd_error
         else:
             return False
+
+    def assert_(self, cond, desc="", **kwargs):
+        if not cond:
+            raise GExcept(self, desc or self.desc, **kwargs)
 
 
 class GExcept(Exception):
