@@ -195,8 +195,8 @@ class JSONable(object):
         return
 
     @classmethod
-    def create(cls):
-        return cls.load_dict({})
+    def create(cls, **kwargs):
+        return cls.load_dict(kwargs)
 
     @classmethod
     def load_json(cls, json_string):
