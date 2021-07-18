@@ -91,6 +91,20 @@ class TimeHelper(object):
         else:
             return True
 
+def days_before(days, dt=None):
+    """返回几天前的日期"""
+    if not dt:
+        dt = datetime.now()
+
+    return dt - timedelta(days=days)
+
+
+def date_str(dt=None):
+    if not dt:
+        dt = datetime.now()
+
+    return f"{dt.year}-{dt.month:02}-{dt.day:02}"
+
 
 def utc_time_str(dt=None):
     """返回 UCT 标准时间，按照 Java 的方式格式化：2011-02-18T08:30:30Z"""
