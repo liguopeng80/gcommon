@@ -125,7 +125,9 @@ async def log_request_and_response(response):
 
     if request.path.find("/s/") > 0:
         # 静态文件，不记录
-        logger.access("%s - request (from %s): %s %s", response.stauts_code,
+        # logger.access("%s - request (from %s): %s %s", response.stauts_code,
+        #               request.remote_addr, request.method, request.full_path)
+        logger.access("request (from %s): %s %s",
                       request.remote_addr, request.method, request.full_path)
         return response
 

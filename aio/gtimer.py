@@ -78,7 +78,10 @@ class AsyncTimer(object):
 
         return self
 
-    def cancel(self):
+    def cancel(self, reason=""):
+        if reason:
+            logger.debug("cancel timer (%s) for reason: %s", self, reason)
+
         if self.status != self.Started:
             return
 
