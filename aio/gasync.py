@@ -23,6 +23,21 @@ def async_call_later(timeout, func, *args, **kwargs):
     return loop.create_task(_delay_call())
 
 
+def async_call_soon(func, *args, **kwargs):
+    """延迟调用
+
+    :func: 同步或异步函数
+    """
+    async def _delay_call():
+        result = func(*args, **kwargs)
+
+        if asyncio.iscoroutine(result):
+            await result
+
+    loop = asyncio.get_running_loop()
+    return loop.create_task(_delay_call())
+
+
 async def maybe_async(func, *args, **kwargs):
     """异步调用一个函数，该函数可能是同步函数，也可能是异步函数"""
     result = func(*args, **kwargs)
