@@ -25,6 +25,10 @@ class DatabaseManager(object):
         url = 'postgresql+asyncpg://{}:{}@{}:{}/{}'
         url = url.format(self.username, self.password, self.server_addr, self.server_port, db_name)
 
+        dsn_template = 'postgresql://{}:{}@{}:{}/{}'
+        self.dsn = dsn_template.format(self.username, self.password,
+                                       self.server_addr, self.server_port, db_name)
+
         # The return value of create_engine() is our connection object
         db_engine = create_async_engine(url, echo=self.ECHO)
 
