@@ -3,7 +3,7 @@
 # created: 2015-01-14
 
 """Utils for date and time."""
-
+import calendar
 import time
 from datetime import datetime, timedelta
 import platform
@@ -137,6 +137,28 @@ def local_time_str(dt=None):
 class DateUtil(object):
     TIME_DAY_START = " 00:00:00"
     TIME_DAY_END = " 23:59:59"
+
+    @staticmethod
+    def first_day_of_month(dt: datetime):
+        return datetime(dt.year, dt.month, 1)
+
+    @staticmethod
+    def last_day_of_month(dt: datetime):
+        last_day = calendar.monthrange(dt.year, dt.month)[1]
+        return datetime(dt.year, dt.month, day=last_day) + timedelta(days=1)
+
+    @staticmethod
+    def first_day_of_next_month(dt: datetime):
+        return DateUtil.last_day_of_month(dt) + timedelta(days=1)
+
+    @staticmethod
+    def first_day_of_last_month(dt: datetime):
+        last_day = DateUtil.last_day_of_month(dt)
+        return DateUtil.first_day_of_month(last_day)
+
+    @staticmethod
+    def last_day_of_last_month(dt: datetime):
+        return DateUtil.first_day_of_month(dt) - timedelta(days=1)
 
     @staticmethod
     def last_monday(dt: datetime):
