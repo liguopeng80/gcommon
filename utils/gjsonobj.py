@@ -161,9 +161,12 @@ if __name__ == '__main__':
 
 
 class JsonField(object):
-    def __init__(self, name, value="", *, validator=None, desc=""):
+    """可转化成 Json 字段的属性"""
+    def __init__(self, name, default_value="", *, validator=None, desc=""):
         self.name = name
-        self.value = value
+        self.value = default_value
+        self.validator = validator
+        self.desc = desc
 
 
 class JSONable(object):
