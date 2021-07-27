@@ -11,6 +11,9 @@ from datetime import datetime
 
 import typing
 
+from gcommon.aio import gasync
+from gcommon.aio.gasync import maybe_async
+
 logger = logging.getLogger('timer')
 
 
@@ -61,8 +64,8 @@ class AsyncTimer(object):
         if self.status == self.Started:
             self.status = self.Timed_Out
             # await self.timeout_handler(*self._args, **self._kwargs)
-            # maybe_async
-            self.timeout_handler(*self._args, **self._kwargs)
+            await gasync.maybe_async(self.timeout_handler, *self._args, **self._kwargs)
+            # self.timeout_handler(*self._args, **self._kwargs)
 
     def restart(self, seconds: int = 0, dt: datetime = None):
         # self.seconds = self._calc_timeout(seconds, dt)
