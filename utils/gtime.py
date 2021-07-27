@@ -9,6 +9,10 @@ from datetime import datetime, timedelta
 import platform
 
 
+def today():
+    return datetime.now().date()
+
+
 def local_timestamp(in_milliseconds=False):
     if in_milliseconds:
         return int(time.time() * 1000)
@@ -90,6 +94,7 @@ class TimeHelper(object):
             return False
         else:
             return True
+
 
 def days_before(days, dt=None):
     """返回几天前的日期"""
@@ -223,6 +228,13 @@ def date_str_for_id(dt: datetime = None):
         dt = datetime.now()
 
     return dt.strftime("%Y%m%d-%H%M%S")
+
+
+def date_str_by_minute(dt: datetime = None):
+    if not dt:
+        dt = datetime.now()
+
+    return dt.strftime("%Y-%m-%d-%H-%M")
 
 
 # Test Codes
