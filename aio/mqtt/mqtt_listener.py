@@ -6,11 +6,12 @@ import asyncio
 import logging
 import threading
 from abc import abstractmethod
+from datetime import datetime
 
 import paho.mqtt.client as mqtt
 
 from gcommon.server.server_config import ServerConfig
-
+from gcommon.utils import gtime
 
 logger = logging.getLogger("mqtt")
 
@@ -43,31 +44,51 @@ class MqttListener(threading.Thread):
         self.observer = observer
 
         self.config = config
-        self.client = mqtt.Client()
+
+        client_id = "rcs" + gtime.date_str_by_minute()
+        self.client = mqtt.Client(client_id=client_id)
 
         # asyncio loop
         self.loop = asyncio.get_running_loop()
 
     def run(self) -> None:
-        # 指定回调函数
+        """注意：所有回调函数都在独立线程中执行"""
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
+        self.client.on_subscribe = self.on_subscribe
 
         # 建立连接
+        self.client.tls_set()
         self.client.connect(self.config.server_address, self.config.server_port, 60)
         self.client.username_pw_set(self.config.username, self.config.password)
         self.client.loop_forever()
 
+    def on_subscribe_v5(self, client, userdata, mid, reasonCodes, properties):
+        pass
+
+    def on_subscribe(self, client, userdata, mid, granted_qos):
+        pass
+
     def on_connect(self, client, userdata, flags, rc):
-        logger.info('Connected with result code %s', str(rc))
+        logger.info('Connected with result code: %s, msg: %s',
+                    str(rc), mqtt.error_string(rc))
+
+        if rc == mqtt.MQTT_ERR_SUCCESS:
+            return
+
         # client.subscribe('robot/')
         assert client == self.client
-        self.client.subscribe("robot/+/topic/task_status")
-
+        # self.client.subscribe("robot/+/topic/task_status")
         self.loop.call_soon_threadsafe(self.observer.on_mqtt_connected, client, userdata, flags, rc)
 
     def subscribe(self, topic, qos=0, options=None, properties=None):
-        self.client.subscribe(topic, qos, options, properties)
+        result, mid = self.client.subscribe(topic, qos, options, properties)
+        if result != mqtt.MQTT_ERR_SUCCESS:
+            logger.error('cannot subscribe topic: %s, code: %s, msg: %s',
+                         topic, result, mqtt.error_string(result))
+            return False
+
+        return True
 
     def unsubscribe(self, topic, properties=None):
         self.client.unsubscribe(topic, properties)
