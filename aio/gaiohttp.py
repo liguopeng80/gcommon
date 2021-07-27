@@ -27,6 +27,10 @@ def web_response(result, *args, **kws):
     if paginator:
         r["pageSize"] = paginator.page_size
         r["current"] = paginator.current_page
+
+        if paginator.total:
+            r['total'] = paginator.total
+
         kws.pop("paginator")
 
     if args:

@@ -9,9 +9,10 @@ from gcommon.web.web_utils import WebConst
 
 
 class Paginator(object):
-    def __init__(self, current_page=1, page_size=10):
+    def __init__(self, current_page=1, page_size=10, total=0):
         self.current_page = current_page
         self.page_size = page_size
+        self.total = total
 
     @property
     def offset(self):
