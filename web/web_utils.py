@@ -35,6 +35,8 @@ class WebConst(object):
     PUT = [REQUEST_METHOD_PUT]
     DELETE = [REQUEST_METHOD_DELETE]
 
+    GCOMMON_DETAIL_RESPONSE_LOG = "_gcommon_detail_response_log"
+
 
 def set_options_methods(request, post=False, get=False, put=False, delete=False, allowed_methods=None):
     methods = ['OPTIONS']

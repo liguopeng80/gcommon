@@ -3,6 +3,7 @@
 # creator: liguopeng@liguopeng.net
 import logging
 import traceback
+from functools import wraps
 
 import werkzeug
 from quart import jsonify, Quart, json, Blueprint
@@ -10,9 +11,11 @@ from quart import has_request_context, request
 from quart.logging import default_handler
 from werkzeug.exceptions import NotFound
 
+from gcommon.aio import gasync
 from gcommon.error import GErrors
 from gcommon.error.gerror import GExcept, GError
 from gcommon.utils.gjsonobj import JsonObject
+from gcommon.web.web_utils import WebConst
 
 logger = logging.getLogger("http")
 
@@ -127,21 +130,19 @@ async def log_request_and_response(response):
                       request.remote_addr, request.method, request.full_path)
         return response
 
-    if request.path.find("/s/") > 0:
-        # 静态文件，不记录
-        # logger.access("%s - request (from %s): %s %s", response.stauts_code,
-        #               request.remote_addr, request.method, request.full_path)
-        logger.access("request (from %s): %s %s",
-                      request.remote_addr, request.method, request.full_path)
-        return response
-
     if request.is_json and request.content_length:
         request_body = await request.get_json()
         request_body = json.dumps(request_body, ensure_ascii=False)
     else:
         request_body = await request.get_data()
 
-    if response.is_json:
+    detail_response_log = getattr(request, WebConst.GCOMMON_DETAIL_RESPONSE_LOG, True)
+
+    if not detail_response_log:
+        response_body = "..."
+    elif FlaskLogManager.should_ignore_response_body(request.path):
+        response_body = "..."
+    elif response.is_json:
         response_body = await response.json
         response_body = json.dumps(response_body, ensure_ascii=False)
     else:
@@ -197,3 +198,31 @@ request_formatter = RequestFormatter(
 default_handler.setFormatter(request_formatter)
 # serving_handler.setFormatter(RequestFormatter("%(t)s %(r)s %(s)s %(b)s"))
 logging.getLogger('quart.serving').setLevel(logging.ERROR)
+
+
+def disable_detail_response_log(f):
+    """禁止详细响应日志"""
+    @wraps(f)
+    async def wrap(*args, **kwargs):
+        setattr(request, WebConst.GCOMMON_DETAIL_RESPONSE_LOG, False)
+        return await gasync.maybe_async(f, *args, **kwargs)
+
+    return wrap
+
+
+class FlaskLogManager(object):
+    _path_without_detail_response_log = set()
+
+    @classmethod
+    def disable_detail_response_log_by_path(cls, path):
+        """禁止详细响应日志"""
+        cls._path_without_detail_response_log.add(path)
+
+    @classmethod
+    def should_ignore_response_body(cls, uri: str):
+        """判断是否应该输出详细日志"""
+        for path in cls._path_without_detail_response_log:
+            if uri.find(path) >= 0:
+                return True
+
+        return False
