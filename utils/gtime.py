@@ -206,21 +206,40 @@ class DateUtil(object):
 
 class DateDelta(object):
     @staticmethod
-    def seconds_late(seconds):
+    def seconds_later(seconds):
+        """数秒以后"""
         return datetime.now() + timedelta(seconds=seconds)
 
     @staticmethod
     def seconds_before(seconds):
+        """数秒之前"""
         return datetime.now() - timedelta(seconds=seconds)
 
     @staticmethod
     def seconds_left(dt):
+        """todo: 剩余多少秒？？有 bug 啊"""
         now = datetime.now()
         if now <= dt:
             return 0
 
         diff = now - dt
         return diff.total_seconds()
+
+    @staticmethod
+    def years_later(dt=None, years=1):
+        """多年以后"""
+        if not dt:
+            dt = datetime.now()
+
+        return dt + timedelta(days=years*365)
+
+    @staticmethod
+    def years_before(dt=None, years=1):
+        """多年以前"""
+        if not dt:
+            dt = datetime.now()
+
+        return dt - timedelta(days=years*365)
 
 
 def date_str_for_id(dt: datetime = None):
