@@ -73,7 +73,7 @@ class MqttListener(threading.Thread):
         logger.info('Connected with result code: %s, msg: %s',
                     str(rc), mqtt.error_string(rc))
 
-        if rc == mqtt.MQTT_ERR_SUCCESS:
+        if rc != mqtt.MQTT_ERR_SUCCESS:
             return
 
         # client.subscribe('robot/')
