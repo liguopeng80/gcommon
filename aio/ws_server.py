@@ -6,85 +6,92 @@
 import asyncio
 import logging
 import traceback
+from abc import abstractmethod
 
-import websockets
+from quart import Websocket
 
+from gcommon.aio import gasync
+from gcommon.utils import gtime
 from gcommon.utils.gcounter import Sequence, Gauge
-
+from gcommon.utils.gjsonobj import JsonObject
 
 logger = logging.getLogger('websock')
 
 
 class WebSocketConnection(object):
+    """派生类需要增加自己的构造参数"""
+
+    _client_seq = Sequence()
     _message_seq = Sequence()
+    _connections = {}
 
-    def __init__(self, client_id, connection, path):
-        self.client_id = client_id
+    def __init__(self):
+        self.client_id = self._client_seq.next_value()
+        self.connection: Websocket = None
+        self._running = False
+
+    async def serve(self, connection: Websocket):
+        """持续监听服务，直到断开或者出现异常"""
         self.connection = connection
-        self.path = path
+        self._connections[self.client_id] = connection
 
-    async def serve(self):
-        """Client is connecting and server will send response to the client."""
-        while True:
-            payload = await self.connection.recv()
-            if not payload:
-                break
-
-            self.on_message(payload, False)
-
-    def on_message(self, payload, is_binary):
-        """Server received a payload from client."""
-        if is_binary:
-            logger.debug('[%06x] - incoming binary msg, size: %s.', self.client_id, len(payload))
-        else:
-            logger.debug('[%06x] - incoming text msg, size: %s, content: %s.', self.client_id, len(payload), payload)
+        logger.info('[%06x] - client connected, %s.', self.client_id,
+                    self.connection._get_current_object())
 
         try:
-            self._client_handler.on_message(payload)
+            self._running = True
+            gasync.async_call_soon(self._start_service)
+
+            while True:
+                data = await self.connection.receive_json()
+                data = JsonObject(data)
+                await self.on_message_received(data)
+        finally:
+            logger.info('[%06x] - client closes transport.', self.client_id)
+            self._running = False
+            await self.close_connection()
+            await gasync.maybe_async(self._stop_service)
+
+    @abstractmethod
+    def _start_service(self):
+        pass
+
+    @abstractmethod
+    def _stop_service(self):
+        pass
+
+    async def on_message_received(self, payload: JsonObject):
+        """Server received a payload from client."""
+        cmd_id = payload.cid
+        cmd = payload.cmd
+
+        logger.debug('[%06x] - incoming msg: %s, id: %s, payload: %s.',
+                     self.client_id, cmd, cmd_id, payload.dumps())
+
+        try:
+            await gasync.maybe_async(self._handle_ws_message, cmd, cmd_id, payload)
         except:
             stack = traceback.format_exc()
             logger.error('[%06x] - error in onMessage: %s.', self.client_id, ''.join(stack))
             raise
 
-    async def send_binary_message(self, payload):
-        logger.debug('[%06x] - outgoing msg, seq: %s, size: %s.',
-                     self.client_id, self._message_seq, len(payload))
-        await self.connection.send(payload, True)
-
-    async def send_text_message(self, payload):
-        # logger.debug('[%06x] - outgoing msg, size: %s, content: %s.', self.client_id, len(payload), payload)
-        await self.connection.send(payload)
-
-
-class WebSocketServer(object):
-    """Now the client request is process synchronisely """
-    _client_seq = Sequence()
-
-    def __init__(self):
+    @abstractmethod
+    def _handle_ws_message(self, msg_id, msg_type, payload: JsonObject):
+        """处理 ws 消息"""
         pass
 
-    async def on_connect(self, websocket, path):
-        """Client is connecting and server will send response to the client."""
-        client_id = self._client_seq.next_value()
+    async def send_message(self, payload: JsonObject):
+        message_sequence = self._message_seq.next_value()
+        logger.debug('[%06x] - outgoing msg, seq: %s, size: %s.',
+                     self.client_id, message_sequence, payload.dumps())
 
-        with Gauge.create("websocket") as counter:
-            logger.info("[%06x] - client connected. %s Clients Online", client_id, counter.value)
-            socket = WebSocketConnection(client_id, websocket, path)
+        payload.cid = str(message_sequence)
+        payload.timestamp = gtime.local_time_str()
 
-            try:
-                await socket.serve()
-            except:
-                logger.error("[%06x] - ws client disconnected (aborted). %s Clients Online",
-                             client_id, counter.value)
-            else:
-                logger.info("[%06x] - ws client disconnected. %s Clients Online",
-                            client_id, counter.value)
+        await self.connection.send_json(payload)
 
-    @classmethod
-    def create_server(cls, port, debug=False):
-        logger.info('WebSocket SERVER STARTED on port: %s.', port)
-
-        server = cls()
-        start_server = websockets.serve(server.on_connect, "localhost", port)
-
-        asyncio.get_event_loop().run_until_complete(start_server)
+    async def close_connection(self, code=0, reason=""):
+        try:
+            await self.connection.close(code, reason)
+        finally:
+            self._connections.pop(self.client_id)
