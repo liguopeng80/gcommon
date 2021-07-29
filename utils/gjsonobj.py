@@ -99,11 +99,12 @@ class JsonObject(dict):
         """从另一个对象拷贝指定名称的属性"""
         for name in names:
             if type(name) in (tuple, list):
-                """(dest_name, source_name, default)"""
                 if len(name) == 3:
+                    """(dest_name, source_name, default)"""
                     source_name = name[1] or name[0]
                     self[name[0]] = getattr(obj, source_name, name[2])
                 elif len(name) == 2:
+                    """(dest_name, source_name)"""
                     source_name = name[1] or name[0]
                     value = getattr(obj, source_name, None)
                     if value is not None:
