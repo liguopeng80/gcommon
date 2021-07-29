@@ -32,11 +32,10 @@ class WebSocketConnection(object):
 
     async def serve(self, connection: Websocket):
         """持续监听服务，直到断开或者出现异常"""
-        self.connection = connection
-        self._connections[self.client_id] = connection
+        self.connection = connection._get_current_object()
+        self._connections[self.client_id] = self.connection
 
-        logger.info('[%06x] - client connected, %s.', self.client_id,
-                    self.connection._get_current_object())
+        logger.info('[%06x] - client connected, %s.', self.client_id, self.connection)
 
         try:
             self._running = True
@@ -69,7 +68,7 @@ class WebSocketConnection(object):
                      self.client_id, cmd, cmd_id, payload.dumps())
 
         try:
-            await gasync.maybe_async(self._handle_ws_message, cmd, cmd_id, payload)
+            await gasync.maybe_async(self._handle_ws_message, cmd_id, cmd, payload)
         except:
             stack = traceback.format_exc()
             logger.error('[%06x] - error in onMessage: %s.', self.client_id, ''.join(stack))
@@ -79,6 +78,31 @@ class WebSocketConnection(object):
     def _handle_ws_message(self, msg_id, msg_type, payload: JsonObject):
         """处理 ws 消息"""
         pass
+
+    async def send_response(self, cmd_request, cmd, data: JsonObject = None):
+        """响应客户端请求"""
+        payload = JsonObject()
+
+        payload.cmd = cmd
+        payload.respToCmd = cmd_request.cmd
+
+        if cmd_request.cid:
+            payload.respToCid = cmd_request.cid
+
+        if data:
+            payload.data = data
+
+        await self.send_message(payload)
+
+    async def send_command(self, cmd, data: JsonObject = None):
+        """发送命令"""
+        payload = JsonObject()
+        payload.cmd = cmd
+
+        if data:
+            payload.data = data
+
+        await self.send_message(payload)
 
     async def send_message(self, payload: JsonObject):
         message_sequence = self._message_seq.next_value()
