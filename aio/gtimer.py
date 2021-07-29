@@ -7,6 +7,7 @@
 import asyncio
 
 import logging
+import traceback
 from datetime import datetime
 
 import typing
@@ -64,7 +65,11 @@ class AsyncTimer(object):
         if self.status == self.Started:
             self.status = self.Timed_Out
             # await self.timeout_handler(*self._args, **self._kwargs)
-            await gasync.maybe_async(self.timeout_handler, *self._args, **self._kwargs)
+            try:
+                await gasync.maybe_async(self.timeout_handler, *self._args, **self._kwargs)
+            except:
+                logger.error("timer handler error, timer: %s, exception: %s", self, traceback.format_exc())
+                raise
             # self.timeout_handler(*self._args, **self._kwargs)
 
     def restart(self, seconds: int = 0, dt: datetime = None):
