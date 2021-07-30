@@ -7,7 +7,9 @@
 
 import random
 import string
+import threading
 import uuid
+from datetime import datetime
 
 
 def rand_string(length, case_sensitive=False):
@@ -26,3 +28,32 @@ def rand_numbers(length):
 
 def uuid_string():
     return str(uuid.uuid4()).replace('-', '')
+
+
+class RandomSequence(object):
+    """随机 ID 生成器，每个线程独立生成序号"""
+    def __init__(self, instance="", max_value=999999):
+        self._value= 0
+        self._max_value = max_value
+
+        if instance:
+            self._instance = instance
+        else:
+            thread_id = threading.get_ident()
+            thread_id = "%08d" % thread_id
+            self._instance = thread_id[-6:]
+
+    def _next_value(self):
+        self._value = self._value + 1
+        if self._value > self._max_value:
+            self._value = 1
+
+        return self._value
+
+    def next(self):
+        dt = datetime.now()
+
+        time_str = dt.strftime("%Y%m%d-%H%M%S")
+        next_value = self._next_value()
+
+        return f"{time_str}-{self._instance}{rand_numbers(6)}-{next_value:04d}"
