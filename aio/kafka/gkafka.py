@@ -68,7 +68,7 @@ class KafkaConfig(object):
         return self
 
 
-KafkaConsumerCallback = Callable[[str, str, datetime, str], None]
+KafkaConsumerCallback = Callable[[str, str, datetime, JsonObject], Any]
 
 
 class KafkaConsumer(object):
