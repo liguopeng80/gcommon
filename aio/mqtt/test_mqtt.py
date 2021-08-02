@@ -27,9 +27,9 @@ if __name__ == '__main__':
     config = MqttConfig()
 
     config.server_port = 1883
-    config.server_address = "proxy-test.yunjichina.com.cn"
-    config.username = "yunjiuser"
-    config.password = "yUn17jI18"
+    config.server_address = "mqtt.yunjichina.com.cn"
+    config.username = "useruser"
+    config.password = "********"
 
     async def start_mqtt():
         await asyncio.sleep(0.01)
