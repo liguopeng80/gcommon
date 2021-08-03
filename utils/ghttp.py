@@ -58,3 +58,28 @@ class Session(object):
 
         return response, data
 
+    def put(self, url, data: JsonObject, **kwargs):
+        if not url.lower().startswith("http"):
+            url = urljoin(self.base_url, url)
+
+        response = self.session.put(url, json=data, **kwargs)
+
+        try:
+            data = JsonObject.loads(response.text)
+        except:
+            data = None
+
+        return response, data
+
+    def delete(self, url: str, **kwargs):
+        if not url.lower().startswith("http"):
+            url = urljoin(self.base_url, url)
+
+        response = self.session.delete(url, **kwargs)
+
+        try:
+            data = JsonObject.loads(response.text)
+        except:
+            data = None
+
+        return response, data
