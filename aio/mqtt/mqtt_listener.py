@@ -58,7 +58,9 @@ class MqttListener(threading.Thread):
         self.client.on_subscribe = self.on_subscribe
 
         # 建立连接
-        self.client.tls_set()
+        if self.config.enable_ssl:
+            self.client.tls_set()
+
         self.client.connect(self.config.server_address, self.config.server_port, 60)
         self.client.username_pw_set(self.config.username, self.config.password)
         self.client.loop_forever()

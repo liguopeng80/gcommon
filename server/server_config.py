@@ -14,6 +14,8 @@ class ServerConfig(object):
     username = ""
     password = ""
 
+    enable_ssl = ""
+
     def clone(self):
         return copy(self)
 
@@ -26,6 +28,8 @@ class ServerConfig(object):
 
         self.username = config.username
         self.password = config.password
+
+        self.enable_ssl = config.enable_ssl
 
         self._load_extra_config(config)
 
