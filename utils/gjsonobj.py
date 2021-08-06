@@ -6,7 +6,7 @@
 import json
 import sys
 
-from gcommon.utils import gobject
+from gcommon.utils import gobject, gstr
 
 
 class JsonAttributeError(AttributeError): pass
@@ -163,33 +163,49 @@ if __name__ == '__main__':
 
 class JsonField(object):
     """可转化成 Json 字段的属性"""
-    def __init__(self, name, default_value="", *, validator=None, desc=""):
+    def __init__(self, name="", default_value=None, *, validator=None, desc=""):
         self.name = name
-        self.value = default_value
+        self.default_value = default_value
         self.validator = validator
-        self.desc = desc
+        self._desc = desc or name
+
+    @property
+    def desc(self):
+        return self._desc or self.name
+
+    def set_name(self, name):
+        self.name = name
+
+    def field_to_json(self, value):
+        return value
 
 
 class JSONable(object):
     """可以进行 json 序列化和反序列化的对象"""
     object_description = ""
+    _enable_snake_to_camel = True
 
     def to_json(self):
         """对象转换成 json """
         result = JsonObject()
 
         fields = gobject.get_instances_of(JsonField, self.__class__)
-        for name, value in fields:
-            obj_value = getattr(self, name)
+        for field_name, field in fields:
+            obj_value = getattr(self, field_name)
             if type(obj_value) == JsonField:
                 json_name = obj_value.name
-                json_value = obj_value.value
+                json_value = obj_value.default_value
             else:
-                json_name = value.name
+                json_name = field.name or field_name
                 json_value = obj_value
 
-            if json_value != "":
-                result[json_name] = json_value
+            if self._enable_snake_to_camel:
+                json_name = gstr.snakeToCamel(json_name)
+
+            if isinstance(json_value, JSONable):
+                result[json_name] = json_value.to_json()
+            elif json_value is not None:
+                result[json_name] = field.field_to_json(json_value)
 
         self._extra_json_fields(result)
 
@@ -214,11 +230,63 @@ class JSONable(object):
     def _copy_from_dict(self, data: dict):
         fields = gobject.get_instances_of(JsonField, self.__class__)
 
-        for name, value in fields:
-            new_value = data.get(name, None)
-            if new_value is None:
-                new_value = value
+        for field_name, field in fields:
+            json_name = field_name if self._enable_snake_to_camel else gstr.camel_to_snake(field_name)
+            json_value = data.get(json_name, None)
 
-            setattr(self, name, new_value)
+            if json_value is None:
+                json_value = field
+            elif type(field) == JsonListField:
+                json_value = [field.list_to_field(item) for item in json_value]
+            elif isinstance(field, JSONable):
+                json_value = field.load_dict(json_value)
+            else:
+                assert type(field) == JsonField
+                json_value = json_value
+
+            setattr(self, field_name, json_value)
 
         return self
+
+
+class JsonObjectField(JsonField, JSONable):
+    """复合对象，用于构造复杂的 json 字段，也可以作为独立对象使用"""
+    def __init__(self, name="", *, validator=None, desc=""):
+        JsonField.__init__(self, name, default_value="", validator=validator, desc=desc)
+
+
+class JsonListField(JsonField):
+    """复合对象，用于构造数组型 json 字段"""
+    def __init__(self, name="", *, meta_class=None, validator=None, desc=""):
+        JsonField.__init__(self, name, validator=validator, desc=desc)
+        self.meta_class = meta_class
+
+    def field_to_json(self, values: list):
+        """转换 list 对象"""
+        if self.meta_class:
+            if isinstance(self.meta_class, JsonListField):
+                # 嵌套列表
+                return [self.meta_class.to_json(item) for item in values]
+            elif issubclass(self.meta_class, JSONable):
+                # Json 对象
+                return [item.to_json() for item in values]
+            else:
+                # 转换函数
+                return [self.meta_class(item) for item in values]
+        else:
+            # 基础对象，直接返回
+            return values
+
+    def list_to_field(self, values: list):
+        if not values or not self.meta_class:
+            return values
+
+        if isinstance(self.meta_class, JsonListField):
+            # 嵌套列表
+            return [self.meta_class.list_to_field(item) for item in values]
+        elif issubclass(self.meta_class, JSONable):
+            # Json 对象
+            return [self.meta_class.load_dict(item) for item in values]
+        else:
+            # 转换函数 -> Json 转换成对象
+            return [self.meta_class(item) for item in values]
