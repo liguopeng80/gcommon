@@ -5,6 +5,7 @@ from abc import abstractmethod
 
 from gcommon.error import GErrors
 from gcommon.error.gerror import GExcept
+from gcommon.utils import gstr
 from gcommon.web.web_utils import WebConst
 
 
@@ -25,6 +26,8 @@ class Paginator(object):
 class WebParams(object):
     current_page = 1
     page_size = 10
+
+    _enable_camel_to_snake = True
 
     def __init__(self, request, paging=False):
         self.request = request
@@ -47,6 +50,11 @@ class WebParams(object):
 
         return self
 
+    def parse_required(self, param_name, attr_name=None, default=None,
+                       validator=None, **validator_params):
+        return self.parse(param_name, attr_name=attr_name, required=True,
+                          default=default, validator=validator, **validator_params)
+
     def parse(self, param_name, attr_name=None, required=False, default=None,
               validator=None, **validator_params):
         param_value = self._get_attribute(param_name)
@@ -60,6 +68,13 @@ class WebParams(object):
             raise GExcept(GErrors.gen_bad_request, "param %s is required" % param_name)
         else:
             param_value = ""
+
+        if not attr_name:
+            # 驼峰转换
+            if self._enable_camel_to_snake:
+                attr_name = gstr.camel_to_snake(param_name)
+            else:
+                attr_name = param_name
 
         setattr(self, attr_name or param_name, param_value)
         return self
