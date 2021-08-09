@@ -3,9 +3,12 @@
 # creator: liguopeng@liguopeng.net
 
 import logging
+import threading
+from asyncio import current_task
+
 import sqlalchemy
 
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import create_async_engine, async_scoped_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
@@ -13,6 +16,9 @@ from sqlalchemy.orm import sessionmaker
 class DatabaseManager(object):
     DEFAULT_ENCODING = 'utf8'
     ECHO = False
+
+    logger = logging.getLogger('db')
+    logger.setLevel(logging.INFO)
 
     def __init__(self, username, password, db_name, server_addr='localhost', server_port=5432):
         self.username = username
@@ -50,6 +56,33 @@ class DatabaseManager(object):
 
     def create_session(self):
         return self.async_session()
+
+    async def _async_session(self):
+        async_session_factory = sessionmaker(
+            self.db_engine, expire_on_commit=False, class_=AsyncSession
+        )
+
+        async_session_cls = async_scoped_session(async_session_factory, scopefunc=current_task)
+        sess = async_session_cls()
+
+        self.logger.debug('db session create - %s', sess)
+        try:
+            yield sess
+        except Exception as e:
+            self.logger.error('db session or app error - %s - exception: %s', sess, e)
+            sess.rollback()
+            raise
+        else:
+            try:
+                self.logger.debug('db session commit - %s', sess)
+                await sess.commit()
+            except Exception as e:
+                self.logger.error('db session or app error - %s - exception: %s', sess, e)
+                await sess.rollback()
+                raise
+        finally:
+            self.logger.debug('db session close - %s', sess)
+            # await sess.close()
 
 
 if __name__ == '__main__':
