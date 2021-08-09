@@ -204,7 +204,7 @@ class JSONable(object):
 
             if isinstance(json_value, JSONable):
                 result[json_name] = json_value.to_json()
-            elif json_value is not None:
+            elif json_value:
                 result[json_name] = field.field_to_json(json_value)
 
         self._extra_json_fields(result)
