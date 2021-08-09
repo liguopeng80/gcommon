@@ -24,5 +24,12 @@ async def test():
     await consumer.consume_forever()
 
 
+async def test_config():
+    config = init_main()
+    kafka_config = KafkaConfig.create(config.get("kafka"))
+    consumer = KafkaConsumer(kafka_config, callback)
+    await consumer.consume_forever()
+
+
 if __name__ == '__main__':
     asyncio.run(test())
