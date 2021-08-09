@@ -11,6 +11,8 @@ import threading
 import uuid
 from datetime import datetime
 
+from gcommon.utils import gtime
+
 
 def rand_string(length, case_sensitive=False):
     if case_sensitive:
@@ -28,6 +30,12 @@ def rand_numbers(length):
 
 def uuid_string():
     return str(uuid.uuid4()).replace('-', '')
+
+
+def uid_with_timestamp():
+    tim_str = gtime.date_str_for_id()
+    uid = f"{tim_str}-{rand_string(8)}-{rand_numbers(4)}"
+    return uid
 
 
 class RandomSequence(object):
