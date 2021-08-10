@@ -12,6 +12,9 @@ import base64
 
 
 def md5(message: str):
+    if not message:
+        return ""
+
     return hashlib.md5(message.encode()).hexdigest()
 
 
