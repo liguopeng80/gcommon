@@ -64,6 +64,9 @@ class KafkaConfig(object):
         self.security_protocol = config.get('security_protocol')
         self.sasl_mechanism = config.get('sasl_mechanism')
 
+        if config.offset:
+            self.offset_reset = config.offset
+
         self.topics = config.get('topics')
         return self
 
@@ -75,6 +78,8 @@ class KafkaConsumer(object):
     """
     callback -> KafkaConsumerCallback(topic, event_id, event_time, content)
     """
+    Message_Content_Is_Json = True
+
     def __init__(self, kafka_config: KafkaConfig, callback: KafkaConsumerCallback = None):
         self.config = kafka_config
 
@@ -128,6 +133,8 @@ class KafkaConsumer(object):
         event_id = f"{message.topic}-{message.partition}-{message.offset}"
         event_time = gtime.timestamp_to_date(int(message.timestamp / 1000))
         content = message.value.decode("utf-8")
+        if self.Message_Content_Is_Json:
+            content = JsonObject.loads(content)
 
         await gasync.maybe_async(self._on_kafka_message, message.topic,
                                  event_id, event_time, content)
