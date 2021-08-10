@@ -17,6 +17,12 @@ from gcommon.utils.gjsonobj import JsonObject
 class ConfigParser(object):
     project_root = ""
 
+    _name_is_case_insensitive = True
+
+    @classmethod
+    def set_name_sensitive(cls):
+        cls._name_is_case_insensitive = False
+
     def __init__(self, defaults: dict = None):
         self._options = JsonObject()
         self._defaults = JsonObject(defaults or {})
@@ -62,7 +68,10 @@ class ConfigParser(object):
         options = {}
 
         for name, value in option_values.items():
-            name = name.strip().lower()
+            name = name.strip()
+
+            if self._name_is_case_insensitive:
+                name = name.lower()
 
             if type(value) is dict:
                 value = self._parse_group(value, params)
@@ -96,9 +105,11 @@ class ConfigParser(object):
 
         return cp
 
-    @staticmethod
-    def _get_option(options, name):
-        name = name.lower()
+    @classmethod
+    def _get_option(cls, options, name):
+        if cls._name_is_case_insensitive:
+            name = name.lower()
+
         names = name.split('.')
 
         root = options
