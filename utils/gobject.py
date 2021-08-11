@@ -121,3 +121,11 @@ def get_instances_of(cls, context):
             objects.append((name, value))
 
     return objects
+
+
+def ensure_enum(value, cls):
+    """确保返回值是对应的 class 对象"""
+    if type(value) == cls:
+        return value
+
+    return cls(value)
