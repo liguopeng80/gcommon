@@ -32,7 +32,7 @@ class SqliteDbEngine(ObjectWithLogger):
         self.db_session = sessionmaker(bind=self.db_engine)
 
     @contextmanager
-    def create_session(self):
+    def create_session(self, expunge=False):
         sess = self.db_session()
         self.logger.debug('[%x] - db session create - %s', threading.get_ident(), sess)
         try:
@@ -45,6 +45,10 @@ class SqliteDbEngine(ObjectWithLogger):
             try:
                 sess.commit()
                 self.logger.debug('[%x] - db session commit - %s', threading.get_ident(), sess)
+
+                if expunge:
+                    sess.expunge_all()
+
             except Exception as e:
                 self.logger.error('[%x] - db session or app error - %s - exception: %s', threading.get_ident(), sess, e)
                 sess.rollback()
