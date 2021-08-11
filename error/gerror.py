@@ -24,6 +24,9 @@ class GError(object):
     def r(self, desc="", **kwargs):
         raise GExcept(self, desc or self.desc, **kwargs)
 
+    def raise_(self, desc="", **kwargs):
+        raise GExcept(self, desc or self.desc, **kwargs)
+
     def equals(self, other):
         if type(other) == GError:
             return self.code == other.code
