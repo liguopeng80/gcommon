@@ -95,7 +95,7 @@ class JsonObject(dict):
 
         return self
 
-    def copy_obj(self, obj, *names, default=None):
+    def copy_obj(self, obj, *names, enable_snake_to_camel=False, default=None):
         """从另一个对象拷贝指定名称的属性"""
         for name in names:
             if type(name) in (tuple, list):
@@ -112,6 +112,9 @@ class JsonObject(dict):
             else:
                 value = getattr(obj, name, None)
                 if value is not None:
+                    if enable_snake_to_camel:
+                        name = gstr.snakeToCamel(name)
+
                     self[name] = value
 
         return self
