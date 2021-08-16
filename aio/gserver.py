@@ -136,9 +136,11 @@ class SimpleServer(ObjectWithLogger):
         log_util.log_server_started(self.logger, self.SERVICE_NAME, self.VERSION)
         # asyncio.run(self._service_main)
 
+        if sys.platform == 'win32':
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
         loop = asyncio.get_event_loop()
         loop.create_task(self._service_main())
-
         loop.run_forever()
 
     async def _service_main(self):
