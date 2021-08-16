@@ -56,7 +56,7 @@ class AsyncioHelper:
         logger.debug("Socket opened")
 
         def cb():
-            logger.debug("Socket is readable, calling loop_read")
+            # logger.debug("Socket is readable, calling loop_read")
             client.loop_read()
 
         self.loop.add_reader(sock, cb)
@@ -72,7 +72,7 @@ class AsyncioHelper:
         logger.debug("Watching socket for writability.")
 
         def cb():
-            logger.debug("Socket is writable, calling loop_write")
+            # logger.debug("Socket is writable, calling loop_write")
             client.loop_write()
 
         self.loop.add_writer(sock, cb)
