@@ -8,14 +8,95 @@ import asyncio
 
 import logging
 import traceback
+from asyncio import Future
 from datetime import datetime
 
 import typing
 
 from gcommon.aio import gasync
 from gcommon.aio.gasync import maybe_async
+from gcommon.utils import gregister
 
 logger = logging.getLogger('timer')
+
+
+class AsyncWait(object):
+    """等待异步事件发生，支持超时
+
+    注意：如果事件在等待之前发生，则无法捕捉该事件。
+
+    watch("event1")
+    await wait("event1", 10)
+
+    or
+
+    watch_and_wait("event1", 10)
+    """
+    def __init__(self):
+        self._commands = gregister.Registry("asyncio-register")
+
+    def watch(self, key, timeout_seconds=0):
+        future = Future()
+        self._commands.register(key, future)
+        logger.warning("future registered, key: %s", key)
+
+    async def wait(self, key, timeout_seconds=0):
+        future: Future = self._commands.get(key, )
+        if not future:
+            # 没有 watch, 当作 timeout 处理
+            logger.warning("wait future which is not registered, key: %s", key)
+            raise asyncio.TimeoutError("not registered")
+
+        try:
+            await asyncio.wait_for(future, timeout_seconds)
+        except asyncio.TimeoutError:
+            self._commands.unregister(key)
+            raise
+
+    async def watch_and_wait(self, key, timeout_seconds=0):
+        future = Future()
+        self._commands.register(key, future)
+        logger.warning("future registered, key: %s", key)
+
+        try:
+            await asyncio.wait_for(future, timeout_seconds)
+        except asyncio.TimeoutError:
+            logger.warning("future timed out, key: %s", key)
+            self._commands.unregister(key)
+            raise
+
+    def set_result(self, key, result=None):
+        """事件结束，通知事件已经完成"""
+        future: Future = self._commands.get(key)
+        if not future:
+            logger.warning("future is not registered, key: %s", key)
+            return
+
+        self._commands.unregister(key)
+        if future.done() or future.cancelled():
+            logger.warning("future has been finished, key: %s, done: %s, cancelled: %s",
+                           key, future.done(), future.cancelled())
+            return
+
+        logger.warning("future notified, key: %s", key)
+        future.set_result(result)
+
+    def set_exception(self, key, result=None):
+        """事件结束，通知事件已经完成"""
+        future: Future = self._commands.get(key)
+
+        if not future:
+            logger.warning("future is not registered, key: %s", key)
+            return
+
+        self._commands.unregister(key)
+        if future.done() or future.cancelled():
+            logger.warning("future has been finished, key: %s, done: %s, cancelled: %s",
+                           key, future.done(), future.cancelled())
+            return
+
+        logger.warning("future notified, key: %s", key)
+        future.set_exception(result)
 
 
 class AsyncTimer(object):
