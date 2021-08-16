@@ -3,15 +3,16 @@
 # creator: liguopeng@liguopeng.net
 import asyncio
 import logging
+import sys
 
-from gcommon.aio.mqtt.mqtt_listener import MqttConfig, MqttObserver, MqttListener
+from gcommon.aio.mqtt.mqtt_listener import MqttConfig, MqttObserverBase, MqttListener
 from gcommon.logger.glogger import init_basic_config
 from gcommon.logger.log_util import log_callback
 
 logger = logging.getLogger("iot")
 
 
-class MyObserver(MqttObserver):
+class MyObserver(MqttObserverBase):
     @log_callback(logger)
     def on_mqtt_connected(self, client, userdata, flags, rc):
         self.mqtt_listener.subscribe("guli/test")
@@ -27,9 +28,9 @@ if __name__ == '__main__':
     config = MqttConfig()
 
     config.server_port = 1883
-    config.server_address = "mqtt.yunjichina.com.cn"
-    config.username = "useruser"
-    config.password = "********"
+    config.server_address = "10.110.10.68"
+    config.username = "demo"
+    config.password = "demo"
 
     async def start_mqtt():
         await asyncio.sleep(0.01)
@@ -39,6 +40,9 @@ if __name__ == '__main__':
         observer.set_mqtt_listener(listener)
 
         listener.start()
+
+    if sys.platform == 'win32':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
     loop = asyncio.get_event_loop()
     loop.create_task(start_mqtt())
