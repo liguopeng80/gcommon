@@ -196,7 +196,8 @@ class JSONable(object):
         for field_name, field in fields:
             obj_value = getattr(self, field_name)
             if type(obj_value) == JsonField:
-                json_name = obj_value.name
+                # 采用默认值；如果名称没有设置，则采用 field_name
+                json_name = obj_value.name or field_name
                 json_value = obj_value.default_value
             else:
                 json_name = field.name or field_name
