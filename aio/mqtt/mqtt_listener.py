@@ -72,7 +72,7 @@ class AsyncioHelper:
         logger.debug("Watching socket for writability.")
 
         def cb():
-            # logger.debug("Socket is writable, calling loop_write")
+            logger.debug("Socket is writable, calling loop_write")
             client.loop_write()
 
         self.loop.add_writer(sock, cb)
@@ -127,9 +127,9 @@ class MqttListener(object):
 
         aio_helper = AsyncioHelper(self.loop, self.client)
 
+        self.client.username_pw_set(self.config.username, self.config.password)
         self.client.connect(self.config.server_address, self.config.server_port, 60)
         self.client.socket().setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2048)
-        self.client.username_pw_set(self.config.username, self.config.password)
 
     async def stop(self):
         self.client.loop_forever()
@@ -145,7 +145,9 @@ class MqttListener(object):
         logger.info('Connected with result code: %s, msg: %s',
                     str(rc), mqtt.error_string(rc))
 
-        if rc != mqtt.MQTT_ERR_SUCCESS:
+        if rc == mqtt.MQTT_ERR_CONN_REFUSED:
+            return
+        elif rc != mqtt.MQTT_ERR_SUCCESS:
             return
 
         # client.subscribe('robot/')
