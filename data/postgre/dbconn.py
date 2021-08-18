@@ -22,7 +22,10 @@ class DatabaseManager(object):
         url = url.format(self.username, self.password, self.server_addr, self.server_port, db_name)
 
         # The return value of create_engine() is our connection object
-        db_conn = sqlalchemy.create_engine(url, echo=self.ECHO, client_encoding=self.DEFAULT_ENCODING)
+        db_conn = sqlalchemy.create_engine(
+            url, echo=self.ECHO, client_encoding=self.DEFAULT_ENCODING,
+            pool_pre_ping=True, pool_recycle=10*60
+        )
 
         # return db_conn
         return db_conn

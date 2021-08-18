@@ -36,7 +36,10 @@ class DatabaseManager(object):
                                        self.server_addr, self.server_port, db_name)
 
         # The return value of create_engine() is our connection object
-        db_engine = create_async_engine(url, echo=self.ECHO)
+        db_engine = create_async_engine(
+            url, echo=self.ECHO,
+            pool_pre_ping=True, pool_recycle=10 * 60
+        )
 
         # return db_conn
         self.db_engine = db_engine
