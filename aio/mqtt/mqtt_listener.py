@@ -172,5 +172,5 @@ class MqttListener(object):
 
     @abstractmethod
     def on_message(self, client, userdata, message):
-        logger.info(message.topic + " " + str(message.payload))
+        logger.debug(message.topic + " " + str(message.payload))
         self.observer.on_mqtt_message(client, userdata, message)
