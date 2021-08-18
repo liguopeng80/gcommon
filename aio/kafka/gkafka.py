@@ -93,7 +93,7 @@ class KafkaConsumer(object):
             *topics,
             bootstrap_servers=self.config.bootstrap_servers,
             group_id=self.config.group_id,
-            auto_offset_reset="earliest",
+            auto_offset_reset=self.config.offset_reset,
             security_protocol=self.config.security_protocol,
             sasl_mechanism=self.config.sasl_mechanism,
         )
