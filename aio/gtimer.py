@@ -56,7 +56,7 @@ class AsyncWait(object):
     async def watch_and_wait(self, key, timeout_seconds=0):
         future = Future()
         self._commands.register(key, future)
-        logger.warning("future registered, key: %s", key)
+        logger.debug("future registered, key: %s", key)
 
         try:
             await asyncio.wait_for(future, timeout_seconds)
@@ -78,7 +78,7 @@ class AsyncWait(object):
                            key, future.done(), future.cancelled())
             return
 
-        logger.warning("future notified, key: %s", key)
+        logger.debug("future notified, key: %s", key)
         future.set_result(result)
 
     def set_exception(self, key, result=None):
