@@ -17,6 +17,12 @@ Default_Log_Root = '.'
 
 logger = logging.getLogger()
 
+
+LOG_TIME = "%(asctime)-15s"
+LOG_LINE_NO = "{%(pathname)s:%(lineno)d}"
+LOG_THREAD = "[%(thread)08d]"
+LOG_MESSAGE = "%(levelname)-3s %(name)-8s %(message)s"
+
 LOG_FORMAT = '%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s'
 THREAD_LOG_FORMAT = '%(asctime)-15s [%(thread)08d] %(levelname)-3s %(name)-8s %(message)s'
 
@@ -115,7 +121,8 @@ def init_stdio_logger():
     init_logger(stdio_handler=True, file_handler=False)
 
 
-def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True, file_handler=True, thread_logger=False):
+def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True,
+                file_handler=True, thread_logger=False, detail=False):
     # Create a new handler for "root logger" on console (stdout):
     # logging.basicConfig(level=logging.DEBUG, format='%(asctime)-15s %(name)-5s %(levelname)-5s %(message)s')
 
@@ -150,7 +157,8 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True, file_ha
 
     logger.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter(THREAD_LOG_FORMAT if thread_logger else LOG_FORMAT)
+    formatter = _get_log_formatter(threading=thread_logger, detail=detail)
+    formatter = logging.Formatter(formatter)
 
     if file_handler:
         # interval = 1
@@ -185,14 +193,28 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True, file_ha
         logger.addHandler(ch)
 
 
-def init_basic_config(level=logging.DEBUG):
-    logging.basicConfig(level=level, format=LOG_FORMAT)
+def init_basic_config(level=logging.DEBUG, detail=False):
+    formatter = _get_log_formatter(detail=detail)
+    logging.basicConfig(level=level, format=formatter)
     return logging.getLogger()
 
 
-def init_threading_config(level=logging.DEBUG):
-    logging.basicConfig(level=level, format=THREAD_LOG_FORMAT)
+def init_threading_config(level=logging.DEBUG, detail=False):
+    formatter = _get_log_formatter(detail=detail)
+    logging.basicConfig(level=level, format=formatter)
     return logging.getLogger()
+
+
+def _get_log_formatter(threading=False, detail=False):
+    formatter = LOG_TIME
+
+    if detail:
+        formatter += " " + LOG_LINE_NO
+
+    if threading:
+        formatter += " " + LOG_THREAD
+
+    return formatter + " " + LOG_MESSAGE
 
 
 # Test Codes
