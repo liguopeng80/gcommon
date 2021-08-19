@@ -100,6 +100,7 @@ def init_logger(options, *, thread_logger=False):
     log_folder = _get_log_folder(options)
     # TODO: stdio_handler should be False in production environment
     glogger.init_logger(log_folder, redirect_stdio=False, stdio_handler=True, file_handler=True,
+                        detail=options.log_line_no,
                         thread_logger=options.multi_thread or thread_logger)
  
 

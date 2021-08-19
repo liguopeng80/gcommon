@@ -63,6 +63,9 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
     parser.add_option('-l', '--log-base', dest='log_base',
                       action='store', default='', help='log base')
 
+    parser.add_option('--log-line-no', dest='log_line_no',
+                      action='store_true', default=False, help='log file name and line no')
+
     parser.add_option('--sid', dest='service_id',
                       action='store', default='', help='service ID')
 
