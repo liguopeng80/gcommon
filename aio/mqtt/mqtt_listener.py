@@ -12,6 +12,7 @@ from datetime import datetime
 
 import paho.mqtt.client as mqtt
 
+from gcommon.aio import gasync
 from gcommon.server.server_config import ServerConfig
 from gcommon.utils import gtime
 
@@ -30,6 +31,10 @@ class MqttObserverBase(object):
 
     @abstractmethod
     def on_mqtt_connected(self, _client, _user_data, _flags, rc):
+        logger.debug(_client)
+
+    @abstractmethod
+    def on_mqtt_disconnected(self, _client, _userdata, _rc):
         logger.debug(_client)
 
     @staticmethod
@@ -53,7 +58,7 @@ class AsyncioHelper:
 
     def on_socket_open(self, client, userdata, sock):
         """监听可读状态"""
-        logger.debug("Socket opened")
+        logger.debug("socket opened")
 
         def cb():
             # logger.debug("Socket is readable, calling loop_read")
@@ -63,22 +68,22 @@ class AsyncioHelper:
         self.misc = self.loop.create_task(self.misc_loop())
 
     def on_socket_close(self, client, userdata, sock):
-        logger.debug("Socket closed")
+        logger.critical("socket closed")
         self.loop.remove_reader(sock)
         self.misc.cancel()
 
     def on_socket_register_write(self, client, userdata, sock):
         """监听可写状态"""
-        logger.debug("Watching socket for writability.")
+        logger.debug("watching socket for writability.")
 
         def cb():
-            logger.debug("Socket is writable, calling loop_write")
+            logger.debug("socket is writable, calling loop_write")
             client.loop_write()
 
         self.loop.add_writer(sock, cb)
 
     def on_socket_unregister_write(self, client, userdata, sock):
-        logger.debug("Stop watching socket for writability.")
+        logger.debug("stop watching socket for writability.")
         self.loop.remove_writer(sock)
 
     async def misc_loop(self):
@@ -105,10 +110,16 @@ class MqttListener(object):
         self.client.on_subscribe = self.on_subscribe
         self.client.on_disconnect = self.on_disconnect
 
+        if self.config.enable_ssl:
+            self.client.tls_set()
+
+        # pass
+        self._subscribes = {}
+
         # asyncio loop
         self.loop = asyncio.get_running_loop()
-
-        self.disconnected = self.loop.create_future()
+        self._future_disconnected = None
+        self._working = True
 
     def send_message(self, topic, message, qos=0) -> mqtt.MQTTMessageInfo:
         if isinstance(message, dict):
@@ -120,20 +131,43 @@ class MqttListener(object):
         info = self.client.publish(topic, message, qos=qos)
         return info
 
+    def reconnect(self):
+        """掉线重连"""
+        logger.debug("reconnect mqtt server on status: %s", self._working)
+        if not self._working:
+            return
+
+        logger.error("reconnecting to mqtt server")
+
+        self._future_disconnected = None
+        gasync.async_call_later(1, self._connect)
+
     def start(self) -> None:
         # 建立连接
-        if self.config.enable_ssl:
-            self.client.tls_set()
+        logger.info("start mqtt service")
+        self._working = True
+        self._connect()
+
+    def _connect(self):
+        if not self._working:
+            logger.warning("connect mqtt server on status: %s", self._working)
+            return
+
+        if self._future_disconnected:
+            logger.warning("mqtt listener has already connected to server")
+            return
 
         aio_helper = AsyncioHelper(self.loop, self.client)
+        self._future_disconnected = self.loop.create_future()
 
         self.client.username_pw_set(self.config.username, self.config.password)
         self.client.connect(self.config.server_address, self.config.server_port, 60)
         self.client.socket().setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 2048)
 
     async def stop(self):
-        self.client.loop_forever()
-        logger.info("Disconnected: {}".format(await self.disconnected))
+        logger.info("stop mqtt service")
+        self.client.disconnect()
+        logger.erro("mqtt disconnected: {}".format(await self._future_disconnected))
 
     def on_subscribe_v5(self, client, userdata, mid, reasonCodes, properties):
         pass
@@ -155,11 +189,30 @@ class MqttListener(object):
         # self.client.subscribe("robot/+/topic/task_status")
         self.observer.on_mqtt_connected(client, userdata, flags, rc)
 
+        # 已经连上服务器，续订
+        for topic, (qos, options, properties) in self._subscribes.items():
+            self._do_subscribe(topic, qos, options, properties)
+
     def on_disconnect(self, client, userdata, rc):
-        self.disconnected.set_result(rc)
+        logger.error('disconnected with result code: %s, msg: %s', str(rc), mqtt.error_string(rc))
+
+        if self._future_disconnected and (
+                self._future_disconnected.done() or self._future_disconnected.cancelled()):
+            self._future_disconnected.set_result(rc)
+            self._future_disconnected = None
+
+        self.observer.on_mqtt_disconnected(client, userdata, rc)
+        if self._working:
+            gasync.async_call_later(1, self.reconnect)
 
     def subscribe(self, topic, qos=0, options=None, properties=None):
+        self._subscribes[topic] = (qos, options, properties)
+        self._do_subscribe(topic, qos, options, properties)
+
+    def _do_subscribe(self, topic, qos, options, properties):
+        logger.debug('subscribe topic: %s', topic)
         result, mid = self.client.subscribe(topic, qos, options, properties)
+
         if result != mqtt.MQTT_ERR_SUCCESS:
             logger.error('cannot subscribe topic: %s, code: %s, msg: %s',
                          topic, result, mqtt.error_string(result))
