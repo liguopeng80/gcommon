@@ -59,7 +59,7 @@ class AsyncWait(object):
         logger.debug("future registered, key: %s", key)
 
         try:
-            await asyncio.wait_for(future, timeout_seconds)
+            return await asyncio.wait_for(future, timeout_seconds)
         except asyncio.TimeoutError:
             logger.warning("future timed out, key: %s", key)
             self._commands.unregister(key)
