@@ -235,7 +235,7 @@ class JSONable(object):
         fields = gobject.get_instances_of(JsonField, self.__class__)
 
         for field_name, field in fields:
-            json_name = field_name if self._enable_snake_to_camel else gstr.camel_to_snake(field_name)
+            json_name = field_name if not self._enable_snake_to_camel else gstr.snakeToCamel(field_name)
             json_value = data.get(json_name, None)
 
             if json_value is None:
@@ -290,7 +290,7 @@ class JsonListField(JsonField):
             return [self.meta_class.list_to_field(item) for item in values]
         elif issubclass(self.meta_class, JSONable):
             # Json 对象
-            return [self.meta_class.load_dict(item) for item in values]
+            return self.meta_class.load_dict(values)
         else:
             # 转换函数 -> Json 转换成对象
             return [self.meta_class(item) for item in values]
