@@ -2,49 +2,117 @@
 # -*- coding: utf-8 -*-
 # created: 2015-01-14
 
-"""Utils for date and time."""
+"""Utils for date and time.
+
+约定：任何不带时区的日期对象，均采用本地时间（而不是 UTC 时间）。
+
+核心冷知识：
+
+1. time.time() 返回的是 UTC 时间。
+
+2. datetime.now() 返回的日期是不带时区的。
+
+3. datetime.now(tzlocal.get_localzone()) 能得到带时区的本地时间，时区类型是 DstTzInfo.
+
+4. datetime.now().astimezone() 也能得到带本地时区的本地时间，但时区类型是 datetime.timezone.
+
+5. 在 time.mktime 只接收本地时间，但输出 UTC 时间。
+"""
+
 import calendar
 import time
 from datetime import datetime, timedelta
 import platform
+from dateutil import parser
+import pytz
+# import tzlocal
 
 
 def today():
+    """根据【本地时间】返回当天的日期"""
     return datetime.now().date()
 
 
+class Timestamp(object):
+    @staticmethod
+    def seconds():
+        """UTC 时间，10 字节时间戳"""
+        return int(time.time())
+
+    @staticmethod
+    def milliseconds():
+        """UTC 时间，13 字节时间戳"""
+        return int(time.time() * 1000)
+
+    @staticmethod
+    def parse(value):
+        """解析时间戳，支持带时区字符串、不带时区字符串。
+
+        value = Timestamp.seconds()
+        value = Timestamp.milliseconds()
+
+        value = "2021-08-25 12:12:12"
+        value = "2021-08-25T12:12:12Z"
+        value = "2021-08-25T12:12:12+00:00"
+        """
+        dt = parser.isoparse(value)
+        if dt.tzinfo is not None:
+            """转换成本地时间，然后删除时区"""
+            dt = dt.astimezone().replace(tzinfo=None)
+
+        return dt
+
+
 def local_timestamp(in_milliseconds=False):
+    """函数名不准确。但是本函数被大量使用，无可挽回...
+    以后尽量使用 timestamp
+
+    time.time 返回的实际上是【utc 时间】。
+    """
     if in_milliseconds:
         return int(time.time() * 1000)
     else:
         return int(time.time())
 
 
-def date_to_timestamp(dt):
-    """Return: POSIX-timestamp. (in seconds)"""
+def is_naive_datetime(dt: datetime):
+    """判断 datetime 对象是否带有时区。
+
+    如果没有时区，在任何时候该对象都应该被当作本地时区对待。
+    """
+    return dt.tzinfo is None
+
+
+def date_to_timestamp(dt: datetime):
+    """Return: POSIX-timestamp. (in seconds)
+
+    注意：time.mktime 只接收本地时间，输出的却是 UTC 时间。
+    """
+    if not is_naive_datetime(dt):
+        # 确保时间是本地时间
+        dt = dt.astimezone()
+
     posix_timestamp = time.mktime(dt.timetuple())
     return int(posix_timestamp)
 
 
-def timestamp_to_date(timestamp):
-    """
-    Timestamp: POSIX-timestamp.
-    POSIX timestamp: seconds from 1970.01.01 in UTC. 
-    """
-    # datetime.utcfromtimestamp(timestamp)
-    
-    posix_timestamp = timestamp
-    dt = datetime.fromtimestamp(posix_timestamp)
+def timestamp_to_date(ts):
+    """时间戳转换成本地时间（不含时区）。"""
+    dt = datetime.fromtimestamp(ts)
 
     return dt
 
 
-def past_millisecond(time_started):
-    """How many milliseconds has past..."""
+def past_millisecond(time_started: int):
+    """How many milliseconds has past...
+
+    time_started: posix timestamp.
+    """
     return int((time.time() - time_started) * 1000)
 
 
 def max_timestamp():
+    """返回时戳能表示的最大日期"""
     if '32bit' in platform.architecture():
         max_year = 2019
     else:
@@ -54,8 +122,13 @@ def max_timestamp():
     return date_to_timestamp(max_dt)
 
 
-def past_seconds(time_started):
-    """从参数表示的时间值开始，已经流逝的时间"""
+def past_seconds(time_started: int):
+    """从参数表示的时间开始，已经流逝的时间。
+
+    如果 time_started 比当前时间晚，则返回 0，不返回负值。
+
+    time_started: posix timestamp.
+    """
     diff = time.time() - time_started
     if diff < 0:
         return 0
@@ -65,15 +138,24 @@ def past_seconds(time_started):
 
 def dt_past_seconds(dt: datetime):
     """从参数表示的时间值开始，已经流逝的时间"""
-    diff = datetime.now() - dt
+    if is_naive_datetime(dt):
+        diff = datetime.now() - dt
+    else:
+        diff = datetime.now().astimezone() - dt
+
     return diff.total_seconds()
 
 
-def has_expired(expiration_time):
-    return datetime.now() > expiration_time
+def has_expired(expiration_time: datetime):
+    """指定的时间是否已过期"""
+    if expiration_time.tzinfo is None:
+        return datetime.now() > expiration_time
+    else:
+        return datetime.now().astimezone() > expiration_time
 
 
 class TimeHelper(object):
+    """计算 context 的执行时间"""
     start = 0
 
     def __init__(self, header=""):
@@ -97,7 +179,10 @@ class TimeHelper(object):
 
 
 def days_before(days, dt=None):
-    """返回几天前的日期"""
+    """返回几天前的日期。
+
+    默认返回不带时区的本地时间。
+    """
     if not dt:
         dt = datetime.now()
 
@@ -105,6 +190,10 @@ def days_before(days, dt=None):
 
 
 def date_str(dt=None):
+    """返回 2021-08-25 格式的字符串。
+
+    默认采用本地当前时间。
+    """
     if not dt:
         dt = datetime.now()
 
