@@ -67,6 +67,10 @@ class KafkaConfig(object):
         if config.offset:
             self.offset_reset = config.offset
 
+        if config.enable_dynamic_group:
+            # 动态组，每次变更组名
+            self.group_id = self.group_id + f"-{int(gtime.Timestamp.seconds())}"
+
         self.topics = config.get('topics')
         return self
 
