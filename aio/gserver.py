@@ -9,6 +9,7 @@ import os
 import sys
 import traceback
 
+from gcommon.aio import gasync
 from gcommon.aio.gasync import maybe_async
 from gcommon.logger import log_util
 from gcommon.server import server_base
@@ -131,20 +132,25 @@ class SimpleServer(ObjectWithLogger):
 
         return params
 
+    def _load_cluster(self):
+        pass
+
+    def _init_cluster(self):
+        pass
+
     def main(self):
         # 打印服务器启动信息
         log_util.log_server_started(self.logger, self.SERVICE_NAME, self.VERSION)
-        # asyncio.run(self._service_main)
+        self._load_cluster()
 
         if sys.platform == 'win32':
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-        loop = asyncio.get_event_loop()
-        loop.create_task(self._service_main())
-        loop.run_forever()
+        gasync.run_forever(self._service_main)
 
     async def _service_main(self):
         try:
+            await maybe_async(self._init_cluster)
             await maybe_async(self.init_server)
             await maybe_async(self.start_server)
         except Exception as e:
