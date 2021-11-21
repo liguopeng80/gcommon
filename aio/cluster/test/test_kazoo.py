@@ -24,6 +24,7 @@ APP_PATH = "/test/guli/app/gatekeeper"
 class MyObserver(ZookeeperObserver):
     def __init__(self):
         super(MyObserver, self).__init__()
+        self.connected = False
 
     def on_connection_failed(self, reason=None):
         ZookeeperObserver.on_connection_failed(self)
@@ -32,13 +33,15 @@ class MyObserver(ZookeeperObserver):
     def on_connection_status_changed(self, state):
         """示例代码，演示如何捕获和处理连接状态变化事件。"""
         logger.debug('watch func called in thread: %s', threading.currentThread())
-        if state == KazooState.CONNECTED:
+        if state == KazooState.CONNECTED and not self.connected:
+            self.connected = True
             gasync.run_in_main_thread(self._on_conn_opened)
             if self._kazoo_client.client_state == KeeperState.CONNECTED_RO:
                 logger.debug("Read only mode!")
             else:
                 logger.debug("Read/Write mode!")
         elif state == KazooState.LOST:
+            self.connected = False
             gasync.run_in_main_thread(self._on_conn_lost)
             logger.debug('kazoo connection lost (client closed)')
         elif state == KazooState.SUSPENDED:
