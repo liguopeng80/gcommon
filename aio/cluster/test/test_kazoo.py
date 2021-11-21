@@ -1,14 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-04-29
-import asyncio
+
 import logging
 import threading
-from kazoo.protocol.states import KazooState, KeeperState
 import time
+
+from kazoo.protocol.states import KazooState, KeeperState
 
 from gcommon.aio import gasync
 from gcommon.aio.cluster.zk_client import ZookeeperObserver, ZookeeperClient
+from gcommon.utils import gtime
+from gcommon.utils.gmain import init_main
 
 formatter = '%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s'
 logging.basicConfig(format=formatter, level=logging.DEBUG)
@@ -19,6 +22,7 @@ logger = logging.getLogger()
 PATH = "/test/guli/favorite"
 APP_ROOT = "/test/guli/app"
 APP_PATH = "/test/guli/app/gatekeeper"
+# APP_PATH = "/yunji/app/working/rcs"
 
 
 class MyObserver(ZookeeperObserver):
@@ -64,15 +68,20 @@ class MyObserver(ZookeeperObserver):
         self._kazoo_client.ChildrenWatch(PATH, self.on_children_changed)
         self._kazoo_client.DataWatch(PATH, self.on_data_changed)
 
-        data = "hehe-%s" % time.time()
-        data = data.encode("utf-8")
+        data_str = "hehe-%s" % time.time()
+        data = data_str.encode("utf-8")
 
-        self._kazoo_client.ensure_path(APP_PATH)
+        # self._kazoo_client.delete(APP_PATH)
+        self._kazoo_client.ensure_path(APP_ROOT)
 
         self._kazoo_client.ChildrenWatch(APP_ROOT, self.on_app_children_changed)
-        self._kazoo_client.DataWatch(APP_PATH, self.on_app_data_changed)
+        self._kazoo_client.DataWatch(APP_ROOT, self.on_app_data_changed)
 
-        self._kazoo_client.create(APP_PATH, data, ephemeral=True, sequence=True)
+        for i in range(2):
+            node_path = f"{APP_PATH}/rcs{data_str}."
+            node_path = f"{APP_PATH}{int(time.time()*1000)}."
+            self._kazoo_client.create(node_path, data, ephemeral=True, sequence=True)
+            time.sleep(0.1)
 
         # reactor.callLater(5, self._gen_test_data)
 
@@ -82,6 +91,10 @@ class MyObserver(ZookeeperObserver):
 
     @gasync.callback_run_in_main_thread
     def on_app_data_changed(self, data, stat, event):
+        if not data and not stat:
+            logger.debug("-- app data changed without data")
+            return
+
         logger.debug("-- app data changed - version: %s, data: %s" % (stat.version, data.decode("utf-8")))
 
     def _gen_test_data(self):
@@ -105,6 +118,8 @@ class MyObserver(ZookeeperObserver):
 
 
 if __name__ == '__main__':
+    init_main(thread_logger=True)
+
     hosts = '192.168.5.131:2181'
     observer = MyObserver()
 

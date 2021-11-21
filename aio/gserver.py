@@ -71,6 +71,10 @@ class SimpleServer(ObjectWithLogger):
         self.full_server_name = gproc.get_process_id(self.SERVICE_NAME, int(self.options.instance))
         self.unique_server_name = gproc.get_process_unique_id(self.SERVICE_NAME, int(self.options.instance))
 
+    @property
+    def service_name(self):
+        return self.SERVICE_NAME
+
     def parse_service_options(self, parser: optparse.OptionParser):
         pass
 

@@ -4,6 +4,7 @@
 
 import logging
 
+from gcommon.aio.cluster import zk_helper
 from gcommon.aio.cluster.zk_service import ZookeeperService
 from gcommon.aio.gserver import SimpleServer
 
@@ -37,19 +38,16 @@ class SimpleClusterServer(SimpleServer):
             self.controller = self.STATUS_CONTROLLER_CLASS(self)
             self.controller.subscribe(self._on_server_status_changed)
 
-            self._failover_enabled = True
+            self._cluster_enabled = True
         else:
             self.STATUS_CONTROLLER_CLASS = None
-            self._failover_enabled = False
+            self._cluster_enabled = False
 
     def _is_zookeeper_enabled(self):
         return self.STATUS_CONTROLLER_CLASS is not None
 
     def _is_zookeeper_enabled_in_cfg(self):
-        return self.config.get_bool('zookeeper.enabled')
-
-    def is_failover_enabled(self):
-        return self._failover_enabled
+        return self.config.get_bool('service.zookeeper.enabled')
 
     def is_running(self):
         """服务是否正在运行"""
@@ -72,7 +70,6 @@ class SimpleClusterServer(SimpleServer):
         interval = self.config.get_int('zookeeper.connection_interval')
 
         zk_service = ZookeeperService(hosts, interval)
-
         self.controller.register_service(zk_service)
 
-
+        zk_service.start()

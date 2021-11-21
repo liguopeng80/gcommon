@@ -27,6 +27,7 @@ class ZookeeperService(ExternalService, ZookeeperObserver):
         manager = ZookeeperClient(self, hosts)
         self.set_client_manager(manager)
 
+        self.conn_status = ConnectionStatus.Closed
         self.reconn_interval = reconn_interval or self.RECONNECTION_INTERVAL
 
     @property
@@ -34,7 +35,8 @@ class ZookeeperService(ExternalService, ZookeeperObserver):
         return self._client_manager.kazoo_client
 
     def start(self):
-        self._try_reconnection(wait=False)
+        # self._try_reconnection(wait=False)
+        self._do_reconnect()
 
     def stop(self):
         self._client_manager.stop()
@@ -73,20 +75,20 @@ class ZookeeperService(ExternalService, ZookeeperObserver):
         seconds = wait and self.reconn_interval or 0
         logger.debug('reconnecting after %s seconds - current connection status: %s',
                      seconds, self.conn_status)
-
-        if self.conn_status.is_connecting():
-            # 正在尝试重连
-            logger.debug('a reconnecting has been scheduled, skip')
-            return
-
-        self.conn_status = ConnectionStatus.Reconnecting
-
-        logger.debug('a reconnecting will be executed after %s seconds', seconds)
         gasync.async_call_later(seconds, self._do_reconnect)
 
     def _do_reconnect(self):
         """尝试重新连接 zookeeper 服务器"""
+        logger.debug("_do_reconnect with connection status: %s", self.conn_status)
+        if self.conn_status.is_connecting:
+            logger.debug('a reconnecting has been scheduled, skip')
+            return
+
+        if self.conn_status.is_connected or self.conn_status.is_suspended:
+            logger.debug('server has connected to zookeeper, skip')
+            return
+
+        self.conn_status = ConnectionStatus.Reconnecting
+
         logger.debug('try reconnect to zookeeper')
         self._client_manager.start()
-
-

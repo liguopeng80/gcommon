@@ -101,7 +101,10 @@ class _ZookeeperClientThread(threading.Thread):
 
 
 class ZookeeperClient(object):
-    """Kazoo 客户端管理器"""
+    """Kazoo 客户端管理器，用于管理 zk connection 和跨线程通信。
+
+    不处理任何实际业务。处理业务的是 ZookeeperService.
+    """
     def __init__(self, observer, server_addr):
         self._observer = observer
 
