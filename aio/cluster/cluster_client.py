@@ -97,15 +97,19 @@ class ClusterClient(object):
     @gasync.callback_run_in_main_thread
     def _on_working_node_data_changed(self, node_name, data, stat, event):
         if not data:
+            logger.debug(f"service {node_name} has no data, waiting for it...")
             return
 
         if not self._node_manager.is_node_managed(node_name):
+            logger.warning(f"service {node_name} is not managed any more.")
             return
 
         try:
             index = int(data)
         except:
+            logger.fatal(f"service {node_name} updated invalid data: {data}!!")
             return
 
+        logger.debug(f"service {node_name} enters working mode on index: {index}.")
         self._node_manager.allocator.update_node(node_name, index)
 

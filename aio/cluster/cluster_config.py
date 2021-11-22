@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 # created: 2021-11-21
 # creator: liguopeng@liguopeng.net
+from gcommon.aio.cluster import zk_helper
 from gcommon.aio.cluster.cluster_manager import ClusterAllocationType
 from gcommon.utils import gobject
 from gcommon.utils.gjsonobj import JsonObject
@@ -26,5 +27,8 @@ class ClusterConfig(object):
             "working_mode",
             "max_working_nodes"
         )
+
+        self._working_root = zk_helper.get_path_to_working_service(self.service_name)
+        self._alive_root = zk_helper.get_path_to_alive_service(self.service_name)
 
         return self

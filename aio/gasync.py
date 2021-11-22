@@ -11,6 +11,54 @@ import traceback
 logger = logging.getLogger("asyncio")
 
 
+class AsyncEvent(object):
+    """可以等待的事件对象"""
+    def __init__(self, triggered=False, pulse_mode=False, auto_reset=True):
+        self._triggered = triggered
+        self._result = True
+
+        self._pulse_mode = pulse_mode
+        self._auto_reset = auto_reset
+
+        self._waiters = []
+
+    def _check_auto_reset(self):
+        if self._auto_reset:
+            self._triggered = False
+
+    async def wait(self):
+        """等待事件被激发，如果已经被激发，则直接返回"""
+        if self._triggered:
+            self._check_auto_reset()
+            return self._result
+
+        future = asyncio.Future()
+        self._waiters.append(future)
+        return await future
+
+    def notify(self, result=True):
+        """通知等待者。如果允许，保留事件的激发状态"""
+        if not self._pulse_mode:
+            self._triggered = True
+            self._result = result
+
+        if self._waiters:
+            self._check_auto_reset()
+            self.pulse(result)
+
+    def pulse(self, result=True):
+        """通知等待者。不改变事件的激发状态。"""
+        for waiter in self._waiters:
+            waiter.set_result(result)
+
+        self._waiters = []
+
+    def reset(self):
+        """重置事件的激发状态"""
+        self._triggered = False
+        self._result = True
+
+
 class AsyncThreads(object):
     """管理当前进程中的事件循环，用于跨线程通信"""
     _main_loop = None
@@ -165,3 +213,9 @@ async def maybe_async(func, *args, **kwargs):
 
     return result
 
+
+def stop_async_loop():
+    """停止事件循环"""
+    # todo: 判断当前线程是否存在运行中的事件循环
+    loop = asyncio.get_event_loop()
+    loop.stop()

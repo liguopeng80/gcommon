@@ -104,6 +104,11 @@ def get_node_data(zk_client, path):
     return data.decode("utf-8")
 
 
+def update_node_data(zk_client, path: str, data: str):
+    """读取一个节点的数据"""
+    zk_client.set(path, data.encode("utf-8"))
+
+
 def get_node_children(zk_client, path):
     """读取一个节点的子节点"""
     data, stat = zk_client.zk_client(path)
