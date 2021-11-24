@@ -91,7 +91,7 @@ class ZookeeperObserver(object):
 class _ZookeeperClientThread(threading.Thread):
     """运行 kazoo 客户端的专用线程。"""
     def __init__(self, client):
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, daemon=True)
         self._client = client
 
     def run(self):

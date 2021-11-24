@@ -117,6 +117,7 @@ class SimpleClusterServer(SimpleServer):
         if not nodes:
             logger.debug(f"{self.service_name} cluster has no working nodes...")
 
+        nodes.sort(key=lambda x: x.split(".")[1], reverse=False)
         nodes = nodes[:self._cluster_config.max_working_nodes]
         node_names = [node.split(".") for node in nodes]
         node_names = [name for name, _sequence in node_names]
@@ -144,6 +145,7 @@ class SimpleClusterServer(SimpleServer):
                                    str(service_index_in_cluster))
 
         # 当前节点成功加入服务集群，通知应用服务器开始工作
+        self._status = ServerStatus.RUNNING
         self._event_zk_ready.notify()
 
     async def _service_main(self):

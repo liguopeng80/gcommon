@@ -70,6 +70,7 @@ class ClusterClient(object):
         new_nodes = {}
 
         # 获取所有的新节点（仅前面的节点提供服务）
+        nodes.sort(key=lambda x: x.split(".")[1], reverse=False)
         available_nodes_count = min(self._cluster_config.max_working_nodes, len(nodes))
         for i in range(available_nodes_count):
             node_name, _zk_sequence = nodes[i].split(".")

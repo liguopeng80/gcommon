@@ -45,6 +45,10 @@ class ZookeeperService(ExternalService, ZookeeperObserver):
     def _on_conn_opened(self):
         """连接打开或者恢复 - in Twisted thread"""
         # 通知 service controller, zookeeper 服务已近就绪
+        if self.is_good():
+            # 从 suspended 状态恢复过来，不重新初始化
+            return
+
         self.enable_service()
 
     def _on_conn_lost(self):
