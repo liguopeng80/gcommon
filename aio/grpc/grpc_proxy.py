@@ -26,14 +26,17 @@ import grpc
 
 class GrpcProxyMethod(object):
     """生成 grpc 请求的代理函数"""
-    def __init__(self, server_stub, server, method_name):
+    def __init__(self, server_stub, server, method_name=""):
         self.server = server
         self.server_stub = server_stub
         self.method_name = method_name
 
-    @staticmethod
-    def create_proxy(server_stub, server, method_name):
-        self = GrpcProxyMethod(server_stub, server, method_name)
+    def create_proxy(self, method_name):
+        if self.method_name:
+            assert method_name == self.method_name
+        else:
+            self.method_name = method_name
+
         return self.proxy_request
 
     async def proxy_request(self, request, context):
@@ -51,7 +54,12 @@ class GrpcProxyHelper(object):
     def __init__(self, server_stub, server, proxy_factory=None):
         self._server = server
         self._server_stub = server_stub
-        self._proxy_factory = proxy_factory or GrpcProxyMethod.create_proxy
+
+        if proxy_factory:
+            self._proxy_factory = proxy_factory
+        else:
+            proxy_method = GrpcProxyMethod(server_stub, server)
+            self._proxy_factory = proxy_method.create_proxy
 
     def set_proxy(self, proxy_servicer):
         """为 servicer 设置代理函数，默认代理所有请求"""
@@ -64,5 +72,5 @@ class GrpcProxyHelper(object):
             if name in excluded:
                 continue
 
-            proxy_method = self._proxy_factory(self._server_stub, self._server, name)
+            proxy_method = self._proxy_factory(name)
             setattr(proxy_servicer, name, proxy_method)

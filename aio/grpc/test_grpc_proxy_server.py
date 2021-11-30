@@ -10,7 +10,7 @@ from functools import partial
 import grpc
 
 from gcommon.aio.grpc.grpc_proxy import GrpcProxyHelper
-from .proto import helloworld_pb2_grpc
+from gcommon.aio.grpc.proto import helloworld_pb2_grpc
 
 
 class Greeter(helloworld_pb2_grpc.GreeterServicer):
