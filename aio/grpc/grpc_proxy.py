@@ -31,6 +31,11 @@ class GrpcProxyMethod(object):
         self.server_stub = server_stub
         self.method_name = method_name
 
+    @staticmethod
+    def create_proxy(server_stub, server, method_name):
+        self = GrpcProxyMethod(server_stub, server, method_name)
+        return self.proxy_request
+
     async def proxy_request(self, request, context):
         async with grpc.aio.insecure_channel(self.server) as channel:
             stub = self.server_stub(channel)
@@ -43,9 +48,10 @@ class GrpcProxyHelper(object):
     """为 grpc 服务增加代理"""
     Attr_Excluded_Methods = "_excluded_methods"
 
-    def __init__(self, server_stub, server):
-        self.server = server
-        self.server_stub = server_stub
+    def __init__(self, server_stub, server, proxy_factory=None):
+        self._server = server
+        self._server_stub = server_stub
+        self._proxy_factory = proxy_factory or GrpcProxyMethod.create_proxy
 
     def set_proxy(self, proxy_servicer):
         """为 servicer 设置代理函数，默认代理所有请求"""
@@ -58,5 +64,5 @@ class GrpcProxyHelper(object):
             if name in excluded:
                 continue
 
-            proxy_method = GrpcProxyMethod(self.server_stub, self.server, name)
-            setattr(proxy_servicer, name, proxy_method.proxy_request)
+            proxy_method = self._proxy_factory(self._server_stub, self._server, name)
+            setattr(proxy_servicer, name, proxy_method)
