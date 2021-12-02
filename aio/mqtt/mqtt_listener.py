@@ -37,7 +37,7 @@ class MqttObserverBase(object):
     def on_mqtt_disconnected(self, _client, _userdata, _rc):
         logger.debug(_client)
 
-    @staticmethod
+    @abstractmethod
     def on_mqtt_message(self, _client, _user_data, message):
         logger.debug(message.payload)
 
