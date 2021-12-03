@@ -7,8 +7,25 @@
 import logging
 import asyncio
 import traceback
+from asyncio import Future
 
 logger = logging.getLogger("asyncio")
+
+
+class AsyncTask(object):
+    def __init__(self, task=None):
+        self._async_task: Future = task
+
+    def set_task(self, task=None):
+        assert not self._async_task
+        self._async_task = task
+
+    def cancel(self):
+        """取消正在执行的异步（下货）任务"""
+        if self._async_task and not self._async_task.done():
+            self._async_task.cancel()
+
+        self._async_task = None
 
 
 class AsyncEvent(object):

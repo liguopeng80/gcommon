@@ -58,17 +58,17 @@ class JsonObject(dict):
 
     @staticmethod
     def loads(json_content):
-        if isinstance(json_content, str):
-            return JsonObject(json.loads(json_content))
+        if not isinstance(json_content, str):
+            json_content = json_content.decode('utf-8')
+
+        j = json.loads(json_content)
+        if isinstance(j, list):
+            result = []
+            for item in j:
+                result.append(JsonObject(item))
+            return result
         else:
-            j = json.loads(json_content.decode('utf-8'))
-            if isinstance(j, list):
-                result = []
-                for item in j:
-                    result.append(JsonObject(item))
-                return result
-            else:
-                return JsonObject(j)
+            return JsonObject(j)
 
     @staticmethod
     def load_obj(obj, *names):
