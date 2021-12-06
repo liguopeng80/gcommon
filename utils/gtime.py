@@ -214,6 +214,18 @@ def utc_time_str(dt=None):
     return date_str
 
 
+def utc_time_second_str(dt=None):
+    """返回 UCT 标准时间，按照 Java 的方式格式化：2011-02-18T08:30:30Z"""
+    date_format = "%04d-%02d-%02dT%02d:%02d:%02dZ"
+
+    if not dt:
+        dt = datetime.utcnow()
+
+    date_str = date_format % (dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
+
+    return date_str
+
+
 def local_time_str(dt=None):
     """返回 UCT 标准时间，按照 Java 的方式格式化：2011-02-18T08:30:30Z"""
     date_format = "%04d-%02d-%02dT%02d:%02d:%02d.%03d"
