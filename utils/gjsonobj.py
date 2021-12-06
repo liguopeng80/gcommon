@@ -183,6 +183,12 @@ class JsonField(object):
         return value
 
 
+class IntegerJsonField(JsonField):
+    def __init__(self, name="", default_value=None, *, validator=None, desc=""):
+        JsonField.__init__(self, name=name, default_value=default_value or 0,
+                           validator=validator, desc=desc)
+
+
 class JSONable(object):
     """可以进行 json 序列化和反序列化的对象"""
     object_description = ""
@@ -218,6 +224,9 @@ class JSONable(object):
     def _extra_json_fields(self, data: JsonObject):
         return
 
+    def _load_extra_json_fields(self, data: dict):
+        pass
+
     @classmethod
     def create(cls, **kwargs):
         return cls.load_dict(kwargs)
@@ -250,6 +259,7 @@ class JSONable(object):
 
             setattr(self, field_name, json_value)
 
+        self._load_extra_json_fields(data)
         return self
 
 
