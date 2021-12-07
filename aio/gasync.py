@@ -9,6 +9,7 @@ import asyncio
 import traceback
 from asyncio import Future
 
+
 logger = logging.getLogger("asyncio")
 
 
@@ -189,6 +190,60 @@ def async_call_soon(func, *args, **kwargs):
 
     loop = asyncio.get_running_loop()
     return loop.create_task(_delay_call())
+
+
+class RunningContext(object):
+    """为需要互斥的操作提供上下文保护"""
+    class ErrorContextAlreadyRunning(Exception):
+        pass
+
+    def __init__(self, name="", logger=None):
+        self._is_running = False
+
+        self._name = ""
+        self._logger = logger
+
+    @property
+    def is_running(self):
+        return self._is_running
+
+    def run(self, func, *args, **kwargs):
+        if self.is_running:
+            return
+
+        with self:
+            func(*args, **kwargs)
+
+    async def async_run(self, func, *args, **kwargs):
+        if self.is_running:
+            return
+
+        with self:
+            await func(*args, **kwargs)
+
+    def __enter__(self):
+        if self._is_running:
+            raise self.ErrorContextAlreadyRunning()
+
+        if self._logger:
+            self._logger.debug("enter context %s", self._name)
+
+        self._is_running = True
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self._logger:
+            self._logger.debug("exit context %s", self._name)
+
+        self._is_running = False
+
+        if self._logger and exc_type:
+            self._logger.error("running context %s got error: %s, %s, %s",
+                               self._name, exc_type, exc_val, exc_tb)
+
+
+class AsyncRunningContext(RunningContext):
+    def async_call(self, func, *args, **kwargs):
+        async_call_soon(self.async_run, func, *args, **kwargs)
 
 
 def call_when_running(func, *args, **kwargs):
