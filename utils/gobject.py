@@ -89,6 +89,54 @@ class Entity(object):
             self.uid = uid
 
 
+class EntityManager(object):
+    def __init__(self):
+        self._entities: {str: Entity} = {}
+
+    def __len__(self):
+        return len(self._entities)
+
+    def put(self, entity: Entity):
+        self._entities[entity.uid] = entity
+
+    def get(self, uid):
+        return self._entities.get(uid, None)
+
+    def remove(self, entity: Entity):
+        self.remove_by_uid(entity.uid)
+
+    def remove_by_uid(self, uid):
+        if uid in self._entities:
+            self._entities.pop(uid)
+
+    def items(self, key=None) -> [Entity]:
+        entities = list(self._entities.items())
+        if key:
+            entities.sort(key=key)
+
+        return entities
+
+    def transfer_to(self, other, uid):
+        entity = self.get(uid)
+        if entity:
+            self.remove_by_uid(uid)
+            other.put(entity)
+
+    def take_from(self, other, uid):
+        entity = other.get(uid)
+        if entity:
+            other.remove_by_uid(uid)
+            self.put(entity)
+
+    @staticmethod
+    def find(uid, *managers):
+        """聚合查询"""
+        for manager in managers:
+            entity = manager.get(uid)
+            if entity:
+                return entity
+
+
 def get_subclasses(base_class, context, func_get_name=None, allow_base=False):
     """注册某个上下文中的所有子类"""
     if inspect.ismodule(context):
