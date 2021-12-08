@@ -29,6 +29,10 @@ class ObjectWithLogger(object):
 
         self.logger = logger
 
+    def set_logger_by_name(self, logger_name):
+        logger = logging.getLogger(logger_name)
+        self.logger = logger
+
 
 def copy_attributes(src, dest, *attributes):
     """Shallow copy attributes from src-obj to dest-obj."""
@@ -93,6 +97,9 @@ class EntityManager(object):
     def __init__(self):
         self._entities: {str: Entity} = {}
 
+    def __bool__(self):
+        return len(self._entities) > 0
+
     def __len__(self):
         return len(self._entities)
 
@@ -102,15 +109,23 @@ class EntityManager(object):
     def get(self, uid):
         return self._entities.get(uid, None)
 
+    def find(self, key) -> Entity:
+        """根据查找函数查找 entity"""
+        for entity in self._entities.values():
+            if key(entity):
+                return entity
+
+        return None
+
     def remove(self, entity: Entity):
-        self.remove_by_uid(entity.uid)
+        return self.remove_by_uid(entity.uid)
 
     def remove_by_uid(self, uid):
         if uid in self._entities:
-            self._entities.pop(uid)
+            return self._entities.pop(uid)
 
     def items(self, key=None) -> [Entity]:
-        entities = list(self._entities.items())
+        entities = list(self._entities.values())
         if key:
             entities.sort(key=key)
 
