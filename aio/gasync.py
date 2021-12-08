@@ -219,7 +219,7 @@ class RunningContext(object):
             return
 
         with self:
-            await func(*args, **kwargs)
+            await async_call_soon(func, *args, **kwargs)
 
     def __enter__(self):
         if self._is_running:
