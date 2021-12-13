@@ -9,6 +9,9 @@ https://aiokafka.readthedocs.io/en/stable/
 from aiokafka import AIOKafkaProducer
 import asyncio
 
+from aiokafka import AIOKafkaConsumer
+import asyncio
+
 
 async def consume():
     consumer = AIOKafkaConsumer(

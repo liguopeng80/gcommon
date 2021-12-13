@@ -6,8 +6,10 @@
 
 import logging
 import asyncio
+import time
 import traceback
 from asyncio import Future
+from asyncio import sleep
 
 
 logger = logging.getLogger("asyncio")
@@ -291,3 +293,16 @@ def stop_async_loop():
     # todo: 判断当前线程是否存在运行中的事件循环
     loop = asyncio.get_event_loop()
     loop.stop()
+
+
+async def async_wait_by_step(total, step):
+    started = time.time()
+    count = 0
+    while True:
+        now = time.time()
+        if now - started < total:
+            if count:
+                await asyncio.sleep(step)
+
+            yield count
+            count += 1

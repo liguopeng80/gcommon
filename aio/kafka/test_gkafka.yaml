@@ -1,0 +1,12 @@
+
+kafka:
+  type: kafka
+  servers: "demo.kafka-server.com:9092"
+  consumer_group:  "demo-watcher"
+  security_protocol: "PLAINTEXT"
+  sasl_mechanism: "PLAIN"
+  sasl_plain_username: ""
+  sasl_plain_password: ""
+
+  topics:
+    - "demo-topic"

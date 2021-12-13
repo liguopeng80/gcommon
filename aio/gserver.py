@@ -28,6 +28,11 @@ class SimpleServer(ObjectWithLogger):
 
     DEFAULT_CONFIG = {}
 
+    @classmethod
+    def start(cls):
+        self = cls()
+        self.main()
+
     def init_server(self):
         """初始化服务器"""
         pass
@@ -49,6 +54,8 @@ class SimpleServer(ObjectWithLogger):
         self.log_dir = ''
 
         self.config = YamlConfigParser(self.DEFAULT_CONFIG)
+        self._logger_name = self.SERVICE_NAME.lower()
+        self.set_logger()
 
         # 解析命令行
         parser = optparse.OptionParser()
@@ -73,7 +80,7 @@ class SimpleServer(ObjectWithLogger):
 
     @property
     def service_name(self):
-        return self.SERVICE_NAME
+        return self.SERVICE_NAME.lower()
 
     def parse_service_options(self, parser: optparse.OptionParser):
         pass

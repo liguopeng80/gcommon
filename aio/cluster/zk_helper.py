@@ -4,6 +4,8 @@
 
 import logging
 
+from kazoo.exceptions import NoNodeError
+
 from gcommon.aio.cluster.cluster_manager import ClusterManager
 from gcommon.utils import gstr
 from gcommon.utils.gglobal import Global
@@ -11,7 +13,7 @@ from gcommon.utils.gglobal import Global
 logger = logging.getLogger('cluster')
 
 
-def zk_create_working_node(zk_client, data=None):
+def zk_create_working_node(zk_client, server, data=None):
     """创建服务节点"""
     node_path, root_path = get_path_to_current_working_node(server)
 
@@ -25,7 +27,7 @@ def zk_create_alive_node(zk_client, data=None):
     """创建在线服务节点（不一定工作）"""
     server = ClusterManager.server
 
-    alive_root = server.cfg.get('service.zookeeper.path_alive_apps')
+    alive_root = server.cfg.get('service.cluster.path_alive_apps')
 
     root_path = alive_root + "/" + server.SERVICE_NAME
     node_path = root_path + "/" + server.unique_server_name
@@ -57,7 +59,7 @@ def get_path_to_current_working_node(server):
 
 def get_path_to_working_service(service_name):
     """某个服务器的工作节点根目录"""
-    working_root = Global.config.get('service.zookeeper.path_working_apps')
+    working_root = Global.config.get('service.cluster.path_working_apps')
 
     if working_root.endswith('/'):
         working_root = working_root[:-1]
@@ -77,7 +79,7 @@ def get_path_to_current_alive_node(server):
 
 def get_path_to_alive_service(service_name):
     """某个服务器的工作节点根目录"""
-    alive_root = Global.config.get('service.zookeeper.path_alive_apps')
+    alive_root = Global.config.get('service.cluster.path_alive_apps')
 
     if alive_root.endswith('/'):
         alive_root = alive_root[:-1]
@@ -95,9 +97,16 @@ def ensure_path_to_service(zk_client, service_name):
     zk_client.ensure_path(alive_path)
 
 
-def get_node_data(zk_client, path):
+def get_node_data(zk_client, path, allow_no_node=True):
     """读取一个节点的数据"""
-    data, stat = zk_client.get(path)
+    try:
+        data, stat = zk_client.get(path)
+    except NoNodeError:
+        if allow_no_node:
+            return ""
+        else:
+            raise
+
     if not data:
         return ""
 
@@ -105,7 +114,7 @@ def get_node_data(zk_client, path):
 
 
 def update_node_data(zk_client, path: str, data: str):
-    """读取一个节点的数据"""
+    """设置节点数据"""
     zk_client.set(path, data.encode("utf-8"))
 
 

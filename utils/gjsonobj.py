@@ -166,11 +166,13 @@ if __name__ == '__main__':
 
 class JsonField(object):
     """可转化成 Json 字段的属性"""
-    def __init__(self, name="", default_value=None, *, validator=None, desc=""):
+    def __init__(self, name="", default_value=None,
+                 *, validator=None, desc="", allow_blank=False):
         self.name = name
         self.default_value = default_value
         self.validator = validator
         self._desc = desc or name
+        self.allow_blank = allow_blank
 
     @property
     def desc(self):
@@ -184,9 +186,10 @@ class JsonField(object):
 
 
 class IntegerJsonField(JsonField):
-    def __init__(self, name="", default_value=None, *, validator=None, desc=""):
+    def __init__(self, name="", default_value=None,
+                 *, validator=None, desc="", allow_blank=False):
         JsonField.__init__(self, name=name, default_value=default_value or 0,
-                           validator=validator, desc=desc)
+                           validator=validator, desc=desc, allow_blank=allow_blank)
 
 
 class JSONable(object):
@@ -203,6 +206,9 @@ class JSONable(object):
             obj_value = getattr(self, field_name)
             if type(obj_value) == JsonField:
                 # 采用默认值；如果名称没有设置，则采用 field_name
+                if obj_value.allow_blank:
+                    continue
+
                 json_name = obj_value.name or field_name
                 json_value = obj_value.default_value
             else:

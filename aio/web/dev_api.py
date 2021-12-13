@@ -8,8 +8,9 @@
 import logging
 
 from gcommon.aio.gaiohttp import create_quart_blueprint, web_response_ok
+from gcommon.error import GErrors
 from gcommon.web.web_utils import WebConst
-from yunji.error import GErrors
+
 
 app = create_quart_blueprint("Dev Tools")
 base_url = "/dev"

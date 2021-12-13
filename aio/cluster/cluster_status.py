@@ -28,32 +28,25 @@ class ServerStatus(Enum):
     STANDBY_STATUS = (STOPPING, STOPPED)
 
     def is_waiting(self):
-        return self.status == self.WAITING
+        return self == self.WAITING
 
     def is_starting(self):
-        return self.status == self.STARTING
+        return self == self.STARTING
 
     def is_running(self):
-        return self.status == self.RUNNING
+        return self == self.RUNNING
 
     def is_stopped(self):
-        return self.status == self.STOPPED
+        return self == self.STOPPED
 
     def is_stopping(self):
-        return self.status == self.STOPPING
+        return self == self.STOPPING
 
     def is_active(self):
-        return self.status in self.ACTIVE_STATUS
+        return self in self.ACTIVE_STATUS
 
     def is_standby(self):
-        return self.status in self.STANDBY_STATUS
-
-    def change_status(self, new_status, desc=''):
-        self.status = new_status
-        self.status_desc = desc
-
-    def __str__(self):
-        return str(self.status)
+        return self in self.STANDBY_STATUS
 
 
 class ServerEvent(object):

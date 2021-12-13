@@ -1,18 +1,18 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-04-27
 # creator: liguopeng@liguopeng.net
 
 import logging
 import os
 import threading
-
-from sqlalchemy import create_engine
-from sqlalchemy import MetaData
-from sqlalchemy.orm import sessionmaker
-
 from contextlib import contextmanager
 
 from gcommon.utils.gobject import ObjectWithLogger
+from sqlalchemy import MetaData
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from .. import BaseManager
 
 
 class SqliteDbEngine(ObjectWithLogger):
@@ -67,3 +67,16 @@ class SqliteDbEngine(ObjectWithLogger):
                 metadata.create_all(bind=engine)
 
         return SqliteDbEngine(db_conn_str)
+
+
+class SqliteManager(BaseManager):
+    def __init__(self, path):
+        self.path = path
+
+    @property
+    def _url(self):
+        return 'sqlite:///%s' % self.path
+
+    @property
+    def _async_url(self):
+        return 'sqlite+aiosqlite:///%s' % self.path

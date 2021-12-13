@@ -167,7 +167,7 @@ class MqttListener(object):
     async def stop(self):
         logger.info("stop mqtt service")
         self.client.disconnect()
-        logger.erro("mqtt disconnected: {}".format(await self._future_disconnected))
+        logger.error("mqtt disconnected: {}".format(await self._future_disconnected))
 
     def on_subscribe_v5(self, client, userdata, mid, reasonCodes, properties):
         pass

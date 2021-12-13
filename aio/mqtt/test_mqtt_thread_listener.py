@@ -27,7 +27,7 @@ if __name__ == '__main__':
     config = MqttConfig()
 
     config.server_port = 1883
-    config.server_address = "mqtt.yunjichina.com.cn"
+    config.server_address = "mqtt.demo.com.cn"
     config.username = "demo"
     config.password = "demo"
 

@@ -7,7 +7,7 @@ import logging
 
 from gcommon.aio import gasync
 from gcommon.aio.cluster.external_service import ExternalService
-from gcommon.aio.cluster.zk_client import ZookeeperObserver, ZookeeperClient
+from gcommon.aio.cluster.zk_client import ZookeeperObserver, ZookeeperClient, KazooLock
 from gcommon.utils.gnet import ConnectionStatus
 
 logger = logging.getLogger('zookeeper')
@@ -29,6 +29,9 @@ class ZookeeperService(ExternalService, ZookeeperObserver):
 
         self.conn_status = ConnectionStatus.Closed
         self.reconn_interval = reconn_interval or self.RECONNECTION_INTERVAL
+
+    def create_lock(self, node_root, node_name):
+        return KazooLock(self._kazoo_client, node_root, node_name)
 
     @property
     def kazoo_client(self):

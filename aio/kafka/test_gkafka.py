@@ -17,8 +17,8 @@ async def test():
     config = KafkaConfig()
 
     config.group_id = "Demo-%s" % int(time.time())
-    config.topics = ["task-status"]
-    config.bootstrap_servers = ["kafka.demo.com:9092"]
+    config.topics = ["my-topic"]
+    config.bootstrap_servers = ["test.server.com:9092"]
 
     consumer = KafkaConsumer(config, callback)
     await consumer.consume_forever()

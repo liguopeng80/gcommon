@@ -22,7 +22,6 @@ logger = logging.getLogger()
 PATH = "/test/guli/favorite"
 APP_ROOT = "/test/guli/app"
 APP_PATH = "/test/guli/app/gatekeeper"
-# APP_PATH = "/yunji/app/working/rcs"
 
 
 class MyObserver(ZookeeperObserver):

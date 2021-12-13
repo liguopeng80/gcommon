@@ -28,7 +28,7 @@ if __name__ == '__main__':
     config = MqttConfig()
 
     config.server_port = 1883
-    config.server_address = "10.110.10.68"
+    config.server_address = "127.0.0.1"
     config.username = "demo"
     config.password = "demo"
 

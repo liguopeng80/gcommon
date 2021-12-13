@@ -164,3 +164,51 @@ class ZookeeperClient(object):
 
         while self.is_running():
             self._process_service_control_message()
+
+    def create_lock(self, node_root, node_name):
+        return KazooLock(self._kazoo_client, node_root, node_name)
+
+
+class KazooLock(object):
+    def __init__(self, client: KazooClient, node_root, node_name):
+        self._kazoo_client = client
+
+        self._node_root = node_root
+        self._node_name = node_name
+        self._node_path = f"{node_root}/{node_name}."
+        self._full_path = ""
+        self._locked = False
+
+    async def acquire(self):
+        result = self._kazoo_client.create(
+            self._node_path, b"", makepath=True, ephemeral=True, sequence=True
+        )
+        event = gasync.AsyncEvent()
+
+        @gasync.callback_run_in_main_thread
+        def _on_lock_nodes_changed(nodes):
+            if not nodes:
+                return
+
+            nodes.sort(key=lambda x: x.split(".")[1], reverse=False)
+            name, _sequence = nodes[0].split(".")
+            if name == self._node_name:
+                self._full_path = f"{self._node_root}/{nodes[0]}"
+                event.notify(True)
+
+        self._kazoo_client.ChildrenWatch(self._node_root, _on_lock_nodes_changed)
+        await event.wait()
+        return self
+
+    def release(self):
+        try:
+            self._kazoo_client.delete(self._full_path)
+        except:
+            logger.fatal("kazoo lock release error, %s", self._node_path)
+            raise
+
+    async def __aenter__(self):
+        await self.acquire()
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        self.release()

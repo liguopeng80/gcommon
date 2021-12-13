@@ -1,0 +1,18 @@
+
+zookeeper:
+  service_name: "guli-demo"
+  zk_hosts: '192.168.5.131:2181'
+
+  cluster_enabled: True
+  working_mode: "modulo"
+  max_working_nodes:  4
+
+  # 处于服务状态的服务节点；
+  # 全路径格式为："/<path>/<service-name>/<server-id>"。
+  path_working_apps: "/guli/app/working"
+
+  # 处于运行状态的服务节点（不一定能提供服务）
+  path_alive_apps: "/guli/app/alive"
+
+  # 服务锁节点
+  path_app_locks: "/guli/app/locks"
