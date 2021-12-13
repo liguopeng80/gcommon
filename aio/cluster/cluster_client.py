@@ -63,6 +63,7 @@ class ClusterClient(object):
         # 监听服务节点变化
         self._kazoo_client.ChildrenWatch(self._working_root, self._on_cluster_nodes_changed)
 
+    @gasync.callback_run_in_main_thread
     def _on_cluster_nodes_changed(self, nodes):
         """服务节点发生变化，可能要更新路由"""
         old_node_names = self._node_manager.allocator.node_names

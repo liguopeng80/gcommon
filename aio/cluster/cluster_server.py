@@ -117,6 +117,7 @@ class SimpleClusterServer(SimpleServer):
         if not nodes:
             logger.debug(f"{self.service_name} cluster has no working nodes...")
 
+        # 根据 "server-name.sequence" 的 sequence 排序
         nodes.sort(key=lambda x: x.split(".")[1], reverse=False)
         nodes = nodes[:self._cluster_config.max_working_nodes]
         node_names = [node.split(".") for node in nodes]
