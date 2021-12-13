@@ -1,10 +1,30 @@
 # -*- coding: utf-8 -*- 
 # created: 2021-07-29
 # creator: liguopeng@liguopeng.net
-
+import collections
 import logging
 from copy import copy
-from aiokafka import AIOKafkaConsumer
+from datetime import datetime
+from types import TracebackType
+from typing import (
+    Any,
+    AnyStr,
+    AsyncContextManager,
+    AsyncGenerator,
+    Awaitable,
+    Callable,
+    Dict,
+    Generator,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TYPE_CHECKING,
+    Union,
+)
+
+
+from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from kafka.errors import KafkaError, KafkaConnectionError
 
 from gcommon.aio import gasync
@@ -48,14 +68,21 @@ class KafkaConfig(object):
         return self
 
 
+KafkaConsumerCallback = Callable[[str, str, datetime, str], None]
+
+
 class KafkaConsumer(object):
-    def __init__(self, kafka_config: KafkaConfig, callback=None):
+    """
+    callback -> KafkaConsumerCallback(topic, event_id, event_time, content)
+    """
+    def __init__(self, kafka_config: KafkaConfig, callback: KafkaConsumerCallback = None):
         self.config = kafka_config
 
         if callback:
             self._on_kafka_message = callback
 
     async def consume_forever(self):
+        """从制定 topic 中消费数据"""
         topics = self.config.topics or [self.config.topic]
         consumer = AIOKafkaConsumer(
             *topics,
@@ -104,3 +131,31 @@ class KafkaConsumer(object):
 
         await gasync.maybe_async(self._on_kafka_message, message.topic,
                                  event_id, event_time, content)
+
+
+class KafkaProducer(object):
+    def __init__(self, kafka_config: KafkaConfig):
+        self.config = kafka_config
+        self.started = False
+        self.producer = AIOKafkaProducer(
+            bootstrap_servers=self.config.bootstrap_servers,
+            security_protocol=self.config.security_protocol,
+            sasl_mechanism=self.config.sasl_mechanism,
+        )
+
+    async def init(self):
+        # Get cluster layout and initial topic/partition leadership information
+        await self.producer.start()
+        self.started = True
+
+    async def send_json(self, topic, message: JsonObject, key=None):
+        # Produce message
+        assert self.started
+        value = message.dumps(ensure_ascii=False).encode('utf-8')
+        await self.producer.send_and_wait(topic, value=value, key=key)
+
+    async def stop(self):
+        # Wait for all pending messages to be delivered or expire.
+        if self.started:
+            await self.producer.stop()
+            self.started = False
