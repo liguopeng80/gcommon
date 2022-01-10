@@ -14,3 +14,5 @@ touch log/README.md
 
 mkdir bin
 touch bin/README.md
+
+cp src/gcommon/.gitignore ./
