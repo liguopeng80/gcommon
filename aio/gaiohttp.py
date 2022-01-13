@@ -9,15 +9,19 @@ import werkzeug
 from quart import jsonify, Quart, json, Blueprint
 from quart import has_request_context, request
 from quart.logging import default_handler
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, HTTPException
 
 from gcommon.aio import gasync
 from gcommon.error import GErrors
 from gcommon.error.gerror import GExcept, GError
+from gcommon.utils.gglobal import Global
 from gcommon.utils.gjsonobj import JsonObject
 from gcommon.web.web_utils import WebConst
 
 logger = logging.getLogger("http")
+
+
+PASSTHROUGH_HTTP_ERROR = True
 
 
 def web_response(result, *args, **kws):
@@ -107,6 +111,9 @@ class ExceptionMiddleware(object):
 
 
 async def handle_bad_request(e):
+    if PASSTHROUGH_HTTP_ERROR and isinstance(e, HTTPException):
+        return e
+
     if isinstance(e, GExcept):
         resp = web_exception_response(e)
     else:
@@ -143,10 +150,12 @@ async def log_request_and_response(response):
     elif FlaskLogManager.should_ignore_response_body(request.path):
         response_body = "..."
     elif response.is_json:
-        response_body = await response.json
+        # response_body = await response.json
+        response_body = await gasync.maybe_async(response.get_json)
         response_body = json.dumps(response_body, ensure_ascii=False)
     else:
-        response_body = await response.data
+        # response_body = await response.data
+        response_body = await gasync.maybe_async(response.get_data)
 
     request_body = request_body or None
     logger.access("request (from %s): %s %s - %s, response: %s",
@@ -169,6 +178,9 @@ def create_quart_blueprint(name, import_name=""):
 
 def create_quart_app(name, static_url_path="", static_folder=""):
     """创建 quart app，并注入 middleware"""
+    global PASSTHROUGH_HTTP_ERROR
+    PASSTHROUGH_HTTP_ERROR = Global.config.get("common.http.passthrough_http_error")
+
     app = Quart(name, static_folder=static_folder, static_url_path=static_url_path)
     app.register_error_handler(Exception, handle_bad_request)
     app.after_request(log_request_and_response)
