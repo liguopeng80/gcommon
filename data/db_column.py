@@ -88,8 +88,8 @@ def column_required_short_string(length=32, index=True, default="", doc=""):
         return Column(String(length), nullable=False, index=index, doc=doc)
 
 
-def column_integer(default=0, doc=""):
-    return Column(Integer, nullable=True, default=default, doc=doc)
+def column_integer(default=0, index=False, doc=""):
+    return Column(Integer, index=index, nullable=True, default=default, doc=doc)
 
 
 def column_big_integer(default=0, doc=""):
@@ -100,7 +100,7 @@ def column_integer_required(doc=""):
     return Column(Integer, nullable=False, index=True, doc=doc)
 
 
-def column_date(doc=""):
+def column_datetime(doc=""):
     return Column(TimeStamp(), default=func.now(), nullable=False, doc=doc)
 
 
