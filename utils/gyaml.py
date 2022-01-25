@@ -158,7 +158,7 @@ class YamlConfigParser(ConfigParser):
 
         """Parse a config file."""
         with open(filename, encoding=encoding) as f:
-            file_options = yaml.safe_load(f)
+            file_options = yaml.safe_load(f) or {}
 
         options = self._parse_group(file_options, params)
         self._options = JsonObject(options)
