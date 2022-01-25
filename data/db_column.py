@@ -6,7 +6,7 @@
 from datetime import datetime, timezone
 
 import sqlalchemy as sa
-from sqlalchemy import Column, Integer, String, func, Boolean, ForeignKey, BigInteger
+from sqlalchemy import Column, Integer, String, func, Boolean, ForeignKey, BigInteger, Text
 
 
 class TimeStamp(sa.types.TypeDecorator):
@@ -86,6 +86,10 @@ def column_required_short_string(length=32, index=True, default="", doc=""):
         return Column(String(length), nullable=False, index=index, default=default, doc=doc)
     else:
         return Column(String(length), nullable=False, index=index, doc=doc)
+
+
+def column_text(doc=""):
+    return Column(Text, doc=doc)
 
 
 def column_integer(default=0, index=False, doc=""):
