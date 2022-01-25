@@ -2,6 +2,7 @@
 
 mkdir deploy
 touch deploy/default.yaml
+touch deploy/example.secret.default.yaml
 
 mkdir docs
 touch docs/README.md
