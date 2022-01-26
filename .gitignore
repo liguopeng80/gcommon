@@ -1,4 +1,4 @@
-# 
+#
 # filename: .gitignore
 #
 
@@ -66,7 +66,6 @@ ftp/
 *_trial_temp*
 
 # python Packages
-
 *.egg
 *.egg-info
 dist
@@ -115,14 +114,11 @@ node_modules
 # pyCharm project
 ################################
 .idea/
-gatekeeper_test_starter_u1.py
-gatekeeper_test_starter_u2.py
 
 ################################
 # code review
 ################################
 .reviewboardrc
-
 
 ################################
 # secret
