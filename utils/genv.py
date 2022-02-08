@@ -16,6 +16,12 @@ def get_env(name):
     return os.environ.get(name, '')
 
 
+def get_env_bool(name):
+    """查看环境变量"""
+    value = os.environ.get(name, '').lower()
+    return value in ("t", "true", "y", "yes")
+
+
 def set_env(name, new_value):
     """设置环境变量"""
     os.environ[name] = new_value

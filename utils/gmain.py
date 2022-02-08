@@ -30,6 +30,10 @@ ENV_SECRET_CONFIG_DIR = 'G_COMMON_SECRET_CONFIG_DIR'
 ENV_LOG_DIR = 'G_COMMON_LOG_DIR'
 
 
+ENV_LOG_FORMAT = 'G_COMMON_LOG_FORMAT'
+ENV_LOG_NOT_TO_FILE = 'G_COMMON_LOG_NOT_TO_FILE'
+
+
 def parse_command_line(service_name, parser, all_args, *, parse_service_options=None):
     """解析命令行参数。"""
     # set usage

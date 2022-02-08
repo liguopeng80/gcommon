@@ -120,7 +120,11 @@ class SimpleServer(ObjectWithLogger):
         self.config.service.service_root = params["SERVICE_ROOT"]
 
     def init_logger(self):
-        server_base.init_logger(self.options, thread_logger=self.IS_MULTI_THREAD)
+        log_to_file = not genv.get_env_bool(gmain.ENV_LOG_NOT_TO_FILE)
+        formatter = genv.get_env(gmain.ENV_LOG_FORMAT)
+
+        server_base.init_logger(self.options, thread_logger=self.IS_MULTI_THREAD,
+                                file_handler=log_to_file, formatter=formatter)
         self.logger = logging.getLogger(self.SERVICE_NAME)
 
     def get_config_params(self):

@@ -122,7 +122,7 @@ def init_stdio_logger():
 
 
 def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True,
-                file_handler=True, thread_logger=False, detail=False):
+                file_handler=True, thread_logger=False, detail=False, formatter=None):
     # Create a new handler for "root logger" on console (stdout):
     # logging.basicConfig(level=logging.DEBUG, format='%(asctime)-15s %(name)-5s %(levelname)-5s %(message)s')
 
@@ -157,7 +157,9 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True,
 
     logger.setLevel(logging.DEBUG)
 
-    formatter = _get_log_formatter(threading=thread_logger, detail=detail)
+    if not formatter:
+        formatter = _get_log_formatter(threading=thread_logger, detail=detail)
+
     formatter = logging.Formatter(formatter)
 
     if file_handler:
@@ -187,10 +189,25 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True,
             pass
 
     if stdio_handler:
-        ch = logging.StreamHandler()
-        ch.setFormatter(formatter)
-        ch.setLevel(logging.DEBUG)
-        logger.addHandler(ch)
+        # ch = logging.StreamHandler()
+        # ch.setFormatter(formatter)
+        # ch.setLevel(logging.DEBUG)
+        # logger.addHandler(ch)
+        h1 = _create_stream_handler(sys.stdout, formatter, logging.DEBUG)
+        h1.addFilter(lambda record: record.levelno <= logging.INFO)
+
+        h2 = _create_stream_handler(sys.stderr, formatter, logging.WARNING)
+
+        logger.addHandler(h1)
+        logger.addHandler(h2)
+
+
+def _create_stream_handler(stream, formatter, level):
+    ch = logging.StreamHandler(stream)
+    ch.setFormatter(formatter)
+    ch.setLevel(level)
+
+    return ch
 
 
 def init_basic_config(level=logging.DEBUG, detail=False):

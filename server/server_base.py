@@ -96,12 +96,14 @@ def _get_log_folder(options):
     return log_folder
 
     
-def init_logger(options, *, thread_logger=False):
+def init_logger(options, *, thread_logger=False, formatter=None, file_handler=True):
     log_folder = _get_log_folder(options)
     # TODO: stdio_handler should be False in production environment
-    glogger.init_logger(log_folder, redirect_stdio=False, stdio_handler=True, file_handler=True,
+    glogger.init_logger(log_folder, redirect_stdio=False,
+                        stdio_handler=True, file_handler=file_handler,
                         detail=options.log_line_no,
-                        thread_logger=options.multi_thread or thread_logger)
+                        thread_logger=options.multi_thread or thread_logger,
+                        formatter=formatter)
  
 
 def server_init(parse_command_line, DEFAULT_CONFIG=None):
