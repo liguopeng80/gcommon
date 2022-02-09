@@ -194,9 +194,9 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True,
         # ch.setLevel(logging.DEBUG)
         # logger.addHandler(ch)
         h1 = _create_stream_handler(sys.stdout, formatter, logging.DEBUG)
-        h1.addFilter(lambda record: record.levelno <= logging.INFO)
+        h1.addFilter(lambda record: record.levelno <= logging.WARNING)
 
-        h2 = _create_stream_handler(sys.stderr, formatter, logging.WARNING)
+        h2 = _create_stream_handler(sys.stderr, formatter, logging.ERROR)
 
         logger.addHandler(h1)
         logger.addHandler(h2)
