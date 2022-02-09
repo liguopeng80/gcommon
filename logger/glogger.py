@@ -122,7 +122,7 @@ def init_stdio_logger():
 
 
 def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True,
-                file_handler=True, thread_logger=False, detail=False, formatter=None):
+                file_handler=True, thread_logger=False, detail=False, formatter=None, level_names=None):
     # Create a new handler for "root logger" on console (stdout):
     # logging.basicConfig(level=logging.DEBUG, format='%(asctime)-15s %(name)-5s %(levelname)-5s %(message)s')
 
@@ -142,6 +142,10 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True,
     logging.addLevelName(logging.WARNING, 'WAR')
     logging.addLevelName(logging.ERROR, 'ERR')
     logging.addLevelName(logging.CRITICAL, 'CRT')
+
+    if level_names:
+        for level, name in level_names.items():
+            logging.addLevelName(level, name)
 
     # monkey patch
     logging.Logger.access = access_logging_func

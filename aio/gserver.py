@@ -123,8 +123,11 @@ class SimpleServer(ObjectWithLogger):
         log_to_file = not genv.get_env_bool(gmain.ENV_LOG_NOT_TO_FILE)
         formatter = genv.get_env(gmain.ENV_LOG_FORMAT)
 
+        log_levels = genv.get_env(gmain.ENV_LOG_LEVEL_NAMES)
+        level_names = gmain.parse_log_level_names(log_levels)
+
         server_base.init_logger(self.options, thread_logger=self.IS_MULTI_THREAD,
-                                file_handler=log_to_file, formatter=formatter)
+                                file_handler=log_to_file, formatter=formatter, level_names=level_names)
         self.logger = logging.getLogger(self.SERVICE_NAME)
 
     def get_config_params(self):

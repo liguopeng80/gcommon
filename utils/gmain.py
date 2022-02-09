@@ -32,6 +32,19 @@ ENV_LOG_DIR = 'G_COMMON_LOG_DIR'
 
 ENV_LOG_FORMAT = 'G_COMMON_LOG_FORMAT'
 ENV_LOG_NOT_TO_FILE = 'G_COMMON_LOG_NOT_TO_FILE'
+ENV_LOG_LEVEL_NAMES = 'G_COMMON_LOG_LEVEL_NAMES'
+
+
+def parse_log_level_names(str_log_level_names):
+    """20:INFO,30:WARN,40:ERROR,50:FATAL"""
+    if not str_log_level_names:
+        return {}
+
+    log_levels = str_log_level_names.split(",")
+    log_levels = [item.split(":") for item in log_levels]
+
+    level_names = {int(level): name for level, name in log_levels}
+    return level_names
 
 
 def parse_command_line(service_name, parser, all_args, *, parse_service_options=None):
