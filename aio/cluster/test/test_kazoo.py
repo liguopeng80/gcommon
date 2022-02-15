@@ -13,7 +13,7 @@ from gcommon.aio.cluster.zk_client import ZookeeperObserver, ZookeeperClient
 from gcommon.utils import gtime
 from gcommon.utils.gmain import init_main
 
-formatter = '%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s'
+formatter = "%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s"
 logging.basicConfig(format=formatter, level=logging.DEBUG)
 
 logger = logging.getLogger()
@@ -35,7 +35,7 @@ class MyObserver(ZookeeperObserver):
 
     def on_connection_status_changed(self, state):
         """示例代码，演示如何捕获和处理连接状态变化事件。"""
-        logger.debug('watch func called in thread: %s', threading.currentThread())
+        logger.debug("watch func called in thread: %s", threading.currentThread())
         if state == KazooState.CONNECTED and not self.connected:
             self.connected = True
             gasync.run_in_main_thread(self._on_conn_opened)
@@ -46,18 +46,21 @@ class MyObserver(ZookeeperObserver):
         elif state == KazooState.LOST:
             self.connected = False
             gasync.run_in_main_thread(self._on_conn_lost)
-            logger.debug('kazoo connection lost (client closed)')
+            logger.debug("kazoo connection lost (client closed)")
         elif state == KazooState.SUSPENDED:
             gasync.run_in_main_thread(self._on_conn_suspended)
-            logger.debug('kazoo connection suspended (maybe the server is gone)')
+            logger.debug("kazoo connection suspended (maybe the server is gone)")
 
     @gasync.callback_run_in_main_thread
     def on_children_changed(self, children):
-        logger.debug('children changed - %s', children)
+        logger.debug("children changed - %s", children)
 
     @gasync.callback_run_in_main_thread
     def on_data_changed(self, data, stat, event):
-        logger.debug("data changed - version: %s, data: %s" % (stat.version, data.decode("utf-8")))
+        logger.debug(
+            "data changed - version: %s, data: %s"
+            % (stat.version, data.decode("utf-8"))
+        )
 
     def _on_conn_lost(self):
         pass
@@ -86,7 +89,7 @@ class MyObserver(ZookeeperObserver):
 
     @gasync.callback_run_in_main_thread
     def on_app_children_changed(self, children):
-        logger.debug('-- app children changed - %s', children)
+        logger.debug("-- app children changed - %s", children)
 
     @gasync.callback_run_in_main_thread
     def on_app_data_changed(self, data, stat, event):
@@ -94,7 +97,10 @@ class MyObserver(ZookeeperObserver):
             logger.debug("-- app data changed without data")
             return
 
-        logger.debug("-- app data changed - version: %s, data: %s" % (stat.version, data.decode("utf-8")))
+        logger.debug(
+            "-- app data changed - version: %s, data: %s"
+            % (stat.version, data.decode("utf-8"))
+        )
 
     def _gen_test_data(self):
         # path = PATH + '/' + str(time.time())
@@ -116,10 +122,10 @@ class MyObserver(ZookeeperObserver):
         self._client_manager.wait()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     init_main(thread_logger=True)
 
-    hosts = '192.168.5.131:2181'
+    hosts = "192.168.5.131:2181"
     observer = MyObserver()
 
     manager = ZookeeperClient(observer, hosts)

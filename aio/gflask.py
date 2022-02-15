@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-07-04
 # creator: liguopeng@liguopeng.net
 
@@ -10,4 +10,3 @@ def register_blueprint(app, module):
     module_base = server_base + module.base_url
 
     app.register_blueprint(module.app, url_prefix=module_base)
-

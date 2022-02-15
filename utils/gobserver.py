@@ -5,6 +5,7 @@
 
 class SimpleObservableSubject(object):
     """简单 subject 对象"""
+
     def __init__(self):
         self._observers = set()
 
@@ -17,4 +18,3 @@ class SimpleObservableSubject(object):
     def notify_observers(self):
         for obv in self._observers:
             obv(self)
-

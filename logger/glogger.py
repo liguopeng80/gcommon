@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 """Provide logging module."""
 
@@ -13,7 +13,7 @@ from logging.handlers import TimedRotatingFileHandler
 VERBOSE = logging.DEBUG - 5
 ACCESS = logging.INFO + 5
 
-Default_Log_Root = '.'
+Default_Log_Root = "."
 
 logger = logging.getLogger()
 
@@ -23,8 +23,10 @@ LOG_LINE_NO = "{%(pathname)s:%(lineno)d}"
 LOG_THREAD = "[%(thread)08d]"
 LOG_MESSAGE = "%(levelname)-3s %(name)-8s %(message)s"
 
-LOG_FORMAT = '%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s'
-THREAD_LOG_FORMAT = '%(asctime)-15s [%(thread)08d] %(levelname)-3s %(name)-8s %(message)s'
+LOG_FORMAT = "%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s"
+THREAD_LOG_FORMAT = (
+    "%(asctime)-15s [%(thread)08d] %(levelname)-3s %(name)-8s %(message)s"
+)
 
 
 class StdIORedirector:
@@ -38,23 +40,23 @@ class StdIORedirector:
 
     def __init__(self, level):
         self._level = level
-        self._buffer = ''
+        self._buffer = ""
 
     def write(self, msg):
         self._buffer = self._buffer + msg
-        pos = self._buffer.rfind('\n')
+        pos = self._buffer.rfind("\n")
 
         if pos == -1:
             return
 
         msg = self._buffer[:pos]
-        self._buffer = self._buffer[pos + 1:]
+        self._buffer = self._buffer[pos + 1 :]
 
         if self._level == self.STD_OUT:
             logger.debug(msg)
         elif self._level == self.STD_ERR:
             logger.error(msg)
-            
+
     def flush(self):
         pass
 
@@ -62,16 +64,27 @@ class StdIORedirector:
 class RotatingFileHandler(TimedRotatingFileHandler):
     """Rotate log file by both time and size."""
 
-    def __init__(self, filename, max_bytes=0, when='d', interval=1, backup_count=0, encoding=None, delay=False,
-                 utc=False):
-        """Create a new time-size rotating file handler. 
-        
+    def __init__(
+        self,
+        filename,
+        max_bytes=0,
+        when="d",
+        interval=1,
+        backup_count=0,
+        encoding=None,
+        delay=False,
+        utc=False,
+    ):
+        """Create a new time-size rotating file handler.
+
         when        - 'd' or 'D' means 'days'
         backupCount - max log files
         utc         - if using UTC time
         """
 
-        TimedRotatingFileHandler.__init__(self, filename, when, interval, backup_count, encoding, delay, utc)
+        TimedRotatingFileHandler.__init__(
+            self, filename, when, interval, backup_count, encoding, delay, utc
+        )
         self.maxBytes = max_bytes
 
     def shouldRollover(self, record):
@@ -89,7 +102,7 @@ class RotatingFileHandler(TimedRotatingFileHandler):
 
 
 class LevelFilter(logging.Filter):
-    def __init__(self, level, name=''):
+    def __init__(self, level, name=""):
         logging.Filter.__init__(self, name)
         self.level = level
 
@@ -101,8 +114,14 @@ class LevelFilter(logging.Filter):
 
 
 def create_file_handler(filename, formatter, level, backup_count, max_bytes):
-    handler = RotatingFileHandler(filename, when='midnight', interval=1,
-                                  backup_count=backup_count, max_bytes=max_bytes, encoding='utf-8')
+    handler = RotatingFileHandler(
+        filename,
+        when="midnight",
+        interval=1,
+        backup_count=backup_count,
+        max_bytes=max_bytes,
+        encoding="utf-8",
+    )
     handler.setFormatter(formatter)
     handler.setLevel(level)
 
@@ -121,8 +140,16 @@ def init_stdio_logger():
     init_logger(stdio_handler=True, file_handler=False)
 
 
-def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True,
-                file_handler=True, thread_logger=False, detail=False, formatter=None, level_names=None):
+def init_logger(
+    log_folder="",
+    redirect_stdio=False,
+    stdio_handler=True,
+    file_handler=True,
+    thread_logger=False,
+    detail=False,
+    formatter=None,
+    level_names=None,
+):
     # Create a new handler for "root logger" on console (stdout):
     # logging.basicConfig(level=logging.DEBUG, format='%(asctime)-15s %(name)-5s %(levelname)-5s %(message)s')
 
@@ -135,13 +162,13 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True,
     if stdio_handler:
         redirect_stdio = False
 
-    logging.addLevelName(VERBOSE, 'VEB')
-    logging.addLevelName(logging.DEBUG, 'DBG')
-    logging.addLevelName(logging.INFO, 'INF')
-    logging.addLevelName(ACCESS, 'ACC')
-    logging.addLevelName(logging.WARNING, 'WAR')
-    logging.addLevelName(logging.ERROR, 'ERR')
-    logging.addLevelName(logging.CRITICAL, 'CRT')
+    logging.addLevelName(VERBOSE, "VEB")
+    logging.addLevelName(logging.DEBUG, "DBG")
+    logging.addLevelName(logging.INFO, "INF")
+    logging.addLevelName(ACCESS, "ACC")
+    logging.addLevelName(logging.WARNING, "WAR")
+    logging.addLevelName(logging.ERROR, "ERR")
+    logging.addLevelName(logging.CRITICAL, "CRT")
 
     if level_names:
         for level, name in level_names.items():
@@ -151,9 +178,9 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True,
     logging.Logger.access = access_logging_func
     logging.Logger.verbose = verbose_logging_func
 
-    debug_log = os.path.join(log_folder, 'debug.log')
-    access_log = os.path.join(log_folder, 'access.log')
-    monitor_log = os.path.join(log_folder, 'monitor.log')
+    debug_log = os.path.join(log_folder, "debug.log")
+    access_log = os.path.join(log_folder, "access.log")
+    monitor_log = os.path.join(log_folder, "monitor.log")
 
     # print 'Debug log file:   ', debug_log
     # print 'Access log file:  ', access_log
@@ -171,19 +198,25 @@ def init_logger(log_folder='', redirect_stdio=False, stdio_handler=True,
         backup_count = 5000
 
         # debug log
-        debug_handle = create_file_handler(debug_log, formatter, logging.DEBUG, backup_count, 1280 * 1024 * 1024)
+        debug_handle = create_file_handler(
+            debug_log, formatter, logging.DEBUG, backup_count, 1280 * 1024 * 1024
+        )
         logger.addHandler(debug_handle)
 
         # access log
-        access_handle = create_file_handler(access_log, formatter, ACCESS, backup_count, 512 * 1024 * 1024)
+        access_handle = create_file_handler(
+            access_log, formatter, ACCESS, backup_count, 512 * 1024 * 1024
+        )
 
-        access_filter = LevelFilter(ACCESS, 'access_filter')
+        access_filter = LevelFilter(ACCESS, "access_filter")
         access_handle.addFilter(access_filter)
 
         logger.addHandler(access_handle)
 
         # monitor log
-        monitor_handler = create_file_handler(monitor_log, formatter, logging.CRITICAL, backup_count, 128 * 1024 * 1024)
+        monitor_handler = create_file_handler(
+            monitor_log, formatter, logging.CRITICAL, backup_count, 128 * 1024 * 1024
+        )
         logger.addHandler(monitor_handler)
 
         if redirect_stdio:
@@ -242,15 +275,14 @@ def _get_log_formatter(threading=False, detail=False):
 if __name__ == "__main__":
     init_logger()
 
-    foo = logger.getChild('foo')
-    foo.info('what do you want?')
-    foo.error('really a bad day')
-    foo.critical('fatal error')
-    foo.access('wahaha...')
+    foo = logger.getChild("foo")
+    foo.info("what do you want?")
+    foo.error("really a bad day")
+    foo.critical("fatal error")
+    foo.access("wahaha...")
 
-    bar = logger.getChild('bar')
-    bar.info('not a problem')
-    bar.log(ACCESS, 'not a problem')
+    bar = logger.getChild("bar")
+    bar.info("not a problem")
+    bar.log(ACCESS, "not a problem")
 
-    print('Done')
-
+    print("Done")

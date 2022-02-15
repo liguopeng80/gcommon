@@ -10,12 +10,13 @@ from gcommon.aio.cluster.external_service import ExternalService
 from gcommon.aio.cluster.zk_client import ZookeeperObserver, ZookeeperClient, KazooLock
 from gcommon.utils.gnet import ConnectionStatus
 
-logger = logging.getLogger('zookeeper')
+logger = logging.getLogger("zookeeper")
 
 
 class ZookeeperService(ExternalService, ZookeeperObserver):
     """Zookeeper 服务管理器，负责监控（和尝试恢复） zookeeper 服务器的连接状态。"""
-    Service_Name = 'zookeeper'
+
+    Service_Name = "zookeeper"
 
     # 尝试重连的时间间隔
     RECONNECTION_INTERVAL = 3
@@ -80,22 +81,25 @@ class ZookeeperService(ExternalService, ZookeeperObserver):
 
     def _try_reconnection(self, wait=True):
         seconds = wait and self.reconn_interval or 0
-        logger.debug('reconnecting after %s seconds - current connection status: %s',
-                     seconds, self.conn_status)
+        logger.debug(
+            "reconnecting after %s seconds - current connection status: %s",
+            seconds,
+            self.conn_status,
+        )
         gasync.async_call_later(seconds, self._do_reconnect)
 
     def _do_reconnect(self):
         """尝试重新连接 zookeeper 服务器"""
         logger.debug("_do_reconnect with connection status: %s", self.conn_status)
         if self.conn_status.is_connecting:
-            logger.debug('a reconnecting has been scheduled, skip')
+            logger.debug("a reconnecting has been scheduled, skip")
             return
 
         if self.conn_status.is_connected or self.conn_status.is_suspended:
-            logger.debug('server has connected to zookeeper, skip')
+            logger.debug("server has connected to zookeeper, skip")
             return
 
         self.conn_status = ConnectionStatus.Reconnecting
 
-        logger.debug('try reconnect to zookeeper')
+        logger.debug("try reconnect to zookeeper")
         self._client_manager.start()

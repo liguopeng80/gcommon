@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-08-04
 # creator: liguopeng@liguopeng.net
 
@@ -39,8 +39,8 @@ def test_person():
     result = JsonObject(result)
     print(result.dumps())
 
-    assert result.name == 'guli'
-    assert result.usedNames[0] == 'guli1'
+    assert result.name == "guli"
+    assert result.usedNames[0] == "guli1"
     assert result.jobHistory[0].level == 3
     assert type(result.jobHistory[0]) == JsonObject
 
@@ -48,5 +48,5 @@ def test_person():
     assert new_person.name == person.name
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_person()

@@ -15,6 +15,7 @@ from gcommon.utils.gobject import ObjectWithLogger
 
 def twisted_callback(func):
     """decorator: 将回调发送回 twisted 线程（不在当前线程执行）"""
+
     def __func(*args, **kwargs):
         reactor.callFromThread(func, *args, **kwargs)
 
@@ -76,11 +77,11 @@ class TwistedTaskPool(ObjectWithLogger):
         pass
 
     def _allocate_task(self, param=None):
-        raise NotImplementedError('for sub-class')
+        raise NotImplementedError("for sub-class")
 
     def _do_work(self, worker):
         """在线程池中执行"""
-        raise NotImplementedError('for sub-class')
+        raise NotImplementedError("for sub-class")
 
     def __fetch_task(self, worker: ThreadWorker):
         with worker.cv:
@@ -103,7 +104,9 @@ class TwistedTaskPool(ObjectWithLogger):
                 self._do_work(worker)
             except Exception as e:
                 twisted_call(self.__on_task_failed, task, e)
-                self.logger.error("failed on task %s with error: \n%s", task, traceback.format_exc())
+                self.logger.error(
+                    "failed on task %s with error: \n%s", task, traceback.format_exc()
+                )
             else:
                 self.logger.debug("worker, task processed: %s", task)
 
@@ -113,6 +116,7 @@ class TwistedTaskPool(ObjectWithLogger):
 
 def test():
     import time
+
     logger = init_threading_config()
 
     class TestPool(TwistedTaskPool):
@@ -136,7 +140,7 @@ def test():
             time.sleep(0.001)
             self.logger.info("worker, process task: %s", worker.task)
             if worker.task % 10 == 0:
-                raise RuntimeError('failure on task %s' % worker.task)
+                raise RuntimeError("failure on task %s" % worker.task)
 
     pool = TestPool()
     pool.set_logger(logger)
@@ -147,5 +151,5 @@ def test():
     print(pool.failed_tasks)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test()

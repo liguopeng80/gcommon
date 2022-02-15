@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-04-28
 # creator: liguopeng@liguopeng.net
 from abc import abstractmethod
@@ -28,7 +28,9 @@ class WebParams(object):
 
         return self
 
-    def parse(self, param_name, attr_name=None, required=False, default=None, validator=None):
+    def parse(
+        self, param_name, attr_name=None, required=False, default=None, validator=None
+    ):
         param_value = self._get_attribute(param_name)
         if param_value:
             if validator:
@@ -45,7 +47,7 @@ class WebParams(object):
         return self
 
     def parse_paging_param(self):
-        """ Get paging params from request, aka, page & size, only capable in method GET """
+        """Get paging params from request, aka, page & size, only capable in method GET"""
         # Process param page size
         current_page = self._get_attribute(WebConst.PARAM_CURRENT_PAGE)
         if current_page:
@@ -70,7 +72,7 @@ class WebParams(object):
 class UrlParams(WebParams):
     def _get_attribute(self, name):
         if type(name) is str:
-            name = name.encode('utf-8')
+            name = name.encode("utf-8")
 
         if name in self.request.args.keys():
             value = self.request.args[name][0]

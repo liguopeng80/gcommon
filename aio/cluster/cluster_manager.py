@@ -7,7 +7,7 @@ import abc
 import logging
 from enum import Enum
 
-logger = logging.getLogger('server')
+logger = logging.getLogger("server")
 
 
 class ClusterAllocationType(Enum):
@@ -17,6 +17,7 @@ class ClusterAllocationType(Enum):
 
 class NodeAllocator(object):
     """根据请求的 key 分配节点"""
+
     allocation_type = ClusterAllocationType.modulo
 
     def is_hash_ring(self):
@@ -57,7 +58,8 @@ class NodeAllocator(object):
 
 
 class ClusterManager(object):
-    """"维护当前服务器进程所提供的服务实例对象，以及所依赖的外部服务节点。"""
+    """维护当前服务器进程所提供的服务实例对象，以及所依赖的外部服务节点。"""
+
     server = None
     controller = None
 
@@ -69,6 +71,7 @@ class ClusterManager(object):
 
 class NodeManager(object):
     """应用服务器集群节点管理"""
+
     _service_name = ""
     _managers = {}
 
@@ -109,9 +112,9 @@ class NodeManager(object):
 
     def set_server_nodes(self, nodes):
         """服务节点变更"""
-        logger.info('service node changed - %s - nodes: %s', self._service_name, nodes)
+        logger.info("service node changed - %s - nodes: %s", self._service_name, nodes)
         if not nodes:
-            logger.critical('All service nodes DOWN - %s', self._service_name)
+            logger.critical("All service nodes DOWN - %s", self._service_name)
 
         self._node_allocator.set_nodes(nodes)
 
@@ -129,4 +132,3 @@ class NodeManager(object):
             key = str(key)
 
         return self._node_allocator.get_server(key)
-

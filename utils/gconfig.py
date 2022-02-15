@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 30 Dec 2014
 # author: "Guo Peng Li" <liguopeng@liguopeng.net>
 
@@ -13,11 +13,11 @@ import platform
 class ConfigParser(object):
     def __init__(self):
         self._options = {}
-        self._default_group = ''
+        self._default_group = ""
 
     def set_default_group(self, default):
         # Default group is the group whose name is current service (gatekeeper,
-        # postman, etc), and can be replaced with 'd.'.        
+        # postman, etc), and can be replaced with 'd.'.
         self._default_group = default.upper()
 
     def read(self, file_name, params=None):
@@ -32,7 +32,7 @@ class ConfigParser(object):
         #
         # For example, in config file:
         # cert_dir=/slim/$(CLOUD)/confs
-        # 
+        #
         # $(CLOUD) is a variable. It will be replaced by params['CLOUD'].
 
         """Parse a config file."""
@@ -44,13 +44,13 @@ class ConfigParser(object):
         if ret:
             return str(ret)
         else:
-            return ''
+            return ""
 
     def get_bool(self, name):
         value = self.get_str(name)
         value = value.lower()
 
-        if value in ('t', 'true'):
+        if value in ("t", "true"):
             return True
 
         value = self.get_int(name)
@@ -86,32 +86,32 @@ class ConfigParser(object):
         lines = f.readlines()
         f.close()
 
-        current_option = 'DEFAULTS'
+        current_option = "DEFAULTS"
         for line in lines:
             line = line.strip()
 
-            pos = line.find('#')
+            pos = line.find("#")
             if pos != -1:
                 line = line[:pos]
 
             if not line:
                 """blank line"""
-            elif line[0] == '[':
+            elif line[0] == "[":
                 # [group], a netw option group
-                pos = line.find(']')
+                pos = line.find("]")
                 if pos != -1:
                     current_option = line[1:pos].strip().upper()
 
             elif line:
                 # name=value
-                name, value = line.split('=', 1)
+                name, value = line.split("=", 1)
                 name = name.strip().upper()
                 value = value.strip()
 
                 # print name, value
 
                 # from "$(CLOUD)" to "%(CLOUD)s"
-                if params and value.find('$') != -1:
+                if params and value.find("$") != -1:
                     value = re.sub(r"\$\((\w+)\)", "%(\\1)s", value)
                     value = value % params
                     # print value
@@ -154,7 +154,7 @@ class ConfigParser(object):
         if name.startswith("D.") and self._default_group:
             name = self._default_group + "." + name[2:]
 
-        names = name.split('.')
+        names = name.split(".")
         root = options
 
         for i in range(len(names) - 1):
@@ -170,6 +170,7 @@ class ConfigParser(object):
 
 class DefaultConfigParser(ConfigParser):
     """支持缺省设置，支持模块嵌套的配置文件解析器。"""
+
     Defaults = {}
 
     def __init__(self, default_values=None):
@@ -189,14 +190,14 @@ class DefaultConfigParser(ConfigParser):
 
         root = self._read(file_name, params)
 
-        paths = self._get(root, 'defaults.default_search_path')
+        paths = self._get(root, "defaults.default_search_path")
 
         if not paths:
             path_list = []
-        elif platform.system() == 'Windows':
-            path_list = paths.split(',')
+        elif platform.system() == "Windows":
+            path_list = paths.split(",")
         else:
-            path_list = paths.split(':')
+            path_list = paths.split(":")
 
         # add current working directory
         path_list.append(os.getcwd())
@@ -205,23 +206,23 @@ class DefaultConfigParser(ConfigParser):
         path_list.append(current_root)
 
         # common config for all services
-        modules = self._get(root, 'defaults.default_module_list')
+        modules = self._get(root, "defaults.default_module_list")
 
         if modules:
-            module_list = modules.split(',')
+            module_list = modules.split(",")
         else:
             module_list = []
 
-        if 'SERVICE' in params:
+        if "SERVICE" in params:
             # also load the service's config file
-            module_list.append(params['SERVICE'].upper())
-            self.set_default_group(params['SERVICE'].upper())
+            module_list.append(params["SERVICE"].upper())
+            self.set_default_group(params["SERVICE"].upper())
 
         for module in module_list:
             # print module, root
             module = module.strip()
 
-            module_file_name = self._get(root, module + '.config_filename')
+            module_file_name = self._get(root, module + ".config_filename")
             if module_file_name:
                 module_option = self._load_module(path_list, module_file_name, params)
                 root[module.upper()] = module_option
@@ -249,23 +250,23 @@ class DefaultConfigParser(ConfigParser):
         if value is None:
             # The option is not in config file, try get a default value.
             name = name.lower()
-            sections = name.split('.')
-            if len(sections) > 2 and sections[0] in ('d', self._default_group.lower()):
-                if sections[1] == 'defaults':
+            sections = name.split(".")
+            if len(sections) > 2 and sections[0] in ("d", self._default_group.lower()):
+                if sections[1] == "defaults":
                     # d.defaults or service.defaults
-                    name = '.'.join(sections[2:])
+                    name = ".".join(sections[2:])
                     if name in self.Defaults:
                         return self.Defaults.get(name)
                     else:
-                        return self.Defaults.get('defaults.' + name, None)
+                        return self.Defaults.get("defaults." + name, None)
                 else:
                     # d.xxx or service.xxx
-                    name = '.'.join(sections[1:])
+                    name = ".".join(sections[1:])
                     return self.Defaults.get(name, None)
 
             if value is None:
                 # try the attribute's full name
-                name = '.'.join(sections)
+                name = ".".join(sections)
                 return self.Defaults.get(name, None)
 
         return value
@@ -274,26 +275,24 @@ class DefaultConfigParser(ConfigParser):
 # Test Codes
 if __name__ == "__main__":
     default_values = {
-        'mysql.server': 'localhost',
-        'mysql.poolsize': 10,
+        "mysql.server": "localhost",
+        "mysql.poolsize": 10,
     }
 
-    p = {'service': 'gatekeeper'}
+    p = {"service": "gatekeeper"}
 
     parser = DefaultConfigParser(default_values)
 
     print(platform.system())
-    if platform.system() == 'Windows':
-        filename = '../../../etc/gatekeeper.conf'
+    if platform.system() == "Windows":
+        filename = "../../../etc/gatekeeper.conf"
     else:
         # filename = '/home/guli/default.conf'
-        filename = '../../../deploy/config/default.cfg'
+        filename = "../../../deploy/config/default.cfg"
 
     parser.read(filename, p)
 
-    print(parser.get_str('huaxia_server'))
+    print(parser.get_str("huaxia_server"))
     # print(parser.get('mysql.server'))
 
-    print('Done')
-
-
+    print("Done")

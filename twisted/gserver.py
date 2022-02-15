@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-04-27
 # creator: liguopeng@liguopeng.net
 import logging
@@ -19,10 +19,10 @@ from gcommon.utils.gyaml import YamlConfigParser
 
 
 class SimpleServer(ObjectWithLogger):
-    SERVICE_NAME = 'undefined'
+    SERVICE_NAME = "undefined"
     IS_MULTI_THREAD = False
     INSTANCE = 0
-    VERSION = '0.0.0.0'
+    VERSION = "0.0.0.0"
 
     DEFAULT_CONFIG = {}
 
@@ -33,7 +33,7 @@ class SimpleServer(ObjectWithLogger):
     @inlineCallbacks
     def start_server(self):
         """启动服务器"""
-        raise NotImplementedError('for sub-class')
+        raise NotImplementedError("for sub-class")
 
     def _get_service_specific_confg(self):
         """服务器特定的配置参数"""
@@ -43,8 +43,8 @@ class SimpleServer(ObjectWithLogger):
         self.options = None
         self.args = None
 
-        self.config_file = ''
-        self.log_dir = ''
+        self.config_file = ""
+        self.log_dir = ""
 
         self.config = YamlConfigParser(self.DEFAULT_CONFIG)
 
@@ -52,7 +52,10 @@ class SimpleServer(ObjectWithLogger):
         parser = optparse.OptionParser()
 
         options, args = gmain.parse_command_line(
-            self.SERVICE_NAME, parser, sys.argv, parse_service_options=self.parse_service_options
+            self.SERVICE_NAME,
+            parser,
+            sys.argv,
+            parse_service_options=self.parse_service_options,
         )
 
         self.options, self.args = options, args
@@ -65,8 +68,12 @@ class SimpleServer(ObjectWithLogger):
         # 加载配置项
         self.load_server_config()
 
-        self.full_server_name = gproc.get_process_id(self.SERVICE_NAME, int(self.options.instance))
-        self.unique_server_name = gproc.get_process_unique_id(self.SERVICE_NAME, int(self.options.instance))
+        self.full_server_name = gproc.get_process_id(
+            self.SERVICE_NAME, int(self.options.instance)
+        )
+        self.unique_server_name = gproc.get_process_unique_id(
+            self.SERVICE_NAME, int(self.options.instance)
+        )
 
     def parse_service_options(self, parser: optparse.OptionParser):
         pass
@@ -76,8 +83,10 @@ class SimpleServer(ObjectWithLogger):
         #     parser.error('No arguments needed.')
         if self.options.service:
             if self.options.service != self.SERVICE_NAME:
-                parser.error('bad service name. expected: %s, got: %s.'
-                             % (self.SERVICE_NAME, self.options.service))
+                parser.error(
+                    "bad service name. expected: %s, got: %s."
+                    % (self.SERVICE_NAME, self.options.service)
+                )
         else:
             self.options.service = self.SERVICE_NAME
 
@@ -118,10 +127,10 @@ class SimpleServer(ObjectWithLogger):
             service_root = genv.get_relative_folder(__file__, gmain.PROJECT_ROOT)
 
         params = {
-            'SERVICE': self.options.service,
-            'INSTANCE': self.options.instance,
-            'CFGROOT': cfg_root,
-            'SERVICE_ROOT': service_root,
+            "SERVICE": self.options.service,
+            "INSTANCE": self.options.instance,
+            "CFGROOT": cfg_root,
+            "SERVICE_ROOT": service_root,
         }
 
         if service_config:
@@ -139,8 +148,8 @@ class SimpleServer(ObjectWithLogger):
     @inlineCallbacks
     def _service_main(self):
         def __error_back(failure):
-            stack = ''.join(traceback.format_tb(failure.getTracebackObject()))
-            self.logger.error('failure: \n%s', stack)
+            stack = "".join(traceback.format_tb(failure.getTracebackObject()))
+            self.logger.error("failure: \n%s", stack)
 
             return failure
 
@@ -149,7 +158,7 @@ class SimpleServer(ObjectWithLogger):
             d.addErrback(__error_back)
             yield d
         except Exception as e:
-            self.logger.error('server exception: %s', e)
+            self.logger.error("server exception: %s", e)
             reactor.stop()
 
     @inlineCallbacks
@@ -157,4 +166,4 @@ class SimpleServer(ObjectWithLogger):
         yield maybeDeferred(self.init_server)
         yield maybeDeferred(self.start_server)
 
-        self.logger.debug('--------- STARTED ---------')
+        self.logger.debug("--------- STARTED ---------")

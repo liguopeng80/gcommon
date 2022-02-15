@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-04-14
 # creator: liguopeng@liguopeng.net
 
@@ -6,10 +6,10 @@ import sqlalchemy
 
 
 class MysqlDB(object):
-    DEFAULT_ENCODING = 'utf8'
+    DEFAULT_ENCODING = "utf8"
     ECHO = False
 
-    def __init__(self, username, password, server_addr='localhost', server_port=3306):
+    def __init__(self, username, password, server_addr="localhost", server_port=3306):
         self.username = username
         self.password = password
 
@@ -18,8 +18,10 @@ class MysqlDB(object):
 
     def connect_to_db(self, db_name):
         # "mysql+pymysql://root:@localhost:3306/testdb"
-        url = 'mysql+pymysql://{}:{}@{}:{}/{}'
-        url = url.format(self.username, self.password, self.server_addr, self.server_port, db_name)
+        url = "mysql+pymysql://{}:{}@{}:{}/{}"
+        url = url.format(
+            self.username, self.password, self.server_addr, self.server_port, db_name
+        )
 
         # The return value of create_engine() is our connection object
         # db_conn = sqlalchemy.create_engine(url, echo=True, client_encoding=self.DEFAULT_ENCODING)
@@ -35,5 +37,5 @@ class MysqlDB(object):
         return db_meta
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

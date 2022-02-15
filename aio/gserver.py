@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-04-27
 # creator: liguopeng@liguopeng.net
 import abc
@@ -21,10 +21,10 @@ from gcommon.utils.gyaml import YamlConfigParser
 
 
 class SimpleServer(ObjectWithLogger):
-    SERVICE_NAME = 'undefined'
+    SERVICE_NAME = "undefined"
     IS_MULTI_THREAD = False
     INSTANCE = 0
-    VERSION = '0.0.0.0'
+    VERSION = "0.0.0.0"
 
     DEFAULT_CONFIG = {}
 
@@ -50,8 +50,8 @@ class SimpleServer(ObjectWithLogger):
         self.options = None
         self.args = None
 
-        self.config_file = ''
-        self.log_dir = ''
+        self.config_file = ""
+        self.log_dir = ""
 
         self.config = YamlConfigParser(self.DEFAULT_CONFIG)
         self._logger_name = self.SERVICE_NAME.lower()
@@ -61,7 +61,10 @@ class SimpleServer(ObjectWithLogger):
         parser = optparse.OptionParser()
 
         options, args = gmain.parse_command_line(
-            self.SERVICE_NAME, parser, sys.argv, parse_service_options=self.parse_service_options
+            self.SERVICE_NAME,
+            parser,
+            sys.argv,
+            parse_service_options=self.parse_service_options,
         )
 
         self.options, self.args = options, args
@@ -75,8 +78,12 @@ class SimpleServer(ObjectWithLogger):
         self.load_server_config()
         Global.set_config(self.config)
 
-        self.full_server_name = gproc.get_process_id(self.SERVICE_NAME, int(self.options.instance))
-        self.unique_server_name = gproc.get_process_unique_id(self.SERVICE_NAME, int(self.options.instance))
+        self.full_server_name = gproc.get_process_id(
+            self.SERVICE_NAME, int(self.options.instance)
+        )
+        self.unique_server_name = gproc.get_process_unique_id(
+            self.SERVICE_NAME, int(self.options.instance)
+        )
 
     @property
     def service_name(self):
@@ -90,8 +97,10 @@ class SimpleServer(ObjectWithLogger):
         #     parser.error('No arguments needed.')
         if self.options.service:
             if self.options.service != self.SERVICE_NAME:
-                parser.error('bad service name. expected: %s, got: %s.'
-                             % (self.SERVICE_NAME, self.options.service))
+                parser.error(
+                    "bad service name. expected: %s, got: %s."
+                    % (self.SERVICE_NAME, self.options.service)
+                )
         else:
             self.options.service = self.SERVICE_NAME
 
@@ -126,8 +135,13 @@ class SimpleServer(ObjectWithLogger):
         log_levels = genv.get_env(gmain.ENV_LOG_LEVEL_NAMES)
         level_names = gmain.parse_log_level_names(log_levels)
 
-        server_base.init_logger(self.options, thread_logger=self.IS_MULTI_THREAD,
-                                file_handler=log_to_file, formatter=formatter, level_names=level_names)
+        server_base.init_logger(
+            self.options,
+            thread_logger=self.IS_MULTI_THREAD,
+            file_handler=log_to_file,
+            formatter=formatter,
+            level_names=level_names,
+        )
         self.logger = logging.getLogger(self.SERVICE_NAME)
 
     def get_config_params(self):
@@ -139,10 +153,10 @@ class SimpleServer(ObjectWithLogger):
             service_root = genv.get_relative_folder(__file__, gmain.PROJECT_ROOT)
 
         params = {
-            'SERVICE': self.options.service,
-            'INSTANCE': self.options.instance,
-            'CFGROOT': cfg_root,
-            'SERVICE_ROOT': service_root,
+            "SERVICE": self.options.service,
+            "INSTANCE": self.options.instance,
+            "CFGROOT": cfg_root,
+            "SERVICE_ROOT": service_root,
         }
 
         if service_config:
@@ -161,7 +175,7 @@ class SimpleServer(ObjectWithLogger):
         log_util.log_server_started(self.logger, self.SERVICE_NAME, self.VERSION)
         self._load_cluster()
 
-        if sys.platform == 'win32':
+        if sys.platform == "win32":
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
         gasync.run_forever(self._service_main)
@@ -172,8 +186,8 @@ class SimpleServer(ObjectWithLogger):
             await maybe_async(self.init_server)
             await maybe_async(self.start_server)
         except Exception as e:
-            self.logger.error('server exception: %s', traceback.format_exc())
+            self.logger.error("server exception: %s", traceback.format_exc())
             loop = asyncio.get_event_loop()
             loop.stop()
         else:
-            self.logger.debug('--------- STARTED ---------')
+            self.logger.debug("--------- STARTED ---------")

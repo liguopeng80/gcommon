@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-06-30
 # creator: liguopeng@liguopeng.net
 import logging
@@ -21,7 +21,7 @@ def create_db_engine(db_config: JsonObject, module, logger=None, **kwargs):
         db_user = db_config.username
         db_pass = db_config.password
 
-        database = kwargs['database'] or db_config.database
+        database = kwargs["database"] or db_config.database
 
         db_manager = DatabaseManager(db_user, db_pass, database, db_host, db_port)
         return db_manager
@@ -31,11 +31,9 @@ def create_db_engine(db_config: JsonObject, module, logger=None, **kwargs):
 
 def create_sqlite_db_engine(db_config, logger, module):
     db_file = gfile.join_path(
-        Global.config.service.service_root,
-        db_config.sqlite_dbfile
+        Global.config.service.service_root, db_config.sqlite_dbfile
     )
     engine = SqliteDbEngine.create_engine(db_file, module._metadata)
     logger = logger or logging.getLogger("db")
     engine.set_logger(logger)
     return engine
-

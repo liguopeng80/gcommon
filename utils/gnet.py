@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2015-05-12
 # creator: liguopeng@liguopeng.net
 
@@ -9,6 +9,7 @@ from enum import Enum
 
 class ConnectionStatus(Enum):
     """所有支持的连接状态"""
+
     Initialized = "initialized"
     Connected = "connected"
     Closed = "closed"

@@ -5,7 +5,7 @@
 
 def count_combinations(n, m):
     """从 n 个数中，取出 m 个数的组合数"""
-    assert (n >= m)
+    assert n >= m
 
     value = 1
     for i in range(m):
@@ -16,7 +16,7 @@ def count_combinations(n, m):
 
 
 def count_full_combinations(n):
-    """从 n 个数中，分别取出 0 - n 个数的全组合数 """
+    """从 n 个数中，分别取出 0 - n 个数的全组合数"""
     value = 0
 
     for i in range(n + 1):

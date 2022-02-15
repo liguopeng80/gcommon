@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 23 Oct 2012
 # author: "Li Guo Peng" <roc.lee.80@gmail.com>
 
@@ -9,7 +9,8 @@ import sys
 from gcommon.utils import gobject, gstr
 
 
-class JsonAttributeError(AttributeError): pass
+class JsonAttributeError(AttributeError):
+    pass
 
 
 class JsonObject(dict):
@@ -33,10 +34,10 @@ class JsonObject(dict):
         return self.get(name, None)
 
     def __setattr__(self, name, value):
-        if name.find('.') == -1:
+        if name.find(".") == -1:
             self.__set_value(name, value)
         else:
-            names = name.split('.', 1)
+            names = name.split(".", 1)
             child = self.get(names[0], None)
 
             if child is None:
@@ -59,7 +60,7 @@ class JsonObject(dict):
     @staticmethod
     def loads(json_content):
         if not isinstance(json_content, str):
-            json_content = json_content.decode('utf-8')
+            json_content = json_content.decode("utf-8")
 
         j = json.loads(json_content)
         if isinstance(j, list):
@@ -75,7 +76,9 @@ class JsonObject(dict):
         return JsonObject({name: getattr(obj, name) for name in names})
 
     def dumps(self, indent=None, ensure_ascii=True, sort_keys=False):
-        result = json.dumps(self, ensure_ascii=ensure_ascii, indent=indent, sort_keys=False)
+        result = json.dumps(
+            self, ensure_ascii=ensure_ascii, indent=indent, sort_keys=False
+        )
 
         # if isinstance(result, str):
         #    result = result.encode('utf-8')
@@ -90,7 +93,10 @@ class JsonObject(dict):
         elif not old:
             setattr(self, name, [value])
         else:
-            msg = 'Item:append - the old value is not list. Name: %s, Value: %s' % (name, value)
+            msg = "Item:append - the old value is not list. Name: %s, Value: %s" % (
+                name,
+                value,
+            )
             raise JsonAttributeError(msg)
 
         return self
@@ -139,16 +145,15 @@ class JsonObject(dict):
         return json_obj
 
 
-if __name__ == '__main__':
-    user_def = {'name': 'user123', 'password': '123456',
-                "values": {"a": 1, "b": 2}}
+if __name__ == "__main__":
+    user_def = {"name": "user123", "password": "123456", "values": {"a": 1, "b": 2}}
 
     user = JsonObject(user_def)
     print(user.name)
     print(user.password)
     print(user.email)
 
-    user.email = 'user123@localhost'
+    user.email = "user123@localhost"
     print(user.email)
     print(user)
 
@@ -156,7 +161,7 @@ if __name__ == '__main__':
     print(user)
 
     user.props = {}
-    user.props.sex = 'male'
+    user.props.sex = "male"
     user.props.age = 26
     print(user)
 
@@ -166,8 +171,10 @@ if __name__ == '__main__':
 
 class JsonField(object):
     """可转化成 Json 字段的属性"""
-    def __init__(self, name="", default_value=None,
-                 *, validator=None, desc="", allow_blank=False):
+
+    def __init__(
+        self, name="", default_value=None, *, validator=None, desc="", allow_blank=False
+    ):
         self.name = name
         self.default_value = default_value
         self.validator = validator
@@ -186,19 +193,27 @@ class JsonField(object):
 
 
 class IntegerJsonField(JsonField):
-    def __init__(self, name="", default_value=None,
-                 *, validator=None, desc="", allow_blank=False):
-        JsonField.__init__(self, name=name, default_value=default_value or 0,
-                           validator=validator, desc=desc, allow_blank=allow_blank)
+    def __init__(
+        self, name="", default_value=None, *, validator=None, desc="", allow_blank=False
+    ):
+        JsonField.__init__(
+            self,
+            name=name,
+            default_value=default_value or 0,
+            validator=validator,
+            desc=desc,
+            allow_blank=allow_blank,
+        )
 
 
 class JSONable(object):
     """可以进行 json 序列化和反序列化的对象"""
+
     object_description = ""
     _enable_snake_to_camel = True
 
     def to_json(self):
-        """对象转换成 json """
+        """对象转换成 json"""
         result = JsonObject()
 
         fields = gobject.get_instances_of(JsonField, self.__class__)
@@ -250,7 +265,11 @@ class JSONable(object):
         fields = gobject.get_instances_of(JsonField, self.__class__)
 
         for field_name, field in fields:
-            json_name = field_name if not self._enable_snake_to_camel else gstr.snakeToCamel(field_name)
+            json_name = (
+                field_name
+                if not self._enable_snake_to_camel
+                else gstr.snakeToCamel(field_name)
+            )
             json_value = data.get(json_name, None)
 
             if json_value is None:
@@ -271,12 +290,14 @@ class JSONable(object):
 
 class JsonObjectField(JsonField, JSONable):
     """复合对象，用于构造复杂的 json 字段，也可以作为独立对象使用"""
+
     def __init__(self, name="", *, validator=None, desc=""):
         JsonField.__init__(self, name, default_value="", validator=validator, desc=desc)
 
 
 class JsonListField(JsonField):
     """复合对象，用于构造数组型 json 字段"""
+
     def __init__(self, name="", *, meta_class=None, validator=None, desc=""):
         JsonField.__init__(self, name, validator=validator, desc=desc)
         self.meta_class = meta_class

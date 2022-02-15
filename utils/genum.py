@@ -24,9 +24,9 @@ class Enum(object):
         self.__names = {}
         self.__values = {}
 
-        if 'starts_from' in kw:
-            index = kw.get('starts_from')
-            del kw['starts_from']
+        if "starts_from" in kw:
+            index = kw.get("starts_from")
+            del kw["starts_from"]
         else:
             index = 0
 
@@ -41,7 +41,7 @@ class Enum(object):
                 for item in name.__names.values():
                     self.add_item(item.name, item.value)
             else:
-                raise Exception('bad argument: invalid data type: %s' % name)
+                raise Exception("bad argument: invalid data type: %s" % name)
 
         for name, value in kw.items():
             if isinstance(value, tuple):
@@ -49,7 +49,7 @@ class Enum(object):
                     value, desc = value
                     self.add_item(name, value, desc)
                 else:
-                    raise Exception('bad argument: invalid tuple')
+                    raise Exception("bad argument: invalid tuple")
             else:
                 self.add_item(name, value)
 
@@ -57,7 +57,7 @@ class Enum(object):
         self.__names[item.name] = item
         self.__values[item.value] = item
 
-    def add_item(self, name, value, desc=''):
+    def add_item(self, name, value, desc=""):
         item = EnumItem(name, int(value), desc)
         setattr(self, name, item)
 
@@ -69,7 +69,7 @@ class Enum(object):
         if item:
             return item.name
         else:
-            return ''
+            return ""
 
     def value(self, name):
         item = self.__names.get(name, None)
@@ -98,9 +98,9 @@ class PlainEnum(object):
         self.__names = {}
         self.__values = {}
 
-        if 'starts_from' in kw:
-            index = kw.get('starts_from')
-            del kw['starts_from']
+        if "starts_from" in kw:
+            index = kw.get("starts_from")
+            del kw["starts_from"]
         else:
             index = 0
 
@@ -114,11 +114,11 @@ class PlainEnum(object):
                     value, desc = value
                     self.add_item(name, value, desc)
                 else:
-                    raise Exception('bad argument: invalid tuple')
+                    raise Exception("bad argument: invalid tuple")
             else:
                 self.add_item(name, value)
 
-    def add_item(self, name, value, desc=''):
+    def add_item(self, name, value, desc=""):
         item = EnumItem(name, int(value), desc)
         setattr(self, name, value)
 
@@ -159,7 +159,7 @@ class PlainEnum(object):
 
 # Test Codes
 if __name__ == "__main__":
-    EnumService = Enum('Email', 'Calendar', 'Attachemnt', 'AddressBook')
+    EnumService = Enum("Email", "Calendar", "Attachemnt", "AddressBook")
 
     print(EnumService.Email)
 
@@ -167,9 +167,9 @@ if __name__ == "__main__":
     print(EnumService.name(1))
     print(EnumService.name(EnumService.Calendar))
 
-    print(EnumService.value('Attachment'))
+    print(EnumService.value("Attachment"))
 
-    e100 = Enum('a', 'b', 'c', starts_from=0x100)
+    e100 = Enum("a", "b", "c", starts_from=0x100)
     print(e100.a.value, e100.b.value, e100.c.value)
 
-    print('Done')
+    print("Done")

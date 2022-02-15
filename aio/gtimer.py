@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2014-12-02
 
 """Timer implemented by twisted."""
@@ -17,7 +17,7 @@ from gcommon.aio import gasync
 from gcommon.aio.gasync import maybe_async
 from gcommon.utils import gregister
 
-logger = logging.getLogger('timer')
+logger = logging.getLogger("timer")
 
 
 class AsyncWait(object):
@@ -32,6 +32,7 @@ class AsyncWait(object):
 
     watch_and_wait("event1", 10)
     """
+
     def __init__(self):
         self._commands = gregister.Registry("asyncio-register")
 
@@ -41,7 +42,9 @@ class AsyncWait(object):
         logger.warning("future registered, key: %s", key)
 
     async def wait(self, key, timeout_seconds=0):
-        future: Future = self._commands.get(key, )
+        future: Future = self._commands.get(
+            key,
+        )
         if not future:
             # 没有 watch, 当作 timeout 处理
             logger.warning("wait future which is not registered, key: %s", key)
@@ -74,8 +77,12 @@ class AsyncWait(object):
 
         self._commands.unregister(key)
         if future.done() or future.cancelled():
-            logger.warning("future has been finished, key: %s, done: %s, cancelled: %s",
-                           key, future.done(), future.cancelled())
+            logger.warning(
+                "future has been finished, key: %s, done: %s, cancelled: %s",
+                key,
+                future.done(),
+                future.cancelled(),
+            )
             return
 
         logger.debug("future notified, key: %s", key)
@@ -91,8 +98,12 @@ class AsyncWait(object):
 
         self._commands.unregister(key)
         if future.done() or future.cancelled():
-            logger.warning("future has been finished, key: %s, done: %s, cancelled: %s",
-                           key, future.done(), future.cancelled())
+            logger.warning(
+                "future has been finished, key: %s, done: %s, cancelled: %s",
+                key,
+                future.done(),
+                future.cancelled(),
+            )
             return
 
         logger.warning("future notified, key: %s", key)
@@ -147,9 +158,15 @@ class AsyncTimer(object):
             self.status = self.Timed_Out
             # await self.timeout_handler(*self._args, **self._kwargs)
             try:
-                await gasync.maybe_async(self.timeout_handler, *self._args, **self._kwargs)
+                await gasync.maybe_async(
+                    self.timeout_handler, *self._args, **self._kwargs
+                )
             except:
-                logger.error("timer handler error, timer: %s, exception: %s", self, traceback.format_exc())
+                logger.error(
+                    "timer handler error, timer: %s, exception: %s",
+                    self,
+                    traceback.format_exc(),
+                )
                 raise
             # self.timeout_handler(*self._args, **self._kwargs)
 

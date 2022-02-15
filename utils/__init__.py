@@ -2,17 +2,33 @@
 # -*- coding: utf-8 -*-
 
 __all__ = [
-    "gconfig", "gcounter", "gdebug", "gdecorator",
-    "genv", "gerrors", "gfile", "ghttp",
-    "gjsonobj", "gmain", "gobject", "gobserver", "gos",
-    "gproc", "grand", "gservice", "gsecurity", "gtime",
-    "gurl", "gyaml"
+    "gconfig",
+    "gcounter",
+    "gdebug",
+    "gdecorator",
+    "genv",
+    "gerrors",
+    "gfile",
+    "ghttp",
+    "gjsonobj",
+    "gmain",
+    "gobject",
+    "gobserver",
+    "gos",
+    "gproc",
+    "grand",
+    "gservice",
+    "gsecurity",
+    "gtime",
+    "gurl",
+    "gyaml",
 ]
 
-def min_with_default(*args, **kwargs):
-    default = kwargs.get('default', None)
 
-    kwargs.pop('default', None)
+def min_with_default(*args, **kwargs):
+    default = kwargs.get("default", None)
+
+    kwargs.pop("default", None)
 
     min_value = min(*args, **kwargs)
 
@@ -38,4 +54,4 @@ def correct_int_value(value, min_value, max_value):
 
 # Test Codes
 if __name__ == "__main__":
-    print('Done')
+    print("Done")

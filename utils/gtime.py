@@ -25,6 +25,7 @@ from datetime import datetime, timedelta
 import platform
 from dateutil import parser
 import pytz
+
 # import tzlocal
 
 
@@ -113,7 +114,7 @@ def past_millisecond(time_started: int):
 
 def max_timestamp():
     """返回时戳能表示的最大日期"""
-    if '32bit' in platform.architecture():
+    if "32bit" in platform.architecture():
         max_year = 2019
     else:
         max_year = 2999
@@ -156,6 +157,7 @@ def has_expired(expiration_time: datetime):
 
 class TimeHelper(object):
     """计算 context 的执行时间"""
+
     start = 0
 
     def __init__(self, header=""):
@@ -209,7 +211,15 @@ def utc_time_str(dt=None):
 
     millisecond = int(dt.microsecond / 1000)
 
-    date_str = date_format % (dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, millisecond)
+    date_str = date_format % (
+        dt.year,
+        dt.month,
+        dt.day,
+        dt.hour,
+        dt.minute,
+        dt.second,
+        millisecond,
+    )
 
     return date_str
 
@@ -235,7 +245,15 @@ def local_time_str(dt=None):
 
     millisecond = int(dt.microsecond / 1000)
 
-    date_str = date_format % (dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, millisecond)
+    date_str = date_format % (
+        dt.year,
+        dt.month,
+        dt.day,
+        dt.hour,
+        dt.minute,
+        dt.second,
+        millisecond,
+    )
 
     return date_str
 
@@ -332,7 +350,7 @@ class DateDelta(object):
         if not dt:
             dt = datetime.now()
 
-        return dt + timedelta(days=years*365)
+        return dt + timedelta(days=years * 365)
 
     @staticmethod
     def years_before(dt=None, years=1):
@@ -340,7 +358,7 @@ class DateDelta(object):
         if not dt:
             dt = datetime.now()
 
-        return dt - timedelta(days=years*365)
+        return dt - timedelta(days=years * 365)
 
 
 def date_str_for_id(dt: datetime = None):
@@ -360,7 +378,6 @@ def date_str_by_minute(dt: datetime = None):
 # Test Codes
 if __name__ == "__main__":
     max_timestamp = max_timestamp()
-    print('Done: %s' % max_timestamp)
+    print("Done: %s" % max_timestamp)
 
     print(utc_time_str())
-

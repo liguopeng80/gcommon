@@ -20,16 +20,16 @@ def rand_string(length, case_sensitive=False):
     else:
         data = string.ascii_uppercase + string.digits
 
-    return ''.join(random.SystemRandom().choice(data) for _ in range(length))
+    return "".join(random.SystemRandom().choice(data) for _ in range(length))
 
 
 def rand_numbers(length):
     data = string.digits
-    return ''.join(random.SystemRandom().choice(data) for _ in range(length))
+    return "".join(random.SystemRandom().choice(data) for _ in range(length))
 
 
 def uuid_string():
-    return str(uuid.uuid4()).replace('-', '')
+    return str(uuid.uuid4()).replace("-", "")
 
 
 def uid_with_timestamp():
@@ -40,8 +40,9 @@ def uid_with_timestamp():
 
 class RandomSequence(object):
     """随机 ID 生成器，每个线程独立生成序号"""
+
     def __init__(self, instance="", max_value=999999):
-        self._value= 0
+        self._value = 0
         self._max_value = max_value
 
         if instance:

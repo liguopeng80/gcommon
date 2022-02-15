@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-06-28
 # creator: liguopeng@liguopeng.net
 
@@ -15,5 +15,3 @@ class Global(object):
     @classmethod
     def set_config(cls, config: YamlConfigParser):
         cls.config = config
-
-

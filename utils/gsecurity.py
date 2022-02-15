@@ -36,7 +36,11 @@ def generate_master_authentication_transport_key_groups(key_group_count=1):
     key_groups = []
     while key_group_count > 0:
         # master key, authentication key, transport key
-        key_group = {'km': generate_l1key(), 'kt': generate_l1key(), 'ka': generate_l1key()}
+        key_group = {
+            "km": generate_l1key(),
+            "kt": generate_l1key(),
+            "ka": generate_l1key(),
+        }
         key_groups.append(key_group)
         key_group_count -= 1
     return key_groups
@@ -46,8 +50,8 @@ def auto_generate_password():
     return (str(secure_uuid())[:8]).lower()
 
 
-def security_hash(str, key='1234567890'):
-    key = bytearray(key.encode('ascii'))
+def security_hash(str, key="1234567890"):
+    key = bytearray(key.encode("ascii"))
     dig = hmac.new(key, msg=str, digestmod=hashlib.sha256).digest()
     return binascii.hexlify(dig)
 

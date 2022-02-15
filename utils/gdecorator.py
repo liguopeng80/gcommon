@@ -24,4 +24,3 @@ class Decorator(object):
 class DummyDecorator(Decorator):
     def __call__(self, *args, **kwargs):
         return self.func(*args, **kwargs)
-

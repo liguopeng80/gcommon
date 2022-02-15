@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-08-02
 # creator: liguopeng@liguopeng.net
 """
@@ -26,6 +26,7 @@ import grpc
 
 class GrpcProxyMethod(object):
     """生成 grpc 请求的代理函数"""
+
     def __init__(self, server_stub, server, method_name=""):
         self.server = server
         self.server_stub = server_stub
@@ -49,6 +50,7 @@ class GrpcProxyMethod(object):
 
 class GrpcProxyHelper(object):
     """为 grpc 服务增加代理"""
+
     Attr_Excluded_Methods = "_excluded_methods"
 
     def __init__(self, server_stub, server, proxy_factory=None):

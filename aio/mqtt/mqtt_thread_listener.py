@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-06-30
 # creator: liguopeng@liguopeng.net
 
@@ -72,8 +72,9 @@ class MqttListener(threading.Thread):
         pass
 
     def on_connect(self, client, userdata, flags, rc):
-        logger.info('Connected with result code: %s, msg: %s',
-                    str(rc), mqtt.error_string(rc))
+        logger.info(
+            "Connected with result code: %s, msg: %s", str(rc), mqtt.error_string(rc)
+        )
 
         if rc != mqtt.MQTT_ERR_SUCCESS:
             return
@@ -81,13 +82,19 @@ class MqttListener(threading.Thread):
         # client.subscribe('robot/')
         assert client == self.client
         # self.client.subscribe("robot/+/topic/task_status")
-        self.loop.call_soon_threadsafe(self.observer.on_mqtt_connected, client, userdata, flags, rc)
+        self.loop.call_soon_threadsafe(
+            self.observer.on_mqtt_connected, client, userdata, flags, rc
+        )
 
     def subscribe(self, topic, qos=0, options=None, properties=None):
         result, mid = self.client.subscribe(topic, qos, options, properties)
         if result != mqtt.MQTT_ERR_SUCCESS:
-            logger.error('cannot subscribe topic: %s, code: %s, msg: %s',
-                         topic, result, mqtt.error_string(result))
+            logger.error(
+                "cannot subscribe topic: %s, code: %s, msg: %s",
+                topic,
+                result,
+                mqtt.error_string(result),
+            )
             return False
 
         return True
@@ -98,4 +105,6 @@ class MqttListener(threading.Thread):
     @abstractmethod
     def on_message(self, client, userdata, message):
         logger.info(message.topic + " " + str(message.payload))
-        self.loop.call_soon_threadsafe(self.observer.on_mqtt_message, client, userdata, message)
+        self.loop.call_soon_threadsafe(
+            self.observer.on_mqtt_message, client, userdata, message
+        )

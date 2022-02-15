@@ -13,16 +13,18 @@ from gcommon.twisted.gtimer import AsyncTimer
 
 import logging
 
-logger = logging.getLogger('async')
+logger = logging.getLogger("async")
 
 
 def pass_through(result, func, *args, **kwargs):
     try:
         func(*args, **kwargs)
     except Exception as e:
-        logger.debug('pass_through, func exception: %s, \nstack: %s',
-                     e,
-                     ''.join(traceback.format_exc()))
+        logger.debug(
+            "pass_through, func exception: %s, \nstack: %s",
+            e,
+            "".join(traceback.format_exc()),
+        )
         pass
 
     return result
@@ -33,9 +35,11 @@ def pass_through_cb(func, *args, **kwargs):
         try:
             func(*args, **kwargs)
         except Exception as e:
-            logger.debug('pass_through, func exception: %s, \nstack: %s',
-                         e,
-                         ''.join(traceback.format_exc()))
+            logger.debug(
+                "pass_through, func exception: %s, \nstack: %s",
+                e,
+                "".join(traceback.format_exc()),
+            )
             pass
 
         return result
@@ -58,7 +62,8 @@ def enable_timeout(d, seconds):
 
 
 class AsyncLock(object):
-    """ 带超时功能的异步锁 """
+    """带超时功能的异步锁"""
+
     locked = False
 
     def __init__(self, lock_name=None):
@@ -79,8 +84,12 @@ class AsyncLock(object):
             d = Deferred()
             d.callback(self)
 
-        logger.debug('<<< AsyncLock.acquire, self.locked:%s, self.waiting_clients:%s, timer:%s',
-                     self.locked, self.waiting_clients, d)
+        logger.debug(
+            "<<< AsyncLock.acquire, self.locked:%s, self.waiting_clients:%s, timer:%s",
+            self.locked,
+            self.waiting_clients,
+            d,
+        )
 
         return d
 
@@ -89,7 +98,9 @@ class AsyncLock(object):
         释放锁
         :return:
         """
-        logger.debug('>>> AsyncLock.release, self.waiting_clients:%s', self.waiting_clients)
+        logger.debug(
+            ">>> AsyncLock.release, self.waiting_clients:%s", self.waiting_clients
+        )
         assert self.locked, "Tried to release an unlocked lock"
 
         self.locked = False
@@ -110,10 +121,14 @@ class AsyncLock(object):
             return r
 
         def execute(r):
-            logger.debug('--- AsyncLock.run, func:%s', func.func_name)
+            logger.debug("--- AsyncLock.run, func:%s", func.func_name)
             client_func_defer = maybeDeferred(func, *args, **kwargs)
             client_func_defer.addBoth(release_callback)
-            logger.debug('--- AsyncLock.run, func:%s, client_func_defer: %s', func.func_name, client_func_defer)
+            logger.debug(
+                "--- AsyncLock.run, func:%s, client_func_defer: %s",
+                func.func_name,
+                client_func_defer,
+            )
 
             return client_func_defer
 
@@ -163,8 +178,13 @@ class AsyncEvent(object):
         1. 如果事件处于激发状态，立即返回；否则加入等待队列
         2. 如果事件需要自动重置，在返回时将激发状态设置为 false
         """
-        logger.debug('>>> AsyncEvent.wait, timeout:%s, signaled:%s, msg:%s, waiting:%s',
-                     timeout, self.signaled, self.message, self.waiting)
+        logger.debug(
+            ">>> AsyncEvent.wait, timeout:%s, signaled:%s, msg:%s, waiting:%s",
+            timeout,
+            self.signaled,
+            self.message,
+            self.waiting,
+        )
 
         if self.signaled:
             # 已经激发，直接返回
@@ -189,7 +209,12 @@ class AsyncEvent(object):
         assert not self.signaled
         assert not self.message
 
-        logger.debug('>>> AsyncEvent.pulse, signaled:%s, msg:%s, waiting:%s', self.signaled, msg, self.waiting)
+        logger.debug(
+            ">>> AsyncEvent.pulse, signaled:%s, msg:%s, waiting:%s",
+            self.signaled,
+            msg,
+            self.waiting,
+        )
 
         # 发送事件
         self._notify(msg)
@@ -199,7 +224,12 @@ class AsyncEvent(object):
 
     def _notify(self, msg):
         """自动重置：仅通知一个等待客户端；手动重置：通知所有等待者。"""
-        logger.debug('>>> AsyncEvent._notify, signaled:%s, msg:%s, waiting:%s', self.signaled, msg, self.waiting)
+        logger.debug(
+            ">>> AsyncEvent._notify, signaled:%s, msg:%s, waiting:%s",
+            self.signaled,
+            msg,
+            self.waiting,
+        )
 
         if isinstance(msg, Exception):
             msg = failure.Failure(exc_value=msg)
@@ -224,7 +254,7 @@ class AsyncEvent(object):
     @staticmethod
     def _notify_one_listener(d, msg):
         """通知一个接收者"""
-        logger.debug('>>> AsyncEvent._notify_one_listener, defer:%s, msg:%s', d, msg)
+        logger.debug(">>> AsyncEvent._notify_one_listener, defer:%s, msg:%s", d, msg)
         AsyncTimer.cancel_timer(d)
         reactor.callLater(0, d.callback, msg)
 
@@ -255,8 +285,12 @@ class AsyncQueue(object):
         return not self.queue
 
     def _cancel_get(self, d):
-        logger.debug('>>> AsyncQueue._cancel_get, d: %s, queue: %s, waiting_clients: %s',
-                     d, self.queue, self.waiting_clients)
+        logger.debug(
+            ">>> AsyncQueue._cancel_get, d: %s, queue: %s, waiting_clients: %s",
+            d,
+            self.queue,
+            self.waiting_clients,
+        )
         self.waiting_clients.remove(d)
 
     def put(self, obj):
@@ -265,10 +299,14 @@ class AsyncQueue(object):
         :param obj:
         :return:
         """
-        logger.debug('>>> AsyncQueue.put, queue: %s, waiting_clients: %s', self.queue, self.waiting_clients)
+        logger.debug(
+            ">>> AsyncQueue.put, queue: %s, waiting_clients: %s",
+            self.queue,
+            self.waiting_clients,
+        )
 
         if self.waiting_clients:
-            logger.debug('--- AsyncQueue.put, data came: %s', obj)
+            logger.debug("--- AsyncQueue.put, data came: %s", obj)
 
             self.waiting_clients.pop(0).callback(obj)
         elif self.size is None or len(self.queue) < self.size:
@@ -282,15 +320,22 @@ class AsyncQueue(object):
         :return: 如果 queue 不为空，返回 queue 中第一个对象；
                  如果 queue 为空，返回 Deferred 对象
         """
-        logger.debug('>>> AsyncQueue.get, queue: %s, waiting_clients: %s', self.queue, self.waiting_clients)
+        logger.debug(
+            ">>> AsyncQueue.get, queue: %s, waiting_clients: %s",
+            self.queue,
+            self.waiting_clients,
+        )
 
         if self.queue:
             return succeed(self.queue.pop(0))
         else:
 
-            if self.max_count_of_clients is None or len(self.waiting_clients) < self.max_count_of_clients:
+            if (
+                self.max_count_of_clients is None
+                or len(self.waiting_clients) < self.max_count_of_clients
+            ):
                 d = AsyncTimer.wait(timeout_seconds)
-                logger.debug('--- AsyncQueue.get, wait d: %s', d)
+                logger.debug("--- AsyncQueue.get, wait d: %s", d)
 
                 d.addErrback(pass_through, self._cancel_get, d)
                 self.waiting_clients.append(d)
@@ -300,20 +345,20 @@ class AsyncQueue(object):
             return d
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from twisted.internet.defer import inlineCallbacks
     from gcommon.logger import glogger
 
     glogger.init_logger(stdio_handler=True)
 
-    lock = AsyncLock('test_lock')
+    lock = AsyncLock("test_lock")
 
     def print_acquire_result(r):
-        logger.debug('-- acquire_result:  %s', r)
+        logger.debug("-- acquire_result:  %s", r)
         # raise Exception('haha')
 
     def test_lock_acquire(timeout_seconds):
-        logger.debug('-- test_lock_acquire')
+        logger.debug("-- test_lock_acquire")
         d = lock.acquire(timeout_seconds)
         d.addCallback(print_acquire_result)
 
@@ -330,20 +375,20 @@ if __name__ == '__main__':
         yield d
 
     queue = AsyncQueue()
-    reactor.callLater(0, queue.put, 'hah')
+    reactor.callLater(0, queue.put, "hah")
     # reactor.callLater(1, queue.get, 1)
     # reactor.callLater(1, queue.put, 'weeh')
     # reactor.callLater(2, queue.get, 2)
 
     def test_qsize():
-        logger.debug('qsize: %s', queue.qsize())
+        logger.debug("qsize: %s", queue.qsize())
 
     def test_empty():
-        logger.debug('empty: %s, queue: %s', queue.empty(), queue.queue)
+        logger.debug("empty: %s, queue: %s", queue.empty(), queue.queue)
 
     # reactor.callLater(2, test_qsize)
     reactor.callLater(1, queue.get, 2)
-    reactor.callLater(2, queue.put, failure.Failure(Exception('Test wahaha')))
+    reactor.callLater(2, queue.put, failure.Failure(Exception("Test wahaha")))
     reactor.callLater(2, queue.get, 2)
     # reactor.callLater(2, queue.get, 2)
     # reactor.callLater(0, test_empty)

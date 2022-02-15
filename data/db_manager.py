@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2022-01-13
 # creator: liguopeng@liguopeng.net
 
 import abc
+
 
 class DatabaseManager(object):
     @abc.abstractmethod

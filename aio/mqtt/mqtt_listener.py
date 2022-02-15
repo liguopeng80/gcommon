@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-06-30
 # creator: liguopeng@liguopeng.net
 
@@ -47,10 +47,11 @@ class MqttObserverBase(object):
 
 class AsyncioHelper:
     """绑定 mqtt client 的 I/O 事件到 loop 上"""
+
     def __init__(self, loop, client):
         self.loop = loop
         self.client = client
-        
+
         self.client.on_socket_open = self.on_socket_open
         self.client.on_socket_close = self.on_socket_close
         self.client.on_socket_register_write = self.on_socket_register_write
@@ -176,8 +177,9 @@ class MqttListener(object):
         pass
 
     def on_connect(self, client, userdata, flags, rc):
-        logger.info('Connected with result code: %s, msg: %s',
-                    str(rc), mqtt.error_string(rc))
+        logger.info(
+            "Connected with result code: %s, msg: %s", str(rc), mqtt.error_string(rc)
+        )
 
         if rc == mqtt.MQTT_ERR_CONN_REFUSED:
             return
@@ -194,10 +196,13 @@ class MqttListener(object):
             self._do_subscribe(topic, qos, options, properties)
 
     def on_disconnect(self, client, userdata, rc):
-        logger.error('disconnected with result code: %s, msg: %s', str(rc), mqtt.error_string(rc))
+        logger.error(
+            "disconnected with result code: %s, msg: %s", str(rc), mqtt.error_string(rc)
+        )
 
         if self._future_disconnected and (
-                self._future_disconnected.done() or self._future_disconnected.cancelled()):
+            self._future_disconnected.done() or self._future_disconnected.cancelled()
+        ):
             self._future_disconnected.set_result(rc)
             self._future_disconnected = None
 
@@ -210,12 +215,16 @@ class MqttListener(object):
         self._do_subscribe(topic, qos, options, properties)
 
     def _do_subscribe(self, topic, qos, options, properties):
-        logger.debug('subscribe topic: %s', topic)
+        logger.debug("subscribe topic: %s", topic)
         result, mid = self.client.subscribe(topic, qos, options, properties)
 
         if result != mqtt.MQTT_ERR_SUCCESS:
-            logger.error('cannot subscribe topic: %s, code: %s, msg: %s',
-                         topic, result, mqtt.error_string(result))
+            logger.error(
+                "cannot subscribe topic: %s, code: %s, msg: %s",
+                topic,
+                result,
+                mqtt.error_string(result),
+            )
             return False
 
         return True

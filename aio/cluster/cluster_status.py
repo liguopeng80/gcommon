@@ -10,18 +10,19 @@ from gcommon.aio import gasync
 from gcommon.utils.gerrors import format_exception_stack
 from gcommon.utils.gobserver import SimpleObservableSubject
 
-logger = logging.getLogger('server')
+logger = logging.getLogger("server")
 
 
 class ServerStatus(Enum):
     """服务器的运行时状态"""
+
     UNKNOWN = "unknown"
 
-    WAITING = "waiting"                # 等待外部依赖
-    STARTING = "starting"               # 正在启动
-    RUNNING = "running"                # 正在运行
-    STOPPING = "stopping"               # 正在关闭（优雅的关闭）
-    STOPPED = "stopped"                # 服务已经停止
+    WAITING = "waiting"  # 等待外部依赖
+    STARTING = "starting"  # 正在启动
+    RUNNING = "running"  # 正在运行
+    STOPPING = "stopping"  # 正在关闭（优雅的关闭）
+    STOPPED = "stopped"  # 服务已经停止
 
     ALL_STATUS = (WAITING, STARTING, RUNNING, STOPPING, STOPPED)
     ACTIVE_STATUS = (WAITING, STARTING, RUNNING)
@@ -61,9 +62,8 @@ class ServerEvent(object):
     Event_External_Service_Ready = 11
 
     # 服务器启动
-    Event_Start_Failed = 20     # 启动失败
-    Event_Started = 21          # 启动成功
+    Event_Start_Failed = 20  # 启动失败
+    Event_Started = 21  # 启动成功
 
     # 停止
     Event_Stopped = 31
-

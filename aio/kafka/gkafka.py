@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-07-29
 # creator: liguopeng@liguopeng.net
 import collections
@@ -59,10 +59,10 @@ class KafkaConfig(object):
     def create(config: JsonObject):
         self = KafkaConfig()
 
-        self.bootstrap_servers = config.get('servers')
-        self.group_id = config.get('consumer_group')
-        self.security_protocol = config.get('security_protocol')
-        self.sasl_mechanism = config.get('sasl_mechanism')
+        self.bootstrap_servers = config.get("servers")
+        self.group_id = config.get("consumer_group")
+        self.security_protocol = config.get("security_protocol")
+        self.sasl_mechanism = config.get("sasl_mechanism")
 
         if config.offset:
             self.offset_reset = config.offset
@@ -71,7 +71,7 @@ class KafkaConfig(object):
             # 动态组，每次变更组名
             self.group_id = self.group_id + f"-{int(gtime.Timestamp.seconds())}"
 
-        self.topics = config.get('topics')
+        self.topics = config.get("topics")
         return self
 
 
@@ -82,9 +82,12 @@ class KafkaConsumer(object):
     """
     callback -> KafkaConsumerCallback(topic, event_id, event_time, content)
     """
+
     Message_Content_Is_Json = True
 
-    def __init__(self, kafka_config: KafkaConfig, callback: KafkaConsumerCallback = None):
+    def __init__(
+        self, kafka_config: KafkaConfig, callback: KafkaConsumerCallback = None
+    ):
         self.config = kafka_config
 
         if callback:
@@ -107,8 +110,11 @@ class KafkaConsumer(object):
         try:
             await consumer.start()
         except KafkaError as kafka_error:
-            logger.critical("cannot connect to kafka server: %s, error: %s",
-                            self.config.bootstrap_servers, kafka_error)
+            logger.critical(
+                "cannot connect to kafka server: %s, error: %s",
+                self.config.bootstrap_servers,
+                kafka_error,
+            )
             raise
 
         try:
@@ -117,12 +123,18 @@ class KafkaConsumer(object):
                 try:
                     await self._process_kafka_message(message)
                 except:
-                    logger.error("failed to process message: %s", gerrors.format_exception_stack())
+                    logger.error(
+                        "failed to process message: %s",
+                        gerrors.format_exception_stack(),
+                    )
 
                 await consumer.commit()
         except KafkaError as kafka_error:
-            logger.critical("kafka consumer error: %s, error: %s",
-                            self.config.bootstrap_servers, kafka_error)
+            logger.critical(
+                "kafka consumer error: %s, error: %s",
+                self.config.bootstrap_servers,
+                kafka_error,
+            )
             raise
         except:
             logger.critical("kafka server error: %s", self.config.bootstrap_servers)
@@ -131,8 +143,13 @@ class KafkaConsumer(object):
             await consumer.stop()
 
     async def _process_kafka_message(self, message):
-        logger.debug("message received, topic=%s, partition=%s, offset=%s, timestamp=%s",
-                     message.topic, message.partition, message.offset, message.timestamp)
+        logger.debug(
+            "message received, topic=%s, partition=%s, offset=%s, timestamp=%s",
+            message.topic,
+            message.partition,
+            message.offset,
+            message.timestamp,
+        )
 
         event_id = f"{message.topic}-{message.partition}-{message.offset}"
         event_time = gtime.timestamp_to_date(int(message.timestamp / 1000))
@@ -140,8 +157,9 @@ class KafkaConsumer(object):
         if self.Message_Content_Is_Json:
             content = JsonObject.loads(content)
 
-        await gasync.maybe_async(self._on_kafka_message, message.topic,
-                                 event_id, event_time, content)
+        await gasync.maybe_async(
+            self._on_kafka_message, message.topic, event_id, event_time, content
+        )
 
 
 class KafkaProducer(object):
@@ -162,7 +180,7 @@ class KafkaProducer(object):
     async def send_json(self, topic, message: JsonObject, key=None):
         # Produce message
         assert self.started
-        value = message.dumps(ensure_ascii=False).encode('utf-8')
+        value = message.dumps(ensure_ascii=False).encode("utf-8")
         await self.producer.send_and_wait(topic, value=value, key=key)
 
     async def stop(self):

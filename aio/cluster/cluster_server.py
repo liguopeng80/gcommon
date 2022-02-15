@@ -13,14 +13,14 @@ from gcommon.aio.cluster.zk_service import ZookeeperService
 from gcommon.aio.gserver import SimpleServer
 from gcommon.utils import grand
 
-logger = logging.getLogger('server')
+logger = logging.getLogger("server")
 
 
 class SimpleClusterServer(SimpleServer):
     STATUS_CONTROLLER_CLASS = None
     controller = None
 
-    SERVICE_NAME = 'undefined'
+    SERVICE_NAME = "undefined"
     INSTANCE = 0
 
     DEFAULT_CONFIG = {}
@@ -48,7 +48,7 @@ class SimpleClusterServer(SimpleServer):
 
     def start_server(self):
         """启动服务器"""
-        raise NotImplementedError('for sub-class')
+        raise NotImplementedError("for sub-class")
 
     def _get_service_specific_confg(self):
         """服务器特定的配置参数"""
@@ -69,7 +69,7 @@ class SimpleClusterServer(SimpleServer):
         return self.STATUS_CONTROLLER_CLASS is not None
 
     def _is_zookeeper_enabled_in_cfg(self):
-        return self.config.get_bool('service.zookeeper.enabled')
+        return self.config.get_bool("service.zookeeper.enabled")
 
     def is_running(self):
         """服务是否正在运行"""
@@ -86,10 +86,10 @@ class SimpleClusterServer(SimpleServer):
 
     async def _init_cluster(self):
         # init zookeeper client
-        logger.debug('create zookeeper service')
+        logger.debug("create zookeeper service")
 
-        hosts = self.config.get('service.cluster.zk_hosts')
-        interval = self.config.get_int('service.cluster.connection_interval')
+        hosts = self.config.get("service.cluster.zk_hosts")
+        interval = self.config.get_int("service.cluster.connection_interval")
 
         zk_service = ZookeeperService(hosts, interval)
         # todo: register
@@ -107,15 +107,16 @@ class SimpleClusterServer(SimpleServer):
         """Zookeeper 服务状态改变"""
         if service.is_good():
             """同步调用。在成功之前，服务器不能执行任何操作，因此不会有问题。"""
-            logger.debug('creating server alive node on zookeeper')
+            logger.debug("creating server alive node on zookeeper")
 
             # 创建 service cluster 需要的 ZK 路径
             self._kazoo_client.ensure_path(self._cluster_config.working_root)
             self._kazoo_client.ensure_path(self._cluster_config.alive_root)
 
             # 监听服务节点变化
-            self._kazoo_client.ChildrenWatch(self._cluster_config.working_root,
-                                             self._on_cluster_nodes_changed)
+            self._kazoo_client.ChildrenWatch(
+                self._cluster_config.working_root, self._on_cluster_nodes_changed
+            )
 
             # 把当前节点注册到 zookeeper
             node_path = f"{self._cluster_config.working_root}/{self.cluster_id}."
@@ -136,14 +137,16 @@ class SimpleClusterServer(SimpleServer):
 
         # 根据 "server-name.sequence" 的 sequence 排序
         nodes.sort(key=lambda x: x.split(".")[1], reverse=False)
-        nodes = nodes[:self._cluster_config.max_working_nodes]
+        nodes = nodes[: self._cluster_config.max_working_nodes]
         node_names = [node.split(".") for node in nodes]
         node_names = [name for name, _sequence in node_names]
 
         if self.cluster_id not in node_names:
             # 当前节点还需要继续排队
-            logger.debug(f"{self.service_name} cluster nodes changed, "
-                         f"but current service instance need wait for working ")
+            logger.debug(
+                f"{self.service_name} cluster nodes changed, "
+                f"but current service instance need wait for working "
+            )
             return
 
         current_node_index = node_names.index(self.cluster_id)
@@ -176,8 +179,9 @@ class SimpleClusterServer(SimpleServer):
             values[node_index] = node_names[index]
         # 服务在 cluster 中的索引，用于消息路由
         service_index_in_cluster = values.index("")
-        zk_helper.update_node_data(self._kazoo_client, current_node_path,
-                                   str(service_index_in_cluster))
+        zk_helper.update_node_data(
+            self._kazoo_client, current_node_path, str(service_index_in_cluster)
+        )
 
     async def _service_main(self):
         try:
@@ -185,7 +189,7 @@ class SimpleClusterServer(SimpleServer):
             await gasync.maybe_async(self.init_server)
             await gasync.maybe_async(self.start_server)
         except Exception as e:
-            self.logger.fatal('server exception: %s', traceback.format_exc())
+            self.logger.fatal("server exception: %s", traceback.format_exc())
             gasync.stop_async_loop()
         else:
-            self.logger.debug('--------- STARTED ---------')
+            self.logger.debug("--------- STARTED ---------")

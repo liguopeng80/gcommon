@@ -1,16 +1,19 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-04-18
 # creator: liguopeng@liguopeng.net
 from gcommon.utils.gregister import Registry, RegistryItemNotExisting
 
 
-class DemoBase(object): pass
+class DemoBase(object):
+    pass
 
 
-class DemoA(DemoBase): pass
+class DemoA(DemoBase):
+    pass
 
 
-class DemoB(DemoBase): pass
+class DemoB(DemoBase):
+    pass
 
 
 def test_register_string():
@@ -54,4 +57,3 @@ def test_register_objects_with_base():
     r4.register_instances(DemoBase, locals(), str, allow_base=True)
     print(r4._objects)
     assert len(r4._objects) == 3
-

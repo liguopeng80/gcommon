@@ -15,7 +15,7 @@ from gcommon.utils import gtime
 from gcommon.utils.gcounter import Sequence, Gauge
 from gcommon.utils.gjsonobj import JsonObject
 
-logger = logging.getLogger('websock')
+logger = logging.getLogger("websock")
 
 
 class WebSocketConnection(object):
@@ -35,7 +35,7 @@ class WebSocketConnection(object):
         self.connection = connection._get_current_object()
         self._connections[self.client_id] = self.connection
 
-        logger.info('[%06x] - client connected, %s.', self.client_id, self.connection)
+        logger.info("[%06x] - client connected, %s.", self.client_id, self.connection)
 
         try:
             self._running = True
@@ -46,7 +46,7 @@ class WebSocketConnection(object):
                 data = JsonObject(data)
                 await self.on_message_received(data)
         finally:
-            logger.info('[%06x] - client closes transport.', self.client_id)
+            logger.info("[%06x] - client closes transport.", self.client_id)
             self._running = False
             await self.close_connection()
             await gasync.maybe_async(self._stop_service)
@@ -64,14 +64,21 @@ class WebSocketConnection(object):
         cmd_id = payload.cid
         cmd = payload.cmd
 
-        logger.debug('[%06x] - incoming msg: %s, id: %s, payload: %s.',
-                     self.client_id, cmd, cmd_id, payload.dumps())
+        logger.debug(
+            "[%06x] - incoming msg: %s, id: %s, payload: %s.",
+            self.client_id,
+            cmd,
+            cmd_id,
+            payload.dumps(),
+        )
 
         try:
             await gasync.maybe_async(self._handle_ws_message, cmd_id, cmd, payload)
         except:
             stack = traceback.format_exc()
-            logger.error('[%06x] - error in onMessage: %s.', self.client_id, ''.join(stack))
+            logger.error(
+                "[%06x] - error in onMessage: %s.", self.client_id, "".join(stack)
+            )
             raise
 
     @abstractmethod
@@ -106,8 +113,12 @@ class WebSocketConnection(object):
 
     async def send_message(self, payload: JsonObject):
         message_sequence = self._message_seq.next_value()
-        logger.debug('[%06x] - outgoing msg, seq: %s, size: %s.',
-                     self.client_id, message_sequence, payload.dumps())
+        logger.debug(
+            "[%06x] - outgoing msg, seq: %s, size: %s.",
+            self.client_id,
+            message_sequence,
+            payload.dumps(),
+        )
 
         payload.cid = str(message_sequence)
         payload.timestamp = gtime.local_time_str()

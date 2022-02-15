@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-07-30
 # creator: liguopeng@liguopeng.net
 import asyncio
@@ -31,5 +31,5 @@ async def test_config():
     await consumer.consume_forever()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(test())

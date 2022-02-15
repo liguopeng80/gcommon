@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2017-02-13
 # creator: liguopeng@liguopeng.net
 import inspect
@@ -35,7 +35,9 @@ class Registry(object):
 
         return value
 
-    def register_classes(self, base_class, context, func_get_name=None, allow_base=False):
+    def register_classes(
+        self, base_class, context, func_get_name=None, allow_base=False
+    ):
         """注册某个上下文中的所有子类"""
         if inspect.ismodule(context):
             context = dir(context)
@@ -49,7 +51,9 @@ class Registry(object):
                     name = func_get_name(value)
                 self._objects[name] = value
 
-    def register_instances(self, base_class, context, func_get_name=None, allow_base=False):
+    def register_instances(
+        self, base_class, context, func_get_name=None, allow_base=False
+    ):
         """注册某个上下文中的所有对象"""
         if inspect.ismodule(context):
             context = dir(context)
@@ -62,6 +66,3 @@ class Registry(object):
                 if func_get_name:
                     name = func_get_name(value)
                 self._objects[name] = value
-
-
-

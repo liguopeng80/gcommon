@@ -8,17 +8,17 @@ import platform
 
 def is_windows():
     uname = platform.uname()
-    return uname[0].lower() == 'windows'
+    return uname[0].lower() == "windows"
 
 
 def get_env(name):
     """查看环境变量"""
-    return os.environ.get(name, '')
+    return os.environ.get(name, "")
 
 
 def get_env_bool(name):
     """查看环境变量"""
-    value = os.environ.get(name, '').lower()
+    value = os.environ.get(name, "").lower()
     return value in ("t", "true", "y", "yes")
 
 
@@ -30,14 +30,14 @@ def set_env(name, new_value):
 def get_relative_folder(base_path, relative_path):
     """根据 base 目录，以及目标目录相对该目录的相对路径，得到目标目录的绝对路径。"""
     fullname = os.path.abspath(base_path)
-    
+
     if os.path.isdir(fullname):
         folder = fullname
     else:
         folder, _filename = os.path.split(fullname)
-    
+
     abs_folder = os.path.abspath(os.path.join(folder, relative_path))
-    
+
     return abs_folder
 
 
@@ -52,6 +52,5 @@ def get_folder(fullname):
         folder = fullname
     else:
         folder, _filename = os.path.split(fullname)
-    
-    return os.path.abspath(folder)
 
+    return os.path.abspath(folder)

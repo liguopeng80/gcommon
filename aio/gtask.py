@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2014-12-02
 
 """Timer implemented by twisted."""
@@ -31,7 +31,9 @@ class ScheduledTask(object):
         self.status = self.Started
 
         loop = asyncio.get_event_loop()
-        self._delayed_call = loop.call_later(self.seconds, self._on_timeout)  # @UndefinedVariable
+        self._delayed_call = loop.call_later(
+            self.seconds, self._on_timeout
+        )  # @UndefinedVariable
 
         return self
 
@@ -70,4 +72,4 @@ class ScheduledTask(object):
 
 # Test Codes
 if __name__ == "__main__":
-    print('Done')
+    print("Done")

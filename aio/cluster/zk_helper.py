@@ -10,7 +10,7 @@ from gcommon.aio.cluster.cluster_manager import ClusterManager
 from gcommon.utils import gstr
 from gcommon.utils.gglobal import Global
 
-logger = logging.getLogger('cluster')
+logger = logging.getLogger("cluster")
 
 
 def zk_create_working_node(zk_client, server, data=None):
@@ -27,7 +27,7 @@ def zk_create_alive_node(zk_client, data=None):
     """创建在线服务节点（不一定工作）"""
     server = ClusterManager.server
 
-    alive_root = server.cfg.get('service.cluster.path_alive_apps')
+    alive_root = server.cfg.get("service.cluster.path_alive_apps")
 
     root_path = alive_root + "/" + server.SERVICE_NAME
     node_path = root_path + "/" + server.unique_server_name
@@ -59,9 +59,9 @@ def get_path_to_current_working_node(server):
 
 def get_path_to_working_service(service_name):
     """某个服务器的工作节点根目录"""
-    working_root = Global.config.get('service.cluster.path_working_apps')
+    working_root = Global.config.get("service.cluster.path_working_apps")
 
-    if working_root.endswith('/'):
+    if working_root.endswith("/"):
         working_root = working_root[:-1]
 
     root_path = f"{working_root}/{service_name}"
@@ -79,9 +79,9 @@ def get_path_to_current_alive_node(server):
 
 def get_path_to_alive_service(service_name):
     """某个服务器的工作节点根目录"""
-    alive_root = Global.config.get('service.cluster.path_alive_apps')
+    alive_root = Global.config.get("service.cluster.path_alive_apps")
 
-    if alive_root.endswith('/'):
+    if alive_root.endswith("/"):
         alive_root = alive_root[:-1]
 
     root_path = f"{alive_root}/{service_name}"

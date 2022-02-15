@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # author: "Li Guo Peng" <liguopeng@liguopeng.net>
 
 
@@ -43,7 +43,7 @@ class GError(object):
 class GExcept(Exception):
     def __init__(self, error_obj: GError, message="", **kwargs):
         # desc = '%s (%s): %s' % (error_obj.code, error_obj.name, error_obj.desc + message)
-        desc = '%s (%s): %s' % (error_obj.code, error_obj.name, message)
+        desc = "%s (%s): %s" % (error_obj.code, error_obj.name, message)
         Exception.__init__(self, desc)
 
         self.cmd_error = error_obj.code
@@ -83,5 +83,3 @@ class GUnauthorized(GExcept):
 class GUnsupported(GExcept):
     # 不支持请求的操作
     pass
-
-

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-06-23
 # creator: liguopeng@liguopeng.net
 import logging
@@ -36,7 +36,7 @@ def web_response(result, *args, **kws):
         r["current"] = paginator.current_page
 
         if paginator.total:
-            r['total'] = paginator.total
+            r["total"] = paginator.total
 
         kws.pop("paginator")
 
@@ -117,14 +117,20 @@ async def handle_bad_request(e):
     if isinstance(e, GExcept):
         resp = web_exception_response(e)
     else:
-        resp = web_error_response(GErrors.gen_server_internal, desc=str(e) or str(type(e)))
+        resp = web_error_response(
+            GErrors.gen_server_internal, desc=str(e) or str(type(e))
+        )
 
     if type(e) == NotFound:
         pass
     else:
-        logger.error("request (from %s): %s %s - %s",
-                      request.remote_addr, request.method, request.full_path,
-                     traceback.format_exc())
+        logger.error(
+            "request (from %s): %s %s - %s",
+            request.remote_addr,
+            request.method,
+            request.full_path,
+            traceback.format_exc(),
+        )
         # logger.error("request (from %s): %s %s - %s",
         #             request.remote_addr, request.method, request.full_path, e)
     return resp
@@ -133,8 +139,12 @@ async def handle_bad_request(e):
 async def log_request_and_response(response):
     """web 服务器的 access log"""
     if type(request.routing_exception) == NotFound:
-        logger.access("404 - request (from %s): %s %s",
-                      request.remote_addr, request.method, request.full_path)
+        logger.access(
+            "404 - request (from %s): %s %s",
+            request.remote_addr,
+            request.method,
+            request.full_path,
+        )
         return response
 
     if request.is_json and request.content_length:
@@ -158,9 +168,14 @@ async def log_request_and_response(response):
         response_body = await gasync.maybe_async(response.get_data)
 
     request_body = request_body or None
-    logger.access("request (from %s): %s %s - %s, response: %s",
-                  request.remote_addr, request.method, request.full_path,
-                  request_body, response_body)
+    logger.access(
+        "request (from %s): %s %s - %s, response: %s",
+        request.remote_addr,
+        request.method,
+        request.full_path,
+        request_body,
+        response_body,
+    )
 
     return response
 
@@ -209,11 +224,12 @@ request_formatter = RequestFormatter(
 
 default_handler.setFormatter(request_formatter)
 # serving_handler.setFormatter(RequestFormatter("%(t)s %(r)s %(s)s %(b)s"))
-logging.getLogger('quart.serving').setLevel(logging.ERROR)
+logging.getLogger("quart.serving").setLevel(logging.ERROR)
 
 
 def disable_detail_response_log(f):
     """禁止详细响应日志"""
+
     @wraps(f)
     async def wrap(*args, **kwargs):
         setattr(request, WebConst.GCOMMON_DETAIL_RESPONSE_LOG, False)

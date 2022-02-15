@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-08-21
 # creator: liguopeng@liguopeng.net
 
@@ -47,4 +47,3 @@ async def update_log_level(name, level):
     logger.setLevel(new_level)
 
     return web_response_ok(oldLevel=old_level)
-

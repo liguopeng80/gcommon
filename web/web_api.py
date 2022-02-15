@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-08-18
 # creator: liguopeng@liguopeng.net
 
@@ -62,7 +62,7 @@ class SimpleWebApi(WebApiBase):
         extra_params = {
             "appname": self.app_name,
             "secret": self.secret,
-            "ts": gtime.local_timestamp(in_milliseconds=True)
+            "ts": gtime.local_timestamp(in_milliseconds=True),
         }
 
         params = request_items + list(extra_params.items())
@@ -70,10 +70,10 @@ class SimpleWebApi(WebApiBase):
         params = "|".join(params)
 
         signature = hashlib.md5()
-        signature.update(params.encode(encoding='utf-8'))
-        signature = binascii.hexlify(signature.digest()).decode('utf-8')[:32]
+        signature.update(params.encode(encoding="utf-8"))
+        signature = binascii.hexlify(signature.digest()).decode("utf-8")[:32]
 
-        del extra_params['secret']
+        del extra_params["secret"]
 
         result = {}
         result.update(kwargs)
@@ -87,7 +87,7 @@ class SimpleWebApi(WebApiBase):
         extra_params = {
             "appname": self.app_name,
             "secret": self.secret,
-            "ts": gtime.local_timestamp(in_milliseconds=True)
+            "ts": gtime.local_timestamp(in_milliseconds=True),
         }
 
         params = request_items + list(extra_params.items())
@@ -95,20 +95,22 @@ class SimpleWebApi(WebApiBase):
         for key, value in params:
             # 处理嵌套的 json 对象
             if type(value) == list:
-                value = json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+                value = json.dumps(
+                    value, sort_keys=True, ensure_ascii=False, separators=(",", ":")
+                )
             param_strings.append(f"{key}:{value}")
 
         params = "|".join(param_strings)
 
         signature = hashlib.md5()
-        signature.update(params.encode(encoding='utf-8'))
-        signature = binascii.hexlify(signature.digest()).decode('utf-8')[:32]
+        signature.update(params.encode(encoding="utf-8"))
+        signature = binascii.hexlify(signature.digest()).decode("utf-8")[:32]
 
         result = {}
         result.update(extra_params)
         result.update({"sign": signature})
 
-        del result['secret']
+        del result["secret"]
 
         return result
 

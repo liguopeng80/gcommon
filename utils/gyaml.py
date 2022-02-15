@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 30 Dec 2014
 # author: "Guo Peng Li" <liguopeng@liguopeng.net>
 
@@ -33,13 +33,13 @@ class ConfigParser(object):
         if ret:
             return str(ret)
         else:
-            return ''
+            return ""
 
     def get_bool(self, name):
         value = self.get_str(name)
         value = value.lower()
 
-        if value in ('t', 'true'):
+        if value in ("t", "true"):
             return True
 
         value = self.get_int(name)
@@ -55,7 +55,7 @@ class ConfigParser(object):
             return int(ret)
         except:
             return 0
-        
+
     def get_float(self, name):
         """Get an int value from current config set."""
         ret = self._get(self._options, name)
@@ -78,7 +78,7 @@ class ConfigParser(object):
             elif type(value) is str:
                 # from "$(CLOUD)" to "%(CLOUD)s"
                 value = value.strip()
-                if params and value.find('$') != -1:
+                if params and value.find("$") != -1:
                     value = re.sub(r"\$\((\w+)\)", "%(\\1)s", value)
                     value = value % params
             else:
@@ -110,7 +110,7 @@ class ConfigParser(object):
         if cls._name_is_case_insensitive:
             name = name.lower()
 
-        names = name.split('.')
+        names = name.split(".")
 
         root = options
 
@@ -140,7 +140,7 @@ class YamlConfigParser(ConfigParser):
     args = []
     _config_root = ""
 
-    def read(self, filename, params=None, encoding='utf-8'):
+    def read(self, filename, params=None, encoding="utf-8"):
         if not filename:
             return
 
@@ -163,14 +163,18 @@ class YamlConfigParser(ConfigParser):
         options = self._parse_group(file_options, params)
         self._options = JsonObject(options)
 
-    def load_module(self, module_name, filename, params=None, encoding='utf-8', defaults=None):
+    def load_module(
+        self, module_name, filename, params=None, encoding="utf-8", defaults=None
+    ):
         config = YamlConfigParser(defaults=defaults)
         config.read(filename, params, encoding)
 
         self._options[module_name] = config._options
         self._defaults[module_name] = config._defaults
 
-    def load_module_in_config_folder(self, module_name, filename="", params=None, encoding='utf-8', defaults=None):
+    def load_module_in_config_folder(
+        self, module_name, filename="", params=None, encoding="utf-8", defaults=None
+    ):
         config = YamlConfigParser(defaults=defaults)
 
         filename = filename or (module_name + ".yaml")
@@ -184,15 +188,15 @@ class YamlConfigParser(ConfigParser):
 # Test Codes
 if __name__ == "__main__":
     default_values = {
-        'mysql.server': 'localhost',
-        'mysql.poolsize': 10,
-        'ucloud.test': 1,
+        "mysql.server": "localhost",
+        "mysql.poolsize": 10,
+        "ucloud.test": 1,
     }
 
-    p = {'service': 'gatekeeper'}
+    p = {"service": "gatekeeper"}
 
     print(platform.system())
-    demo_filename = './test/demo_data.yaml'
+    demo_filename = "./test/demo_data.yaml"
 
     parser = YamlConfigParser(default_values)
     parser.read(demo_filename, p)
@@ -202,5 +206,4 @@ if __name__ == "__main__":
     print(parser.get("ucloud.test"))
     assert parser.get("ucloud.test") == "test"
 
-    print('Done')
-
+    print("Done")

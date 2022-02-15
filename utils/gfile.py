@@ -11,14 +11,14 @@ from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 
 
 def remove_trailing_slash(path):
-    if path.endswith('/'):
+    if path.endswith("/"):
         path = path[:-1]
 
     return path
 
 
 def write_file(filename, content):
-    with open(filename, 'w+') as f:
+    with open(filename, "w+") as f:
         f.write(content)
 
 
@@ -97,11 +97,11 @@ def copy_files_ext(src_pat, dest):
 
         if os.path.isdir(filename):
             # copy a folder
-            dir_name = os.path.join(dest, filename[len(src_pat) - 1:])
+            dir_name = os.path.join(dest, filename[len(src_pat) - 1 :])
             if not os.path.exists(dir_name):
                 os.mkdir(dir_name)
                 pass
-            copy_files_ext(filename + '/*', dir_name)
+            copy_files_ext(filename + "/*", dir_name)
         else:
             # copy a source file
             shutil.copy(filename, dest)
@@ -151,17 +151,17 @@ def zip(archive_name, *targets):
 
 def _zip_a_folder(z, path):
     # put all contents in a folder into the root directory of the zip file
-    assert(os.path.isdir(path))
+    assert os.path.isdir(path)
 
     _, filename = os.path.split(path)
     if filename:
         # no os sep on the trail
         base_path = filename + os.sep
     else:
-        base_path = ''
+        base_path = ""
 
     if path.endswith(os.sep):
-        path = path[:-len(os.sep)]
+        path = path[: -len(os.sep)]
 
     for root, dirs, files in os.walk(path):
         # "root" is based on path, for example:
@@ -171,22 +171,23 @@ def _zip_a_folder(z, path):
         # NOTE: ignore empty directories
         for fn in files:
             abs_fn = os.path.join(root, fn)
-            zfn = base_path + abs_fn[len(path)+len(os.sep):]  # XXX: relative path
+            zfn = base_path + abs_fn[len(path) + len(os.sep) :]  # XXX: relative path
             z.write(abs_fn, zfn)
 
         for dn in dirs:
             abs_fn = os.path.join(root, dn)
-            zfn = base_path + abs_fn[len(path)+len(os.sep):] + '\\'  # XXX: relative path
+            zfn = (
+                base_path + abs_fn[len(path) + len(os.sep) :] + "\\"
+            )  # XXX: relative path
 
             zfi = ZipInfo(zfn)
             zfi.external_attr = 48
-            z.writestr(zfi, '')
+            z.writestr(zfi, "")
 
 
 def _zip_a_file(z, path):
     # put the file into the root directory of the zip file
-    assert(os.path.isfile(path))
+    assert os.path.isfile(path)
 
     _, filename = os.path.split(path)
     z.write(path, filename)
-

@@ -1,10 +1,14 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-06-30
 # creator: liguopeng@liguopeng.net
 import asyncio
 import logging
 
-from gcommon.aio.mqtt.mqtt_thread_listener import MqttConfig, MqttObserverBase, MqttListener
+from gcommon.aio.mqtt.mqtt_thread_listener import (
+    MqttConfig,
+    MqttObserverBase,
+    MqttListener,
+)
 from gcommon.logger.glogger import init_basic_config
 from gcommon.logger.log_util import log_callback
 
@@ -21,7 +25,7 @@ class MyObserver(MqttObserverBase):
         print(message.timestamp)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     init_basic_config()
 
     config = MqttConfig()
@@ -44,4 +48,3 @@ if __name__ == '__main__':
 
     loop.create_task(start_mqtt())
     loop.run_forever()
-

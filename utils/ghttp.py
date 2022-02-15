@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2013-05-25
 # creator: liguopeng@liguopeng.net
 import urllib
@@ -15,10 +15,10 @@ def download_file(url, target_file):
         file.write(r.content)
 
 
-Content_Type_XML = 'application/xml'
-Content_Type_Plain_Text = 'text/plain'
-Content_Type_JSON = 'application/json'
-Content_Type_URL_Encoded = 'application/x-www-form-urlencoded; charset=UTF-8'
+Content_Type_XML = "application/xml"
+Content_Type_Plain_Text = "text/plain"
+Content_Type_JSON = "application/json"
+Content_Type_URL_Encoded = "application/x-www-form-urlencoded; charset=UTF-8"
 
 
 class Session(object):

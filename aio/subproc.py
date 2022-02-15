@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # author: Guopeng Li
 # created: 27 Aug 2008
 
@@ -29,7 +29,6 @@ class ProcessExitException(Exception):
 
 
 def start_process(func, *args, **kwargs):
-
     def _process_main():
         reactor.callWhenRunning(func, *args, **kwargs)
         reactor.run()
@@ -49,7 +48,9 @@ class FileTailer(object):
         self._event_sink = event_sink
 
     def start(self):
-        reactor.spawnProcess(self.proc_tail, 'tail', ['-c +10000', '-c10', '-F', self.filename])
+        reactor.spawnProcess(
+            self.proc_tail, "tail", ["-c +10000", "-c10", "-F", self.filename]
+        )
 
     def stop(self):
         reactor.stop()
@@ -70,11 +71,11 @@ class SubprocessProtocol(protocol.ProcessProtocol):
 
         self.outLiner = basic.LineReceiver()
         self.outLiner.lineReceived = partial(self.manager.on_stdout_received, self)
-        self.outLiner.delimiter = '\n'
+        self.outLiner.delimiter = "\n"
 
         self.errLiner = basic.LineReceiver()
         self.errLiner.lineReceived = partial(self.manager.on_stderr_received, self)
-        self.errLiner.delimiter = '\n'
+        self.errLiner.delimiter = "\n"
 
     def outReceived(self, data):
         self.outLiner.dataReceived(data)
@@ -83,7 +84,7 @@ class SubprocessProtocol(protocol.ProcessProtocol):
         self.errLiner.dataReceived(data)
 
     def processExited(self, status):
-        """ This is called when the child process has been reaped, and receives
+        """This is called when the child process has been reaped, and receives
         information about the process' exit status. The status is passed in the
         form of a Failure instance, created with a .value that either holds a
         ProcessDone object if the process terminated normally (it died of natural

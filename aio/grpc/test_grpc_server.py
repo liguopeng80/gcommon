@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-07-31
 # creator: liguopeng@liguopeng.net
 
@@ -16,20 +16,22 @@ _cleanup_coroutines = []
 
 class Greeter(helloworld_pb2_grpc.GreeterServicer):
     async def SayHello(
-            self, request: helloworld_pb2.HelloRequest,
-            context: grpc.aio.ServicerContext) -> helloworld_pb2.HelloReply:
+        self, request: helloworld_pb2.HelloRequest, context: grpc.aio.ServicerContext
+    ) -> helloworld_pb2.HelloReply:
 
-        logging.info('Received request, sleeping for 1 seconds...')
+        logging.info("Received request, sleeping for 1 seconds...")
         # await asyncio.sleep(0.01)
-        logging.info('Sleep completed, responding')
+        logging.info("Sleep completed, responding")
 
-        return helloworld_pb2.HelloReply(message=f'Hello, {request.name} - {datetime.now()}! ')
+        return helloworld_pb2.HelloReply(
+            message=f"Hello, {request.name} - {datetime.now()}! "
+        )
 
 
 async def serve() -> None:
     server = grpc.aio.server()
     helloworld_pb2_grpc.add_GreeterServicer_to_server(Greeter(), server)
-    listen_addr = '[::]:50051'
+    listen_addr = "[::]:50051"
     server.add_insecure_port(listen_addr)
     logging.info("Starting server on %s", listen_addr)
     await server.start()
@@ -46,6 +48,6 @@ async def serve() -> None:
     await server.wait_for_termination()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     asyncio.run(serve())

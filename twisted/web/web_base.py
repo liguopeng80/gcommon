@@ -26,7 +26,7 @@ from ...utils.gurl import ensure_trailing_slash
 
 post_client = None
 
-logger = logging.getLogger('webbase')
+logger = logging.getLogger("webbase")
 
 
 def router(url_pattern, **args):
@@ -35,9 +35,10 @@ def router(url_pattern, **args):
         setattr(func, WebConst.ROUTER_PARAM_OPT, args)
 
         # Save original param list in function for wrapping
-        arg_names = func.__code__.co_varnames[1:func.__code__.co_argcount]
+        arg_names = func.__code__.co_varnames[1 : func.__code__.co_argcount]
         setattr(func, WebConst.ROUTER_PARAM_VIEW_FUNC_PARAMS, arg_names)
         return func
+
     return __inner
 
 
@@ -57,30 +58,31 @@ class ApiRouter(object):
 
 
 class HttpWebBase(resource.Resource):
-    """ Base providing web service
-        Base Web Service class, All service api should be here
-        Usage:
-            all business handlers should be decorated with @router(uri, accepted_methods)
-            accepted methods is 'GET' by default, leading handler param must be *request*
+    """Base providing web service
+    Base Web Service class, All service api should be here
+    Usage:
+        all business handlers should be decorated with @router(uri, accepted_methods)
+        accepted methods is 'GET' by default, leading handler param must be *request*
 
-            e.g.    @router('/hello/world')
-                    def hello_world(self, request):
-                        pass
+        e.g.    @router('/hello/world')
+                def hello_world(self, request):
+                    pass
 
-                    @router('/hello/world', methods=['GET', 'POST])
-                    def hello_world(self, request):
-                        pass
+                @router('/hello/world', methods=['GET', 'POST])
+                def hello_world(self, request):
+                    pass
 
-            mutable parts in URI should be bracketed with '<' and '>', variable names with
-            in the brackets is used as handler params
+        mutable parts in URI should be bracketed with '<' and '>', variable names with
+        in the brackets is used as handler params
 
-            e.g.    @router('/api/team/<team_id>/invitations')
-                    def _process_team_invitations(self, request, team_id)
-                        pass
+        e.g.    @router('/api/team/<team_id>/invitations')
+                def _process_team_invitations(self, request, team_id)
+                    pass
 
-            add extra accepted methods is NOT supported by now, so handlers dealing with same
-            RESTful API should check the request's method
+        add extra accepted methods is NOT supported by now, so handlers dealing with same
+        RESTful API should check the request's method
     """
+
     isLeaf = False
 
     def __init__(self, config):
@@ -98,12 +100,14 @@ class HttpWebBase(resource.Resource):
 
         # Retrieve real ip address
         # TODO: X-Forwarded-For Check
-        if 'x-real-ip' in request.requestHeaders._rawHeaders:
-            real_ip = str(request.requestHeaders._rawHeaders['x-real-ip'][0])
+        if "x-real-ip" in request.requestHeaders._rawHeaders:
+            real_ip = str(request.requestHeaders._rawHeaders["x-real-ip"][0])
         else:
             real_ip = str(request.client.host)
 
-        logger.info('process request from %s:%s: %s', real_ip, request.client.port, path)
+        logger.info(
+            "process request from %s:%s: %s", real_ip, request.client.port, path
+        )
 
         # Process request
         try:
@@ -112,15 +116,17 @@ class HttpWebBase(resource.Resource):
             d.addCallback(pass_through_cb(self._app.serve, path, request, method))
             return NOT_DONE_YET
         except TypeError as e:
-            result = HttpWebBase.return_result(GErrors.gen_bad_request, error_message=e.message)
+            result = HttpWebBase.return_result(
+                GErrors.gen_bad_request, error_message=e.message
+            )
         except NotImplementedError:
             result = HttpWebBase.return_result(GErrors.gen_bad_request)
         except GExcept as e:
             result = HttpWebBase.return_result(e.cmd_error, error_message=e.message)
 
-        logger.access('%s - result:%s',path, result.result)
+        logger.access("%s - result:%s", path, result.result)
 
-        request.setHeader('Content-Type', 'application/json')
+        request.setHeader("Content-Type", "application/json")
         return result.dumps()
 
     @staticmethod
@@ -130,11 +136,11 @@ class HttpWebBase(resource.Resource):
 
         if isinstance(req_message, list):
             # log = (",").join([item.dumps() for item in req_message ])
-            logger.debug('Request args - %s', req_message)
-            
+            logger.debug("Request args - %s", req_message)
+
         else:
-            logger.debug('Request args - %s', req_message.dumps())
-            
+            logger.debug("Request args - %s", req_message.dumps())
+
         return req_message
 
     @staticmethod
@@ -172,20 +178,20 @@ class HttpWebBase(resource.Resource):
 
     @staticmethod
     def _hash_strings(*args):
-        content = ''.join(args)
+        content = "".join(args)
         sha512 = hashlib.sha512(content)
         return binascii.hexlify(sha512.digest())
 
     @staticmethod
     def _get_token_string(token_id, token_text):
-        return '%d-%s' % (token_id, token_text)
+        return "%d-%s" % (token_id, token_text)
 
 
 class Welcome(resource.Resource):
     isLeaf = False
 
     def getChild(self, name, request):
-        if name == b'':
+        if name == b"":
             return self
         return resource.Resource.getChild(self, name, request)
 

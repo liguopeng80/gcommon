@@ -9,7 +9,7 @@ from enum import Enum
 
 from gcommon.utils.gobserver import SimpleObservableSubject
 
-logger = logging.getLogger('cluster')
+logger = logging.getLogger("cluster")
 
 
 class ExternalServiceLevel(Enum):
@@ -37,6 +37,7 @@ class ExternalServiceIssue(object):
     1. 故障发生时，服务器必须停止处理客户端请求
     2. 故障解决后，服务器才能继续对外提供服务
     """
+
     Service_Starting = "starting"  # Not a real error
 
     Err_Desc_Cannot_Be_Reached = "cannot-reach"
@@ -47,11 +48,12 @@ class ExternalServiceIssue(object):
         self.desc = desc
 
     def __str__(self):
-        return '%s, %s' % (self.name, self.desc)
+        return "%s, %s" % (self.name, self.desc)
 
 
 class ExternalService(SimpleObservableSubject):
     """服务器运行所依赖的外部服务，用来管理服务状态"""
+
     def __init__(self, name, level=ExternalServiceLevel.Crucial):
         SimpleObservableSubject.__init__(self)
 
@@ -62,7 +64,7 @@ class ExternalService(SimpleObservableSubject):
         self._issue: ExternalServiceIssue = None
 
     def start(self):
-        raise NotImplementedError('for-sub-class')
+        raise NotImplementedError("for-sub-class")
 
     def is_good(self):
         return self._status.is_good()
@@ -75,7 +77,7 @@ class ExternalService(SimpleObservableSubject):
 
     def enable_service(self):
         """服务状态从不可用变为可用"""
-        logger.info('external service %s enabled...', self.name)
+        logger.info("external service %s enabled...", self.name)
 
         self._status = ExternalServiceStatus.Good
         self._issue = None
@@ -84,7 +86,7 @@ class ExternalService(SimpleObservableSubject):
 
     def disable_service(self, issue=None):
         """服务器状态从可用变为不可用"""
-        logger.info('external service %s disabled!!!', self.name)
+        logger.info("external service %s disabled!!!", self.name)
 
         self._status = ExternalServiceStatus.Bad
         self._issue = issue
@@ -95,14 +97,9 @@ class ExternalService(SimpleObservableSubject):
         pass
 
     def __str__(self):
-        desc = '%s-%s-%s' % (
-            self.name,
-            self._status.name,
-            self._level.name
-        )
+        desc = "%s-%s-%s" % (self.name, self._status.name, self._level.name)
 
         if self._issue:
-            desc += '(%s)' % self._issue
+            desc += "(%s)" % self._issue
 
         return desc
-

@@ -21,11 +21,11 @@ from kazoo.protocol.states import KazooState, KeeperState
 from gcommon.aio import gasync
 from gcommon.utils.gnet import ConnectionStatus
 
-logger = logging.getLogger('kazoo')
+logger = logging.getLogger("kazoo")
 
 
 class ZookeeperObserver(object):
-    ZK_Conn_Connecting = 'CONNECTING'
+    ZK_Conn_Connecting = "CONNECTING"
 
     def __init__(self):
         self._client_manager = None
@@ -40,7 +40,7 @@ class ZookeeperObserver(object):
 
     def on_connection_failed(self, reason=None):
         """Client Manager 回调"""
-        logger.error('cannot connect to zookeeper, reason: %s', reason)
+        logger.error("cannot connect to zookeeper, reason: %s", reason)
 
         self._conn_status = ConnectionStatus.Closed
         self._zk_conn_status = KazooState.LOST
@@ -65,7 +65,9 @@ class ZookeeperObserver(object):
 
     def on_connection_status_changed(self, state):
         """在 ZK 的独立线程中调用（禁止在主线程调用）"""
-        logger.debug('connection status changed from %s to %s', self._zk_conn_status, state)
+        logger.debug(
+            "connection status changed from %s to %s", self._zk_conn_status, state
+        )
         self._zk_conn_status = state
 
         if state == KazooState.CONNECTED:
@@ -78,26 +80,27 @@ class ZookeeperObserver(object):
             gasync.run_in_main_thread(self._on_conn_opened)
 
         elif state == KazooState.LOST:
-            logger.debug('kazoo connection lost (client closed)')
+            logger.debug("kazoo connection lost (client closed)")
             self._conn_status = ConnectionStatus.Closed
             gasync.run_in_main_thread(self._on_conn_lost)
 
         elif state == KazooState.SUSPENDED:
-            logger.debug('kazoo connection suspended (maybe the server is gone)')
+            logger.debug("kazoo connection suspended (maybe the server is gone)")
             self._conn_status = ConnectionStatus.Suspended
             gasync.run_in_main_thread(self._on_conn_suspended)
 
 
 class _ZookeeperClientThread(threading.Thread):
     """运行 kazoo 客户端的专用线程。"""
+
     def __init__(self, client):
         threading.Thread.__init__(self, daemon=True)
         self._client = client
 
     def run(self):
-        logger.info('enter kazoo thread')
+        logger.info("enter kazoo thread")
         self._client.thread_main()
-        logger.info('leave kazoo thread')
+        logger.info("leave kazoo thread")
 
 
 class ZookeeperClient(object):
@@ -105,6 +108,7 @@ class ZookeeperClient(object):
 
     不处理任何实际业务。处理业务的是 ZookeeperService.
     """
+
     def __init__(self, observer, server_addr):
         self._observer = observer
 
@@ -128,7 +132,7 @@ class ZookeeperClient(object):
     def _process_service_control_message(self):
         """处理控制消息"""
         message = self._q_service_control.get()
-        logger.debug('process control message: %s', message)
+        logger.debug("process control message: %s", message)
 
         if message == "stop":
             self._is_running = False
@@ -137,19 +141,19 @@ class ZookeeperClient(object):
     def start(self):
         """启动独立线程运行 zookeeper 客户端 - 主线程调用"""
         assert gasync.AsyncThreads.is_main_loop()
-        logger.info('start kazoo client')
+        logger.info("start kazoo client")
 
         self._kazoo_client.add_listener(self._observer.on_connection_status_changed)
         self._thread.start()
 
     def stop(self):
-        logger.info('stop kazoo client')
-        self.send_control_message('stop')
+        logger.info("stop kazoo client")
+        self.send_control_message("stop")
 
     def wait(self):
-        logger.info('wait kazoo client exiting')
+        logger.info("wait kazoo client exiting")
         self._thread.join()
-        logger.info('kazoo client stopped')
+        logger.info("kazoo client stopped")
 
     def thread_main(self):
         """尝试连接服务器，如果多次连接失败则抛出超时错"""

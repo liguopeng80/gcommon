@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-04-16
 # creator: liguopeng@liguopeng.net
 
@@ -14,25 +14,25 @@ from gcommon.utils.gjsonobj import JsonObject
 from gcommon.utils.gyaml import YamlConfigParser
 
 
-DEFAULT_CONFIG_FILE = 'default.yaml'
-DEFAULT_SECRET_CONFIG_FILE = 'secret.default.yaml'
+DEFAULT_CONFIG_FILE = "default.yaml"
+DEFAULT_SECRET_CONFIG_FILE = "secret.default.yaml"
 
-PROJECT_ROOT = '../../../'
-PROJECT_LOG_DIR = '../../../log/'
-PROJECT_CONFIG_DIR = '../../../deploy/'
-PROJECT_SECRET_CONFIG_DIR = '../../../deploy/'
+PROJECT_ROOT = "../../../"
+PROJECT_LOG_DIR = "../../../log/"
+PROJECT_CONFIG_DIR = "../../../deploy/"
+PROJECT_SECRET_CONFIG_DIR = "../../../deploy/"
 
-ENV_PROJECT_ROOT = 'G_PROJECT_ROOT'
-ENV_CONFIG_FILE = 'G_COMMON_CONFIG_FILE'
-ENV_CONFIG_DIR = 'G_COMMON_CONFIG_DIR'
-ENV_SECRET_CONFIG_FILE = 'G_COMMON_SECRET_CONFIG_FILE'
-ENV_SECRET_CONFIG_DIR = 'G_COMMON_SECRET_CONFIG_DIR'
-ENV_LOG_DIR = 'G_COMMON_LOG_DIR'
+ENV_PROJECT_ROOT = "G_PROJECT_ROOT"
+ENV_CONFIG_FILE = "G_COMMON_CONFIG_FILE"
+ENV_CONFIG_DIR = "G_COMMON_CONFIG_DIR"
+ENV_SECRET_CONFIG_FILE = "G_COMMON_SECRET_CONFIG_FILE"
+ENV_SECRET_CONFIG_DIR = "G_COMMON_SECRET_CONFIG_DIR"
+ENV_LOG_DIR = "G_COMMON_LOG_DIR"
 
 
-ENV_LOG_FORMAT = 'G_COMMON_LOG_FORMAT'
-ENV_LOG_NOT_TO_FILE = 'G_COMMON_LOG_NOT_TO_FILE'
-ENV_LOG_LEVEL_NAMES = 'G_COMMON_LOG_LEVEL_NAMES'
+ENV_LOG_FORMAT = "G_COMMON_LOG_FORMAT"
+ENV_LOG_NOT_TO_FILE = "G_COMMON_LOG_NOT_TO_FILE"
+ENV_LOG_LEVEL_NAMES = "G_COMMON_LOG_LEVEL_NAMES"
 
 
 def parse_log_level_names(str_log_level_names):
@@ -54,43 +54,85 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
     %(app)s [-c override_config_file] [-i instance] [-l log_folder] [--sid service_id]"""
 
     usage_param = {
-        'app': all_args[0],
-        'service': service_name,
+        "app": all_args[0],
+        "service": service_name,
     }
 
     print(usage_param)
     parser.set_usage(usage_text % usage_param)
 
     # add arguments
-    parser.add_option('-c', '--config-file', dest='config_file',
-                      action='store', default='', help='server config file')
+    parser.add_option(
+        "-c",
+        "--config-file",
+        dest="config_file",
+        action="store",
+        default="",
+        help="server config file",
+    )
 
-    parser.add_option('--secret-config', dest='secret_config_file',
-                      action='store', default='', help='server secret config file')
+    parser.add_option(
+        "--secret-config",
+        dest="secret_config_file",
+        action="store",
+        default="",
+        help="server secret config file",
+    )
 
-    parser.add_option('-s', '--service', dest='service',
-                      action='store', default='', help='service name')
+    parser.add_option(
+        "-s",
+        "--service",
+        dest="service",
+        action="store",
+        default="",
+        help="service name",
+    )
 
-    parser.add_option('-i', '--instance', dest='instance',
-                      action='store', default=0, help='instance sequence')
+    parser.add_option(
+        "-i",
+        "--instance",
+        dest="instance",
+        action="store",
+        default=0,
+        help="instance sequence",
+    )
 
-    parser.add_option('--log-folder', dest='log_folder',
-                      action='store', default='', help='log folder')
+    parser.add_option(
+        "--log-folder", dest="log_folder", action="store", default="", help="log folder"
+    )
 
-    parser.add_option('-l', '--log-base', dest='log_base',
-                      action='store', default='', help='log base')
+    parser.add_option(
+        "-l", "--log-base", dest="log_base", action="store", default="", help="log base"
+    )
 
-    parser.add_option('--log-line-no', dest='log_line_no',
-                      action='store_true', default=False, help='log file name and line no')
+    parser.add_option(
+        "--log-line-no",
+        dest="log_line_no",
+        action="store_true",
+        default=False,
+        help="log file name and line no",
+    )
 
-    parser.add_option('--sid', dest='service_id',
-                      action='store', default='', help='service ID')
+    parser.add_option(
+        "--sid", dest="service_id", action="store", default="", help="service ID"
+    )
 
-    parser.add_option('-d', '--debug', dest='debug',
-                      action='store_true', default=False, help='enable debug')
+    parser.add_option(
+        "-d",
+        "--debug",
+        dest="debug",
+        action="store_true",
+        default=False,
+        help="enable debug",
+    )
 
-    parser.add_option('--multi-thread', dest='multi_thread',
-                      action='store_true', default=False, help='is multi thread service')
+    parser.add_option(
+        "--multi-thread",
+        dest="multi_thread",
+        action="store_true",
+        default=False,
+        help="is multi thread service",
+    )
 
     if parse_service_options:
         parse_service_options(parser)
@@ -131,7 +173,7 @@ def get_log_folder(options, default_config: JsonObject):
     elif not options.instance:
         log_folder = os.path.join(log_base, options.service)
     else:
-        log_folder = os.path.join(log_base, options.service, '%s' % options.instance)
+        log_folder = os.path.join(log_base, options.service, "%s" % options.instance)
 
     # create if the log folder is not existed
     if not os.path.isdir(log_folder):
@@ -195,14 +237,22 @@ def get_secret_config_file(options, default_config: JsonObject):
         return default_config.secret_config_file
 
     if default_config.secret_config_dir:
-        return os.path.join(default_config.secret_config_dir, DEFAULT_SECRET_CONFIG_FILE)
+        return os.path.join(
+            default_config.secret_config_dir, DEFAULT_SECRET_CONFIG_FILE
+        )
 
     # 默认配置
     project_cfg_dir = genv.get_relative_folder(__file__, PROJECT_SECRET_CONFIG_DIR)
     return os.path.join(project_cfg_dir, DEFAULT_SECRET_CONFIG_FILE)
 
 
-def init_main(*, service_name="", default_config: dict = None, thread_logger=False, parse_service_options=None) -> YamlConfigParser:
+def init_main(
+    *,
+    service_name="",
+    default_config: dict = None,
+    thread_logger=False,
+    parse_service_options=None
+) -> YamlConfigParser:
     """加载进程的基本配置，并初始化日志等设置"""
     if not service_name:
         full_service_name = sys.argv[0]
@@ -215,7 +265,9 @@ def init_main(*, service_name="", default_config: dict = None, thread_logger=Fal
 
     # 解析命令行参数
     parser = optparse.OptionParser()
-    options, args = parse_command_line(service_name, parser, sys.argv, parse_service_options=parse_service_options)
+    options, args = parse_command_line(
+        service_name, parser, sys.argv, parse_service_options=parse_service_options
+    )
 
     # 初始化日志服务
     log_folder = get_log_folder(options, default_config)
@@ -237,8 +289,9 @@ def init_main(*, service_name="", default_config: dict = None, thread_logger=Fal
     return config
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import logging
+
     default_demo_config = {"config_file": "test/demo_data.yaml"}
     demo_config = init_main(service_name="demo", default_config=default_demo_config)
 
@@ -246,5 +299,3 @@ if __name__ == '__main__':
     logger.debug(demo_config)
 
     pass
-
-

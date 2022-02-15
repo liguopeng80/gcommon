@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-06-23
 # creator: liguopeng@liguopeng.net
 import json
@@ -76,4 +76,3 @@ async def delete(url, **kwargs):
         async with session.delete(url, **kwargs) as response:
             logger.debug("DELETE %s - %s", url, response.status)
             return await response.json()
-

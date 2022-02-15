@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2015-08-18
 
 import re
@@ -18,11 +18,12 @@ from gcommon.error import *
 from gcommon.twisted.web.web_utils import WebConst, set_options_methods
 
 
-logger = logging.getLogger('Router')
+logger = logging.getLogger("Router")
 
 
 def url_route(url_pattern, **args):
     """Decorator: 修饰 URL 的处理函数，构造 URL MAP."""
+
     def __inner(func):
         setattr(func, WebConst.ROUTER_PARAM_PATH, url_pattern)
         setattr(func, WebConst.ROUTER_PARAM_OPT, args)
@@ -41,9 +42,9 @@ class WebNavigator(object):
             uri_path = getattr(item, WebConst.ROUTER_PARAM_PATH, None)
             if uri_path:
                 router_opts = getattr(item, WebConst.ROUTER_PARAM_OPT)
-                methods = set(router_opts.pop('methods', []))
+                methods = set(router_opts.pop("methods", []))
 
-                method = router_opts.pop('method', None)
+                method = router_opts.pop("method", None)
                 if method:
                     methods.add(method)
 
@@ -51,18 +52,18 @@ class WebNavigator(object):
 
     @staticmethod
     def build_route_pattern(route):
-        """ compile url pattern into regex """
+        """compile url pattern into regex"""
         # 替换路径中的参数，比如 /store/<storeid>
-        route_regex = re.sub(r'(<\w+>)', r'(?P\1[-_:\\.\\w]+)', route)
+        route_regex = re.sub(r"(<\w+>)", r"(?P\1[-_:\\.\\w]+)", route)
         return re.compile("^{}$".format(route_regex))
 
     def add_url_rules(self, route_str, view_func, methods):
-        """ add url pattern into routing table
-            a table content contains
-                - url pattern
-                - view function
-                - accepted methods
-                    -If methods not defined, acceptable methods will be set to GET by default
+        """add url pattern into routing table
+        a table content contains
+            - url pattern
+            - view function
+            - accepted methods
+                -If methods not defined, acceptable methods will be set to GET by default
         """
         if not methods:
             methods = {"GET"}
@@ -73,7 +74,7 @@ class WebNavigator(object):
         self.routes.append((route_pattern, view_func, methods))
 
     def get_route_match(self, path, method):
-        """ Get correspond view function from routing table """
+        """Get correspond view function from routing table"""
         for route_pat, view_func, methods in self.routes:
             if method not in methods:
                 # requested method must in accepted methods
@@ -88,14 +89,20 @@ class WebNavigator(object):
 
     @inlineCallbacks
     def serve(self, path, request, method):
-        """ serve a request from specific path """
-        logger.debug('process %s request start - from %s:%s: %s', method, request.client.host, request.client.port, path)
+        """serve a request from specific path"""
+        logger.debug(
+            "process %s request start - from %s:%s: %s",
+            method,
+            request.client.host,
+            request.client.port,
+            path,
+        )
         request.loaded_content = request.content.read()
         when_started = time.time()
 
         route_match = self.get_route_match(path, method)
         if route_match:
-            if method == 'OPTIONS':
+            if method == "OPTIONS":
                 set_options_methods(request, allowed_methods=route_match[-1])
                 result = GErrors.ok
 
@@ -103,17 +110,23 @@ class WebNavigator(object):
                 rtn.code = result.code
                 rtn.message = result.desc
                 request.write(rtn.dumps())
-                logger.access('processed %s request from %s:%s: %s - result: %s',
-                              method, request.client.host, request.client.port, path, rtn)
+                logger.access(
+                    "processed %s request from %s:%s: %s - result: %s",
+                    method,
+                    request.client.host,
+                    request.client.port,
+                    path,
+                    rtn,
+                )
                 request.finish()
                 return
-            elif method == 'POST':
+            elif method == "POST":
                 set_options_methods(request, post=True)
-            elif method == 'GET':
+            elif method == "GET":
                 set_options_methods(request, get=True)
-            elif method == 'PUT':
+            elif method == "PUT":
                 set_options_methods(request, put=True)
-            elif method == 'DEL':
+            elif method == "DEL":
                 set_options_methods(request, delete=True)
 
             # 获取 URL 中匹配的模式参数和处理函数
@@ -123,7 +136,7 @@ class WebNavigator(object):
             params[WebConst.ROUTER_VIEW_FUNC_KWS_REQUEST] = request
             params[WebConst.ROUTER_VIEW_FUNC_KWS_METHOD] = method
             # todo: remove this line
-            params['kwargs'] = params
+            params["kwargs"] = params
 
             # 提取处理函数需要的参数（去除 self 参数）
             arg_names = getattr(view_func, WebConst.ROUTER_PARAM_VIEW_FUNC_PARAMS)
@@ -140,8 +153,12 @@ class WebNavigator(object):
                 try:
                     f.raiseException()
                 except Exception as e:
-                    logger.error('%s - error - exception: %s, stack: \n%s', view_func.__name__,
-                                 f.getErrorMessage(), ''.join(traceback.format_tb(f.getTracebackObject())))
+                    logger.error(
+                        "%s - error - exception: %s, stack: \n%s",
+                        view_func.__name__,
+                        f.getErrorMessage(),
+                        "".join(traceback.format_tb(f.getTracebackObject())),
+                    )
 
                     result = JsonObject()
                     if isinstance(e, GExcept):
@@ -162,13 +179,19 @@ class WebNavigator(object):
             result.code = GErrors.server_not_implemented.code
             result.message = GErrors.server_not_implemented.desc
 
-        request.setHeader('Content-Type', 'application/json')
-        request.write(result.dumps().encode('utf-8'))
+        request.setHeader("Content-Type", "application/json")
+        request.write(result.dumps().encode("utf-8"))
 
-        logger.access('processed %s request from %s:%s: %sms - %s - %s - %s',
-                      method, request.client.host, request.client.port,
-                      gtime.past_millisecond(when_started),
-                      path, request.loaded_content, result)
+        logger.access(
+            "processed %s request from %s:%s: %sms - %s - %s - %s",
+            method,
+            request.client.host,
+            request.client.port,
+            gtime.past_millisecond(when_started),
+            path,
+            request.loaded_content,
+            result,
+        )
         request.finish()
 
 
@@ -179,31 +202,33 @@ if __name__ == "__main__":
             pass
 
     class Test(object):
-        @url_route('/api/hello')
-        def hello(self, ):
+        @url_route("/api/hello")
+        def hello(
+            self,
+        ):
             return "Hello World!"
 
-        @url_route('/api/hello/<username>')
+        @url_route("/api/hello/<username>")
         def hello_user(self, username):
             return "HELLO {}".format(username)
 
-        @url_route('/api/hello/<username>/team/<teamname>')
+        @url_route("/api/hello/<username>/team/<teamname>")
         def hello_join(self, username, teamname):
             return "Hello %s, welcome to %s" % (username, teamname)
 
-        @url_route('/api/hello/noparam', method='GET')
+        @url_route("/api/hello/noparam", method="GET")
         def hello_noparam(self, noparm):
-            return "Hello %s." % (noparm or 'noparam')
+            return "Hello %s." % (noparm or "noparam")
 
-        @url_route('/api/hello/request/<request_id>')
+        @url_route("/api/hello/request/<request_id>")
         def hello_with_request(self, request, request_id):
             return "Hello %s in %s." % (request_id, request)
 
     app = WebNavigator(Test())
     request = Request()
 
-    print(app.serve('/api/hello', request, 'GET'))
-    print(app.serve('/api/hello/current', request, 'GET'))
+    print(app.serve("/api/hello", request, "GET"))
+    print(app.serve("/api/hello/current", request, "GET"))
 
-    print(app.serve('/api/hello/noparam', request, 'GET'))
-    print(app.serve('/api/hello/request/guli', request, 'GET'))
+    print(app.serve("/api/hello/noparam", request, "GET"))
+    print(app.serve("/api/hello/request/guli", request, "GET"))

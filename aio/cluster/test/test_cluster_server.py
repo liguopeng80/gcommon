@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-11-23
 # creator: liguopeng@liguopeng.net
 import sys
@@ -9,7 +9,7 @@ from gcommon.utils.gglobal import Global
 
 
 class DemoClusterServer(SimpleClusterServer):
-    SERVICE_NAME = 'guli-demo'
+    SERVICE_NAME = "guli-demo"
     INSTANCE = 0
 
     def start_server(self):
@@ -17,8 +17,7 @@ class DemoClusterServer(SimpleClusterServer):
         pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     config_file = genv.get_relative_folder(__file__, "demo-cluster-server.yaml")
     genv.set_env(gmain.ENV_CONFIG_FILE, config_file)
     DemoClusterServer.start()
-

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-11-21
 # creator: liguopeng@liguopeng.net
 from gcommon.aio.cluster import zk_helper
@@ -27,11 +27,12 @@ class ClusterConfig(object):
         return f"{self._lock_root}/{lock_name}"
 
     @staticmethod
-    def parse(cluster_config: JsonObject, service_name = None):
+    def parse(cluster_config: JsonObject, service_name=None):
         self = ClusterConfig()
 
         gobject.copy_attributes(
-            cluster_config, self,
+            cluster_config,
+            self,
             "zk_hosts",
             "cluster_enabled",
             "service_name",
@@ -39,7 +40,7 @@ class ClusterConfig(object):
             "max_working_nodes",
             "path_working_apps",
             "path_alive_apps",
-            "path_app_locks"
+            "path_app_locks",
         )
 
         if service_name:

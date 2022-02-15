@@ -26,4 +26,3 @@ class Observer(object):
 
     def __nonzero__(self):
         return self._d is not None
-

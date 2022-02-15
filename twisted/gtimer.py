@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2014-12-02
 
 """Timer implemented by twisted."""
@@ -8,7 +8,8 @@ from twisted.internet import reactor
 from twisted.internet.defer import Deferred, timeout, inlineCallbacks
 
 import logging
-logger = logging.getLogger('timer')
+
+logger = logging.getLogger("timer")
 
 
 class AsyncTimer(object):
@@ -20,7 +21,7 @@ class AsyncTimer(object):
 
     @staticmethod
     def wait(seconds):
-        """ wait until interrupted by callback or timeout that will raise a CancelledError """
+        """wait until interrupted by callback or timeout that will raise a CancelledError"""
         d = Deferred()
         _delayed_call = reactor.callLater(seconds, timeout, d)
         d._gcommon_delayed_call = _delayed_call
@@ -47,59 +48,62 @@ class Timer(object):
     Started = 1
     Timed_Out = 2
     Cancelled = 3
-    
+
     def __init__(self, seconds, timeout_handler, *args, **kwargs):
         self.status = self.Not_Started
-        
+
         self.seconds = seconds
 
         self.timeout_handler = timeout_handler
         self._args = args
         self._kwargs = kwargs
-        
+
         self._delayed_call = None
-        
+
     def start(self):
         if self.status != self.Not_Started:
             return None
-            
+
         self.status = self.Started
-        self._delayed_call = reactor.callLater(self.seconds, self._on_timeout)  # @UndefinedVariable
-        
+        self._delayed_call = reactor.callLater(
+            self.seconds, self._on_timeout
+        )  # @UndefinedVariable
+
         return self
 
-    def restart(self, seconds = 0):
+    def restart(self, seconds=0):
         if seconds:
             self.seconds = seconds
-            
+
         if self.status == self.Started:
             self.cancel()
-            
+
         self.status = self.Not_Started
         self.start()
-        
+
         return self
-        
+
     def cancel(self):
         if self.status != self.Started:
             return
-            
+
         self.status = self.Cancelled
         self._delayed_call.cancel()
-        
+
     def _on_timeout(self):
         if self.status != self.Started:
             return
-            
-        self.status = self.Timed_Out        
+
+        self.status = self.Timed_Out
         self.timeout_handler(*self._args, **self._kwargs)
 
 
 @inlineCallbacks
 def test():
     from twisted.internet.defer import CancelledError
+
     max_count = 10
-    
+
     # def foo():
     #     print 'haha', count
     #     if count > max_count:
@@ -134,7 +138,6 @@ def test():
     r = yield result
     print(r)
 
-
     print("Done")
 
 
@@ -142,4 +145,4 @@ def test():
 if __name__ == "__main__":
     test()
     reactor.run()  # @UndefinedVariable
-    print('Done')
+    print("Done")

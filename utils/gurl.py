@@ -4,7 +4,7 @@
 
 
 def remove_trailing_slash(path):
-    if path.endswith('/'):
+    if path.endswith("/"):
         path = path[:-1]
 
     return path

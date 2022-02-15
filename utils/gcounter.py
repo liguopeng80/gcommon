@@ -9,6 +9,7 @@ from contextlib import contextmanager
 
 class _Register(object):
     """具有名称的对象的全局注册表"""
+
     _items = None
 
     @classmethod
@@ -40,6 +41,7 @@ class _Register(object):
 
 class Sequence(object):
     """序列号生成器"""
+
     def __init__(self, start=0, step=1):
         self.value = start
         self.step = step
@@ -74,6 +76,7 @@ class SimpleCounter(object):
 
 class Counter(SimpleCounter, _Register):
     """有名称的计数器将被存入全局注册表。"""
+
     def __init__(self, name=None):
         SimpleCounter.__init__(self)
         if name:
@@ -112,6 +115,7 @@ class Gauge(object):
 
 class Timer(_Register):
     """统计调用时间"""
+
     @staticmethod
     @contextmanager
     def create(name):
@@ -153,7 +157,7 @@ def demo():
     connections = Counter("total_connections")
     connections.inc(100)
 
-    with Gauge.create('active_connections', 1):
+    with Gauge.create("active_connections", 1):
         # {'total_connections': 100, 'active_connections': 1}
         print(Counter.all())
 
@@ -161,7 +165,7 @@ def demo():
     print(Counter.all())
 
     for i in range(10):
-        with Timer.create('user_login'):
+        with Timer.create("user_login"):
             time.sleep(0.01)
 
     for name, timer in Timer.all().items():
@@ -169,6 +173,6 @@ def demo():
         print(name, timer.clear())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     demo()
-    print('Done')
+    print("Done")

@@ -17,7 +17,7 @@ logger = logging.getLogger("proc")
 
 
 def _hostname():
-    return socket.gethostname().replace('-', '').lower()
+    return socket.gethostname().replace("-", "").lower()
 
 
 def get_process_id(service_name, instance_id=0):
@@ -28,9 +28,9 @@ def get_process_id(service_name, instance_id=0):
     """
     # server01.gateway.00
     if instance_id:
-        proc_id = '%s.%s.%02d' % (_hostname(), service_name, instance_id)
+        proc_id = "%s.%s.%02d" % (_hostname(), service_name, instance_id)
     else:
-        proc_id = '%s.%s' % (_hostname(), service_name)
+        proc_id = "%s.%s" % (_hostname(), service_name)
 
     return proc_id
 
@@ -44,21 +44,26 @@ def get_process_unique_id(service_name, instance_id=0):
     pid = os.getpid()
 
     # server01.gateway.00.87312
-    myid = '%s.%s.%02d.%s' % (_hostname(), service_name, instance_id, pid)
+    myid = "%s.%s.%02d.%s" % (_hostname(), service_name, instance_id, pid)
 
     return myid
 
 
-def execute_command(cmd_str, working_dir="",
-                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
+def execute_command(
+    cmd_str,
+    working_dir="",
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+):
     """执行系统命令，并返回 process 对象。
-    
+
     例如：
     cmd = 'sh -c "ps -ef | grep -i python | grep -i %s | grep -v grep"' % sid
     proc = execute(cmd)
     """
     logger.debug("execute: %s (in %s)", cmd_str, working_dir or os.curdir)
-        
+
     old_curdir = os.curdir
     if working_dir:
         os.chdir(working_dir)
@@ -95,8 +100,15 @@ def execute_and_read_lines(cmd_str) -> [str]:
     return lines
 
 
-def execute_and_wait(cmd_str, working_dir="", ensure_success=True,
-                     stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=0):
+def execute_and_wait(
+    cmd_str,
+    working_dir="",
+    ensure_success=True,
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    timeout=0,
+):
     p = execute_command(cmd_str, working_dir, stdin, stdout, stderr)
 
     if timeout:
@@ -105,10 +117,10 @@ def execute_and_wait(cmd_str, working_dir="", ensure_success=True,
         p.wait()
 
     for line in p.stdout.readlines():
-        line = line.strip().decode('utf-8')
+        line = line.strip().decode("utf-8")
         logger.debug("%s", line)
 
-    if p.returncode ==0:
+    if p.returncode == 0:
         logger.debug("success on cmd: %s", cmd_str)
     else:
         message = "failed on cmd: %s (code: %s)" % (cmd_str, p.returncode)
@@ -119,9 +131,8 @@ def execute_and_wait(cmd_str, working_dir="", ensure_success=True,
     return p.returncode
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     execute_and_wait("ls -l")
     execute_and_wait("wget https://www.baidu.com")
     execute_and_wait("mv not-existed-file wrong-target")
-

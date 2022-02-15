@@ -1,14 +1,14 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2016-01-18
 
 import aiohttp
 
 
-Content_Type_XML = 'application/xml'
-Content_Type_Plain_Text = 'text/plain'
-Content_Type_JSON = 'application/json'
-Content_Type_URL_Encoded = 'application/x-www-form-urlencoded; charset=UTF-8'
+Content_Type_XML = "application/xml"
+Content_Type_Plain_Text = "text/plain"
+Content_Type_JSON = "application/json"
+Content_Type_URL_Encoded = "application/x-www-form-urlencoded; charset=UTF-8"
 
 
 class Session(object):
@@ -34,5 +34,3 @@ class Session(object):
     async def delete(self, url, **kwargs):
         async with self.session.delete(url, **kwargs) as response:
             return await response.text()
-
-

@@ -18,13 +18,16 @@ from .. import BaseManager
 class SqliteDbEngine(ObjectWithLogger):
     is_debug = False
 
-    logger = logging.getLogger('db')
+    logger = logging.getLogger("db")
     logger.setLevel(logging.INFO)
 
     def __init__(self, db_conn_str, pool_size=15):
         if self.is_debug:
             from sqlalchemy.pool import AssertionPool
-            self.db_engine = create_engine(db_conn_str, poolclass=AssertionPool, pool_recycle=3600, echo=True)
+
+            self.db_engine = create_engine(
+                db_conn_str, poolclass=AssertionPool, pool_recycle=3600, echo=True
+            )
         else:
             self.db_engine = create_engine(db_conn_str)
 
@@ -34,27 +37,41 @@ class SqliteDbEngine(ObjectWithLogger):
     @contextmanager
     def create_session(self, expunge=False):
         sess = self.db_session()
-        self.logger.debug('[%x] - db session create - %s', threading.get_ident(), sess)
+        self.logger.debug("[%x] - db session create - %s", threading.get_ident(), sess)
         try:
             yield sess
         except Exception as e:
-            self.logger.error('[%x] - db session or app error - %s - exception: %s', threading.get_ident(), sess, e)
+            self.logger.error(
+                "[%x] - db session or app error - %s - exception: %s",
+                threading.get_ident(),
+                sess,
+                e,
+            )
             sess.rollback()
             raise
         else:
             try:
                 sess.commit()
-                self.logger.debug('[%x] - db session commit - %s', threading.get_ident(), sess)
+                self.logger.debug(
+                    "[%x] - db session commit - %s", threading.get_ident(), sess
+                )
 
                 if expunge:
                     sess.expunge_all()
 
             except Exception as e:
-                self.logger.error('[%x] - db session or app error - %s - exception: %s', threading.get_ident(), sess, e)
+                self.logger.error(
+                    "[%x] - db session or app error - %s - exception: %s",
+                    threading.get_ident(),
+                    sess,
+                    e,
+                )
                 sess.rollback()
                 raise
         finally:
-            self.logger.debug('[%x] - db session close - %s', threading.get_ident(), sess)
+            self.logger.debug(
+                "[%x] - db session close - %s", threading.get_ident(), sess
+            )
             sess.close()
 
     @staticmethod
@@ -75,8 +92,8 @@ class SqliteManager(BaseManager):
 
     @property
     def _url(self):
-        return 'sqlite:///%s' % self.path
+        return "sqlite:///%s" % self.path
 
     @property
     def _async_url(self):
-        return 'sqlite+aiosqlite:///%s' % self.path
+        return "sqlite+aiosqlite:///%s" % self.path

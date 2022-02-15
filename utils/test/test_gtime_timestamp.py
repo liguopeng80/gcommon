@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-08-26
 # creator: liguopeng@liguopeng.net
 from gcommon.utils import gtime
@@ -18,5 +18,5 @@ def test():
         print(dt, dt.tzinfo)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test()

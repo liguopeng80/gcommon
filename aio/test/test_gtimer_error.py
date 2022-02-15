@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-07-04
 # creator: liguopeng@liguopeng.net
 
@@ -23,5 +23,5 @@ async def test():
         print(result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(test())

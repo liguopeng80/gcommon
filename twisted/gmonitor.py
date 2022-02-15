@@ -12,7 +12,7 @@ from gcommon.utils.gcounter import Gauge
 from gcommon.utils.gcounter import Timer
 from functools import wraps
 
-logger = logging.getLogger('monitor')
+logger = logging.getLogger("monitor")
 
 
 def monitor(name=None):
@@ -29,15 +29,21 @@ def monitor(name=None):
                 counter = Counter(func_name)
 
             counter.inc()
-            gauge_name = '%s_active' % func_name
-            timer_name = '%s_time' % func_name
+            gauge_name = "%s_active" % func_name
+            timer_name = "%s_time" % func_name
             with Gauge.create(gauge_name), Timer.create(timer_name):
                 result = yield maybeDeferred(func, *args, **kwargs)
 
-            logger.debug("function %s counter %s active %s", func_name, counter.value,
-                     Counter.get(gauge_name).value)
+            logger.debug(
+                "function %s counter %s active %s",
+                func_name,
+                counter.value,
+                Counter.get(gauge_name).value,
+            )
             returnValue(result)
+
         return __inner
+
     return monitor_decorator
 
 
@@ -53,15 +59,15 @@ def demo():
     func_name = monitor_test.__name__
     # func_name="aaa"
     counter = Counter.get(func_name)
-    print('func %s counter is %s' % (func_name, counter.value))
-    gauge_name = func_name + '_active'
+    print("func %s counter is %s" % (func_name, counter.value))
+    gauge_name = func_name + "_active"
     gauge = Counter.get(gauge_name)
-    print('func %s gauge is %s' % (gauge_name, gauge))
-    timer_name = func_name + '_time'
+    print("func %s gauge is %s" % (gauge_name, gauge))
+    timer_name = func_name + "_time"
     timer = Timer.get(timer_name)
-    print('func %s time is %d' % (timer_name, timer.clear()))
+    print("func %s time is %d" % (timer_name, timer.clear()))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     demo()
-    print('Done')
+    print("Done")

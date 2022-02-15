@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-06-17
 # creator: liguopeng@liguopeng.net
 
@@ -33,6 +33,7 @@ class AsyncTask(object):
 
 class AsyncEvent(object):
     """可以等待的事件对象"""
+
     def __init__(self, triggered=False, pulse_mode=False, auto_reset=True):
         self._triggered = triggered
         self._result = True
@@ -81,6 +82,7 @@ class AsyncEvent(object):
 
 class AsyncThreads(object):
     """管理当前进程中的事件循环，用于跨线程通信"""
+
     _main_loop = None
     _loops = {}
 
@@ -134,6 +136,7 @@ def _proxy_to_async_call(func, *args, **kwargs):
 
 def callback_run_in_main_thread(func):
     """decorator: 将回调发送到主线程（不在当前线程执行）"""
+
     def __func(*args, **kwargs):
         run_in_main_thread(func, *args, **kwargs)
 
@@ -157,6 +160,7 @@ def async_call_later(timeout, func, *args, **kwargs):
 
     :func: 同步或异步函数
     """
+
     async def _delay_call():
         await asyncio.sleep(timeout)
 
@@ -166,8 +170,9 @@ def async_call_later(timeout, func, *args, **kwargs):
             if asyncio.iscoroutine(result):
                 await result
         except:
-            logger.error("async_call_later: func: %s, except: %s",
-                         func, traceback.format_exc())
+            logger.error(
+                "async_call_later: func: %s, except: %s", func, traceback.format_exc()
+            )
             raise
 
     loop = asyncio.get_running_loop()
@@ -179,6 +184,7 @@ def async_call_soon(func, *args, **kwargs):
 
     :func: 同步或异步函数
     """
+
     async def _delay_call():
         try:
             result = func(*args, **kwargs)
@@ -186,8 +192,9 @@ def async_call_soon(func, *args, **kwargs):
             if asyncio.iscoroutine(result):
                 await result
         except:
-            logger.error("async_call_soon: func: %s, except: %s",
-                         func, traceback.format_exc())
+            logger.error(
+                "async_call_soon: func: %s, except: %s", func, traceback.format_exc()
+            )
             raise
 
     loop = asyncio.get_running_loop()
@@ -196,6 +203,7 @@ def async_call_soon(func, *args, **kwargs):
 
 class RunningContext(object):
     """为需要互斥的操作提供上下文保护"""
+
     class ErrorContextAlreadyRunning(Exception):
         pass
 
@@ -239,8 +247,13 @@ class RunningContext(object):
         self._is_running = False
 
         if self._logger and exc_type:
-            self._logger.error("running context %s got error: %s, %s, %s",
-                               self._name, exc_type, exc_val, exc_tb)
+            self._logger.error(
+                "running context %s got error: %s, %s, %s",
+                self._name,
+                exc_type,
+                exc_val,
+                exc_tb,
+            )
 
 
 class AsyncRunningContext(RunningContext):
@@ -253,6 +266,7 @@ def call_when_running(func, *args, **kwargs):
 
     :func: 同步或异步函数
     """
+
     async def _delay_call():
         try:
             result = func(*args, **kwargs)
@@ -260,8 +274,9 @@ def call_when_running(func, *args, **kwargs):
             if asyncio.iscoroutine(result):
                 await result
         except:
-            logger.error("call_when_running: func: %s, except: %s",
-                         func, traceback.format_exc())
+            logger.error(
+                "call_when_running: func: %s, except: %s", func, traceback.format_exc()
+            )
             raise
 
     loop = asyncio.get_event_loop()

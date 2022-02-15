@@ -14,8 +14,12 @@ def format_exception_stack():
 
 def format_exception(exception=None):
     if exception:
-        stack = traceback.format_exception(type(exception), exception, exception.__traceback__)
+        stack = traceback.format_exception(
+            type(exception), exception, exception.__traceback__
+        )
     else:
-        stack = traceback.format_exception(sys.last_type, sys.last_value, sys.last_traceback)
+        stack = traceback.format_exception(
+            sys.last_type, sys.last_value, sys.last_traceback
+        )
 
-    return ''.join(stack)
+    return "".join(stack)

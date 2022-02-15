@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-11-21
 # creator: liguopeng@liguopeng.net
 from functools import partial
@@ -19,7 +19,7 @@ def main(cluster_config: ClusterConfig):
     cluster_client.start()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     config_file = genv.get_relative_folder(__file__, "demo-cluster-client.yaml")
     genv.set_env(gmain.ENV_CONFIG_FILE, config_file)
 

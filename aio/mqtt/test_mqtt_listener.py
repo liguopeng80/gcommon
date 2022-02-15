@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2021-06-30
 # creator: liguopeng@liguopeng.net
 import asyncio
@@ -22,7 +22,7 @@ class MyObserver(MqttObserverBase):
         print(message.timestamp)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     init_basic_config()
 
     config = MqttConfig()
@@ -41,10 +41,9 @@ if __name__ == '__main__':
 
         listener.start()
 
-    if sys.platform == 'win32':
+    if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
     loop = asyncio.get_event_loop()
     loop.create_task(start_mqtt())
     loop.run_forever()
-
