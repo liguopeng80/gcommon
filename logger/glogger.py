@@ -3,12 +3,10 @@
 
 """Provide logging module."""
 
+import logging
 import os
 import sys
-import logging
-
 from logging.handlers import TimedRotatingFileHandler
-
 
 VERBOSE = logging.DEBUG - 5
 ACCESS = logging.INFO + 5

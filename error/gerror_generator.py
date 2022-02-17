@@ -189,7 +189,8 @@ def main(all_args, prefix="Gcommon"):
 
 def generate_gcommon_error_code():
     global Error_Defines, Domain_Base
-    from gcommon.error.gerror_generator_source import error_defines, domain_base
+    from gcommon.error.gerror_generator_source import (domain_base,
+                                                       error_defines)
 
     Error_Defines = error_defines
     Domain_Base = domain_base

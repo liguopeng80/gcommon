@@ -7,7 +7,8 @@
 
 from uhashring import HashRing
 
-from gcommon.aio.cluster.cluster_manager import NodeAllocator, ClusterAllocationType
+from gcommon.aio.cluster.cluster_manager import (ClusterAllocationType,
+                                                 NodeAllocator)
 
 
 class HashRingAllocator(NodeAllocator):

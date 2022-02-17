@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
 import platform
+import sys
 
 
 def is_windows():

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # created: 2015-05-04
 
+import logging
 import optparse
 import os
 import sys
@@ -9,8 +10,6 @@ import sys
 from gcommon.logger import glogger
 from gcommon.utils import genv
 from gcommon.utils.gconfig import DefaultConfigParser
-
-import logging
 
 logger = logging.getLogger("server")
 

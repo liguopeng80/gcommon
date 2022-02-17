@@ -4,7 +4,6 @@
 
 import aiohttp
 
-
 Content_Type_XML = "application/xml"
 Content_Type_Plain_Text = "text/plain"
 Content_Type_JSON = "application/json"

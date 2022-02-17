@@ -8,8 +8,7 @@ import threading
 from kazoo.protocol.states import KazooState
 
 from gcommon.aio import gasync
-from gcommon.aio.cluster.zk_client import ZookeeperObserver, ZookeeperClient
-
+from gcommon.aio.cluster.zk_client import ZookeeperClient, ZookeeperObserver
 
 format = "%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s"
 logging.basicConfig(format=format, level=logging.DEBUG)

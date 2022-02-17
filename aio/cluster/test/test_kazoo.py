@@ -9,7 +9,7 @@ import time
 from kazoo.protocol.states import KazooState, KeeperState
 
 from gcommon.aio import gasync
-from gcommon.aio.cluster.zk_client import ZookeeperObserver, ZookeeperClient
+from gcommon.aio.cluster.zk_client import ZookeeperClient, ZookeeperObserver
 from gcommon.utils.gmain import init_main
 
 formatter = "%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s"

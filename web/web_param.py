@@ -104,7 +104,7 @@ class WebParams(object):
 
 class UrlParams(WebParams):
     def _get_attribute(self, name):
-        """Twisted 等 web 库，request 请求的参数名和参数值都是 binary"""
+        """Asyncio 等 web 库，request 请求的参数名和参数值都是 binary"""
         if type(name) is str:
             name = name.encode("utf-8")
 

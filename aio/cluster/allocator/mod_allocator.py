@@ -4,7 +4,8 @@
 
 """基于整数取余的分配方式"""
 from gcommon.aio.cluster.cluster_config import ClusterConfig
-from gcommon.aio.cluster.cluster_manager import NodeAllocator, ClusterAllocationType
+from gcommon.aio.cluster.cluster_manager import (ClusterAllocationType,
+                                                 NodeAllocator)
 
 
 class NodeDesc(object):

@@ -6,10 +6,9 @@
 https://aiokafka.readthedocs.io/en/stable/
 """
 
-from aiokafka import AIOKafkaProducer
-from aiokafka import AIOKafkaConsumer
-
 import asyncio
+
+from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 
 
 async def consume():

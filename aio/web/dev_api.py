@@ -11,7 +11,6 @@ from gcommon.aio.gaiohttp import create_quart_blueprint, web_response_ok
 from gcommon.error import GErrors
 from gcommon.web.web_utils import WebConst
 
-
 app = create_quart_blueprint("Dev Tools")
 base_url = "/dev"
 

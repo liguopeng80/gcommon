@@ -4,11 +4,10 @@
 import logging
 
 from gcommon.data.postgre.async_postgre import DatabaseManager
+from gcommon.data.sqlite import SqliteDbEngine
 from gcommon.utils import gfile
 from gcommon.utils.gglobal import Global
 from gcommon.utils.gjsonobj import JsonObject
-
-from gcommon.data.sqlite import SqliteDbEngine
 
 
 def create_db_engine(db_config: JsonObject, module, logger=None, **kwargs):

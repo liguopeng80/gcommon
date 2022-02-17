@@ -13,7 +13,6 @@ from gcommon.utils import genv
 from gcommon.utils.gjsonobj import JsonObject
 from gcommon.utils.gyaml import YamlConfigParser
 
-
 DEFAULT_CONFIG_FILE = "default.yaml"
 DEFAULT_SECRET_CONFIG_FILE = "secret.default.yaml"
 

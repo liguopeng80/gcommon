@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # created: 2014-12-02
 
-"""Timer implemented by twisted."""
+"""Timer implemented by asyncio."""
 
 import asyncio
 

@@ -6,8 +6,8 @@
 """Parse server config file(s)."""
 
 import os
-import re
 import platform
+import re
 
 import yaml
 

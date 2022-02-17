@@ -5,7 +5,6 @@
 import inspect
 import logging
 
-
 from gcommon.utils import grand
 
 

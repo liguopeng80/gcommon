@@ -3,13 +3,11 @@
 # created: 2015-08-31
 
 """计数器、计时器、序号发生器等。"""
-import time
 import logging
-
-from gcommon.utils.gcounter import Counter
-from gcommon.utils.gcounter import Gauge
-from gcommon.utils.gcounter import Timer
+import time
 from functools import wraps
+
+from gcommon.utils.gcounter import Counter, Gauge, Timer
 
 logger = logging.getLogger("monitor")
 

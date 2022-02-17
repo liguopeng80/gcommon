@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 # created: 2015-05-19
 
-import uuid
-import hmac
-import hashlib
+import base64
 import binascii
 import datetime
+import hashlib
+import hmac
+import uuid
+
 import OpenSSL
-import base64
 
 
 def md5(message: str):

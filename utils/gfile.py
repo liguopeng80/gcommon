@@ -4,10 +4,9 @@
 # created: 27 Aug 2008
 
 import glob
-
 import os
 import shutil
-from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
+from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 
 def remove_trailing_slash(path):

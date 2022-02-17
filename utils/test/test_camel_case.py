@@ -2,7 +2,7 @@
 # created: 2021-08-04
 # creator: liguopeng@liguopeng.net
 
-from gcommon.utils.gstr import camel_to_snake, snakeToCamel, SnakeToCamel
+from gcommon.utils.gstr import SnakeToCamel, camel_to_snake, snakeToCamel
 
 
 def test_camel_to_snake():

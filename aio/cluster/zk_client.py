@@ -2,13 +2,7 @@
 # -*- coding: utf-8 -*-
 # created: 2015-04-22
 
-"""ZooKeeper 客户端。
-
-和 asyncio 联用时请注意：
-所有 watch observer 必须使用 reactor.callFromThread() 将 watch 结果返回给 twisted 线程。
-
-为调用方便，请使用 twisted_kazoo.twisted_callback 对回调进行封装。
-"""
+"""ZooKeeper 客户端"""
 
 import logging
 import threading

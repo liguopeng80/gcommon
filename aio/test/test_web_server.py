@@ -2,7 +2,7 @@
 # created: 2021-08-19
 # creator: liguopeng@liguopeng.net
 
-from quart import Quart, websocket, request
+from quart import Quart, request, websocket
 
 app = Quart(__name__)
 

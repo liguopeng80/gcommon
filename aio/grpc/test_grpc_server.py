@@ -3,12 +3,12 @@
 # creator: liguopeng@liguopeng.net
 
 import asyncio
-from datetime import datetime
 import logging
+from datetime import datetime
 
 import grpc
-from gcommon.aio.grpc.proto import helloworld_pb2
-from gcommon.aio.grpc.proto import helloworld_pb2_grpc
+
+from gcommon.aio.grpc.proto import helloworld_pb2, helloworld_pb2_grpc
 
 # Coroutines to be invoked when the event loop is shutting down.
 _cleanup_coroutines = []

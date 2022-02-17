@@ -4,14 +4,11 @@
 
 """进程辅助工具。"""
 
+import logging
 import os
 import shlex
 import socket
 import subprocess
-
-
-import logging
-
 
 logger = logging.getLogger("proc")
 

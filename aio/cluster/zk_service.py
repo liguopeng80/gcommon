@@ -7,7 +7,8 @@ import logging
 
 from gcommon.aio import gasync
 from gcommon.aio.cluster.external_service import ExternalService
-from gcommon.aio.cluster.zk_client import ZookeeperObserver, ZookeeperClient, KazooLock
+from gcommon.aio.cluster.zk_client import (KazooLock, ZookeeperClient,
+                                           ZookeeperObserver)
 from gcommon.utils.gnet import ConnectionStatus
 
 logger = logging.getLogger("zookeeper")
@@ -47,7 +48,7 @@ class ZookeeperService(ExternalService, ZookeeperObserver):
         self._client_manager.wait()
 
     def _on_conn_opened(self):
-        """连接打开或者恢复 - in Twisted thread"""
+        """连接打开或者恢复 - in asyncio thread"""
         # 通知 service controller, zookeeper 服务已近就绪
         if self.is_good():
             # 从 suspended 状态恢复过来，不重新初始化
@@ -56,7 +57,7 @@ class ZookeeperService(ExternalService, ZookeeperObserver):
         self.enable_service()
 
     def _on_conn_lost(self):
-        """会话断开 - in Twisted thread"""
+        """会话断开 - in asyncio thread"""
         # 通知 service controller, zookeeper 服务已经失效
         self.disable_service()
 
@@ -64,12 +65,12 @@ class ZookeeperService(ExternalService, ZookeeperObserver):
         self._try_reconnection()
 
     def _on_conn_suspended(self):
-        """连接断开，会话挂起 - in Twisted thread"""
+        """连接断开，会话挂起 - in asyncio thread"""
         # Zookeeper 客户端会自动尝试恢复，等待
         assert self.is_good()
 
     def _on_conn_failed(self):
-        """初始连接失败，无法建立会话 - in Twisted thread"""
+        """初始连接失败，无法建立会话 - in asyncio thread"""
         assert self.is_bad()
 
         # 通知 service controller, zookeeper 服务已经失效。

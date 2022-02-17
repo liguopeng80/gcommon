@@ -7,8 +7,7 @@ import logging
 
 import grpc
 
-from gcommon.aio.grpc.proto import helloworld_pb2
-from gcommon.aio.grpc.proto import helloworld_pb2_grpc
+from gcommon.aio.grpc.proto import helloworld_pb2, helloworld_pb2_grpc
 
 
 async def run() -> None:
