@@ -3,8 +3,7 @@
 # creator: liguopeng@liguopeng.net
 
 """使用 JSONable 构造序列化对象"""
-from gcommon.utils.gjsonobj import (JsonField, JsonListField, JsonObject,
-                                    JsonObjectField)
+from gcommon.utils.gjsonobj import JsonField, JsonListField, JsonObject, JsonObjectField
 
 
 class MyJob(JsonObjectField):

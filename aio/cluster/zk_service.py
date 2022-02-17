@@ -7,8 +7,7 @@ import logging
 
 from gcommon.aio import gasync
 from gcommon.aio.cluster.external_service import ExternalService
-from gcommon.aio.cluster.zk_client import (KazooLock, ZookeeperClient,
-                                           ZookeeperObserver)
+from gcommon.aio.cluster.zk_client import KazooLock, ZookeeperClient, ZookeeperObserver
 from gcommon.utils.gnet import ConnectionStatus
 
 logger = logging.getLogger("zookeeper")

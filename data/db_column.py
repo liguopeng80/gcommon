@@ -6,8 +6,7 @@
 from datetime import datetime, timezone
 
 import sqlalchemy as sa
-from sqlalchemy import (BigInteger, Boolean, Column, ForeignKey, Integer,
-                        String, Text, func)
+from sqlalchemy import BigInteger, Boolean, Column, ForeignKey, Integer, String, Text, func
 
 
 class TimeStamp(sa.types.TypeDecorator):
