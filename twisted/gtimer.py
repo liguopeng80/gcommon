@@ -100,18 +100,6 @@ class Timer(object):
 def test():
     from twisted.internet.defer import CancelledError
 
-    max_count = 10
-
-    # def foo():
-    #     print 'haha', count
-    #     if count > max_count:
-    #         reactor.stop()  # @UndefinedVariable
-    #         return
-    #
-    #     t = Timer(0.01, foo, count + 1).start()
-    #
-    # t = Timer(0.01, foo, 0).start()
-
     # @inlineCallbacks
     def __error_or_timeout_callback(failure):
         print("__error_or_timeout_callback %s" % failure)

@@ -31,8 +31,8 @@ def test_register_classes():
     assert len(r2._objects) == 2
     try:
         not_found = False
-        demo_base_class = r2.get("DemoBase")
-    except RegistryItemNotExisting as e:
+        r2.get("DemoBase")
+    except RegistryItemNotExisting:
         not_found = True
     assert not_found
 

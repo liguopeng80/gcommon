@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # created: 2013-05-25
 # creator: liguopeng@liguopeng.net
-import urllib
+
 from urllib.parse import urljoin
 
 import requests

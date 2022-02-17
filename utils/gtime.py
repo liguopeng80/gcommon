@@ -20,13 +20,11 @@
 """
 
 import calendar
+import platform
 import time
 from datetime import datetime, timedelta
-import platform
-from dateutil import parser
-import pytz
 
-# import tzlocal
+from dateutil import parser
 
 
 def today():
@@ -104,7 +102,7 @@ def timestamp_to_date(ts):
     return dt
 
 
-def past_millisecond(time_started: int):
+def past_millisecond(time_started: float):
     """How many milliseconds has past...
 
     time_started: posix timestamp.

@@ -48,7 +48,7 @@ class StdIORedirector:
             return
 
         msg = self._buffer[:pos]
-        self._buffer = self._buffer[pos + 1 :]
+        self._buffer = self._buffer[pos + 1:]
 
         if self._level == self.STD_OUT:
             logger.debug(msg)

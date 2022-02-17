@@ -2,7 +2,7 @@
 # created: 2021-07-30
 # creator: liguopeng@liguopeng.net
 import asyncio
-import time, logging
+import time
 
 from gcommon.aio.kafka.gkafka import KafkaConfig, KafkaConsumer
 from gcommon.utils.gmain import init_main

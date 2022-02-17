@@ -3,13 +3,11 @@
 # creator: liguopeng@liguopeng.net
 
 import logging
-import threading
 from asyncio import current_task
 
 import sqlalchemy
-
-from sqlalchemy.ext.asyncio import create_async_engine, async_scoped_session
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine, async_scoped_session
 from sqlalchemy.orm import sessionmaker
 
 

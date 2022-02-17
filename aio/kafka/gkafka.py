@@ -1,36 +1,20 @@
 # -*- coding: utf-8 -*-
 # created: 2021-07-29
 # creator: liguopeng@liguopeng.net
-import collections
 import logging
 from copy import copy
 from datetime import datetime
-from types import TracebackType
 from typing import (
     Any,
-    AnyStr,
-    AsyncContextManager,
-    AsyncGenerator,
-    Awaitable,
     Callable,
-    Dict,
-    Generator,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    TYPE_CHECKING,
-    Union,
 )
 
-
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
-from kafka.errors import KafkaError, KafkaConnectionError
+from kafka.errors import KafkaError
 
 from gcommon.aio import gasync
 from gcommon.utils import gtime, gerrors
 from gcommon.utils.gjsonobj import JsonObject
-from gcommon.utils.gobject import ObjectWithLogger
 
 logger = logging.getLogger("kafka")
 

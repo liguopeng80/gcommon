@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 # created: 2021-06-23
 # creator: liguopeng@liguopeng.net
-import json
 import logging
-from functools import partial
 
 import aiohttp
-
 
 logger = logging.getLogger("webclient")
 

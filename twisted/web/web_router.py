@@ -10,11 +10,10 @@ import traceback
 import time
 from twisted.internet.defer import inlineCallbacks, maybeDeferred
 
+from gcommon.error import GErrors
 from gcommon.error.gerror import GExcept
 from gcommon.utils import gtime
 from gcommon.utils.gjsonobj import JsonObject
-from gcommon.error import *
-
 from gcommon.twisted.web.web_utils import WebConst, set_options_methods
 
 

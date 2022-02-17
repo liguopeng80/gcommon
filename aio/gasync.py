@@ -4,13 +4,11 @@
 
 """基于 asyncio 封装的常用异步函数"""
 
-import logging
 import asyncio
+import logging
 import time
 import traceback
 from asyncio import Future
-from asyncio import sleep
-
 
 logger = logging.getLogger("asyncio")
 

@@ -5,9 +5,8 @@ import logging
 import traceback
 from functools import wraps
 
-import werkzeug
-from quart import jsonify, Quart, json, Blueprint
 from quart import has_request_context, request
+from quart import jsonify, Quart, json, Blueprint
 from quart.logging import default_handler
 from werkzeug.exceptions import NotFound, HTTPException
 

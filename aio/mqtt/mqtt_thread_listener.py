@@ -6,7 +6,6 @@ import asyncio
 import logging
 import threading
 from abc import abstractmethod
-from datetime import datetime
 
 import paho.mqtt.client as mqtt
 

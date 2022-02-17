@@ -7,7 +7,6 @@ import logging
 from kazoo.exceptions import NoNodeError
 
 from gcommon.aio.cluster.cluster_manager import ClusterManager
-from gcommon.utils import gstr
 from gcommon.utils.gglobal import Global
 
 logger = logging.getLogger("cluster")

@@ -9,7 +9,6 @@ import logging
 from functools import partial
 
 from gcommon.aio import gasync
-from gcommon.aio.cluster import zk_helper
 from gcommon.aio.cluster.allocator.mod_allocator import ModuloAllocator
 from gcommon.aio.cluster.cluster_config import ClusterConfig
 from gcommon.aio.cluster.cluster_manager import NodeManager

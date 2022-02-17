@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # created: 2015-04-22
 # creator: liguopeng@liguopeng.net
-import asyncio
+
 import logging
 import threading
 

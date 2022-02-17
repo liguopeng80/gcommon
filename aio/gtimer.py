@@ -5,16 +5,12 @@
 """Timer implemented by twisted."""
 
 import asyncio
-
 import logging
 import traceback
 from asyncio import Future
 from datetime import datetime
 
-import typing
-
 from gcommon.aio import gasync
-from gcommon.aio.gasync import maybe_async
 from gcommon.utils import gregister
 
 logger = logging.getLogger("timer")

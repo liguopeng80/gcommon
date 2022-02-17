@@ -6,9 +6,8 @@ import asyncio
 import json
 import logging
 import socket
-import threading
 from abc import abstractmethod
-from datetime import datetime
+from typing import Optional
 
 import paho.mqtt.client as mqtt
 
@@ -122,6 +121,8 @@ class MqttListener(object):
         self._future_disconnected = None
         self._working = True
 
+        self._aio_helper: Optional[AsyncioHelper] = None
+
     def send_message(self, topic, message, qos=0) -> mqtt.MQTTMessageInfo:
         if isinstance(message, dict):
             message = json.dumps(message, ensure_ascii=False, separators=(",", ":"))
@@ -158,7 +159,7 @@ class MqttListener(object):
             logger.warning("mqtt listener has already connected to server")
             return
 
-        aio_helper = AsyncioHelper(self.loop, self.client)
+        self._aio_helper = AsyncioHelper(self.loop, self.client)
         self._future_disconnected = self.loop.create_future()
 
         self.client.username_pw_set(self.config.username, self.config.password)

@@ -2,26 +2,22 @@
 # -*- coding: utf-8 -*-
 # created: 2015-08-19
 
-import logging
-import hashlib
 import binascii
-import urllib
-from datetime import datetime
+import hashlib
+import logging
 from urllib.parse import urljoin
 
-from twisted.web import resource
-from twisted.internet.defer import Deferred
-from twisted.web.server import NOT_DONE_YET
 from twisted.internet import reactor
+from twisted.internet.defer import Deferred
+from twisted.web import resource
+from twisted.web.server import NOT_DONE_YET
 
-from gcommon.utils.gjsonobj import JsonObject
 from gcommon.twisted.gasync import pass_through_cb
-
-from gcommon.error.gerror import *
-
+from gcommon.utils.gjsonobj import JsonObject
 from .web_router import WebNavigator
 from .web_utils import WebConst
 from ...error import GErrors
+from ...error.gerror import GExcept
 from ...utils.gurl import ensure_trailing_slash
 
 post_client = None
@@ -35,7 +31,7 @@ def router(url_pattern, **args):
         setattr(func, WebConst.ROUTER_PARAM_OPT, args)
 
         # Save original param list in function for wrapping
-        arg_names = func.__code__.co_varnames[1 : func.__code__.co_argcount]
+        arg_names = func.__code__.co_varnames[1: func.__code__.co_argcount]
         setattr(func, WebConst.ROUTER_PARAM_VIEW_FUNC_PARAMS, arg_names)
         return func
 

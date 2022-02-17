@@ -182,7 +182,7 @@ class KazooLock(object):
         self._locked = False
 
     async def acquire(self):
-        result = self._kazoo_client.create(self._node_path, b"", makepath=True, ephemeral=True, sequence=True)
+        self._kazoo_client.create(self._node_path, b"", makepath=True, ephemeral=True, sequence=True)
         event = gasync.AsyncEvent()
 
         @gasync.callback_run_in_main_thread

@@ -3,7 +3,6 @@
 
 """WebSocket Server."""
 
-import asyncio
 import logging
 import traceback
 from abc import abstractmethod
@@ -12,7 +11,7 @@ from quart import Websocket
 
 from gcommon.aio import gasync
 from gcommon.utils import gtime
-from gcommon.utils.gcounter import Sequence, Gauge
+from gcommon.utils.gcounter import Sequence
 from gcommon.utils.gjsonobj import JsonObject
 
 logger = logging.getLogger("websock")

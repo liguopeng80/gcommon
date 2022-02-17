@@ -4,8 +4,6 @@
 import time
 import traceback
 
-from gcommon.utils import gtime
-
 
 def log_server_started(logger, service_name, version):
     logger.info("-" * 72)

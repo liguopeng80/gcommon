@@ -46,7 +46,8 @@ class ServiceStatus(object):
         return self._status
 
     def set(self, value):
-        old_value, self._status = self._status, value
+        # old_value, self._status = self._status, value
+        self._status = value
         return self._status
 
 

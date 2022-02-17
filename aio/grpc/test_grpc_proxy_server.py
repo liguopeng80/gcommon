@@ -4,8 +4,6 @@
 
 import asyncio
 import logging
-from datetime import datetime
-from functools import partial
 
 import grpc
 

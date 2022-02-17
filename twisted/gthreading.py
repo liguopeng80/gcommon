@@ -70,7 +70,7 @@ class TwistedTaskPool(ObjectWithLogger):
             thread = deferToThread(self.__thread_worker, workers[i])
             threads.append(thread)
 
-        result = yield DeferredList(threads)
+        yield DeferredList(threads)
         self._on_finished()
 
     def _on_finished(self):

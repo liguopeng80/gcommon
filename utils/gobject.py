@@ -145,7 +145,7 @@ class EntityManager(object):
             self.put(entity)
 
     @staticmethod
-    def find(uid, *managers):
+    def find_in_managers(uid, *managers):
         """聚合查询"""
         for manager in managers:
             entity = manager.get(uid)
@@ -163,10 +163,13 @@ def get_subclasses(base_class, context, func_get_name=None, allow_base=False):
     for name, value in context.items():
         if inspect.isclass(value) and issubclass(value, base_class):
             if not allow_base and (value == base_class):
+                # ignore base class
                 continue
 
             if func_get_name:
-                name = func_get_name(value)
+                # todo: user can register the class with a different name
+                func_get_name(value)
+
             subclasses.append(value)
 
     return subclasses

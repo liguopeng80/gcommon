@@ -181,7 +181,7 @@ class SimpleClusterServer(SimpleServer):
             await gasync.maybe_async(self._init_cluster)
             await gasync.maybe_async(self.init_server)
             await gasync.maybe_async(self.start_server)
-        except Exception as e:
+        except Exception:
             self.logger.fatal("server exception: %s", traceback.format_exc())
             gasync.stop_async_loop()
         else:

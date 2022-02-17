@@ -2,7 +2,6 @@
 # created: 2021-04-14
 # creator: liguopeng@liguopeng.net
 
-import logging
 import sqlalchemy
 
 

@@ -3,7 +3,7 @@
 # author: "Li Guo Peng" <liguopeng@liguopeng.net>
 
 """
-Generic socket server. 
+Generic socket server.
 """
 
 import logging
@@ -56,16 +56,17 @@ class SocketServer(LineReceiver):
 
     def lineReceived(self, line):
         if self.status == self.STATUS_WAIT_FOR_USERNAME:
-            username = line.strip()
-            # skip username verification
+            _username = line.strip()
+            logger.warning("skip username verification: %s", _username)
 
             self.transport.write("Password: ")
             self.status = self.STATUS_WAIT_FOR_PASSWORD
             return
 
         elif self.status == self.STATUS_WAIT_FOR_PASSWORD:
-            password = line.strip()
-            # skip password verification
+            _password = line.strip()
+            logger.warning("skip password verification: %s", _password)
+
             self.status = self.STATUS_AUTHENTICATED
             self.sendLine("Welcome to Server!")
             self.writePrompt()
@@ -218,7 +219,6 @@ def create(port, cmd_parser, cmd_handler):
 
 def start_socket_server(port):
     from gcommon.net import telnet_base
-    from gcommon.net import telnet_cmds
 
     create(port, telnet_base.CommandParser, None)
 
