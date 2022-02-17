@@ -80,6 +80,7 @@ develop-eggs
 # python project
 .ropeproject
 .ipynb_checkpoints/
+.tox/
 
 ################################
 # C\C++ 
