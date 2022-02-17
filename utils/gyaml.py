@@ -78,7 +78,7 @@ class ConfigParser(object):
             elif type(value) is str:
                 # from "$(CLOUD)" to "%(CLOUD)s"
                 value = value.strip()
-                if params and value.find_in_managers("$") != -1:
+                if params and value.find("$") != -1:
                     value = re.sub(r"\$\((\w+)\)", "%(\\1)s", value)
                     value = value % params
             else:

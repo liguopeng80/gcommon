@@ -33,7 +33,7 @@ class JsonObject(dict):
         return self.get(name, None)
 
     def __setattr__(self, name, value):
-        if name.find_in_managers(".") == -1:
+        if name.find(".") == -1:
             self.__set_value(name, value)
         else:
             names = name.split(".", 1)
