@@ -170,9 +170,7 @@ def async_call_later(timeout, func, *args, **kwargs):
             if asyncio.iscoroutine(result):
                 await result
         except:
-            logger.error(
-                "async_call_later: func: %s, except: %s", func, traceback.format_exc()
-            )
+            logger.error("async_call_later: func: %s, except: %s", func, traceback.format_exc())
             raise
 
     loop = asyncio.get_running_loop()
@@ -192,9 +190,7 @@ def async_call_soon(func, *args, **kwargs):
             if asyncio.iscoroutine(result):
                 await result
         except:
-            logger.error(
-                "async_call_soon: func: %s, except: %s", func, traceback.format_exc()
-            )
+            logger.error("async_call_soon: func: %s, except: %s", func, traceback.format_exc())
             raise
 
     loop = asyncio.get_running_loop()
@@ -274,9 +270,7 @@ def call_when_running(func, *args, **kwargs):
             if asyncio.iscoroutine(result):
                 await result
         except:
-            logger.error(
-                "call_when_running: func: %s, except: %s", func, traceback.format_exc()
-            )
+            logger.error("call_when_running: func: %s, except: %s", func, traceback.format_exc())
             raise
 
     loop = asyncio.get_event_loop()

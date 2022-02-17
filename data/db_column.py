@@ -46,13 +46,9 @@ def column_foreign_key(field, nullable=False, doc=""):
     for column in field.parent.columns.values():
         if column.name == filed_name:
             if type(column.type) == Integer:
-                return Column(
-                    Integer, ForeignKey(full_name), nullable=nullable, doc=doc
-                )
+                return Column(Integer, ForeignKey(full_name), nullable=nullable, doc=doc)
             else:
-                return Column(
-                    String(32), ForeignKey(full_name), nullable=nullable, doc=doc
-                )
+                return Column(String(32), ForeignKey(full_name), nullable=nullable, doc=doc)
 
     raise RuntimeError("invalid field")
 
@@ -102,9 +98,7 @@ def column_short_string(length=32, index=True, default="", doc=""):
 
 def column_required_short_string(length=32, index=True, default="", doc=""):
     if default:
-        return Column(
-            String(length), nullable=False, index=index, default=default, doc=doc
-        )
+        return Column(String(length), nullable=False, index=index, default=default, doc=doc)
     else:
         return Column(String(length), nullable=False, index=index, doc=doc)
 
@@ -135,9 +129,7 @@ def column_created_date(doc=""):
 
 def column_updated_date(doc=""):
     # return Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False, doc=doc)
-    return Column(
-        TimeStamp(), default=func.now(), onupdate=func.now(), nullable=False, doc=doc
-    )
+    return Column(TimeStamp(), default=func.now(), onupdate=func.now(), nullable=False, doc=doc)
 
 
 def first_row(result_set):

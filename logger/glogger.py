@@ -24,9 +24,7 @@ LOG_THREAD = "[%(thread)08d]"
 LOG_MESSAGE = "%(levelname)-3s %(name)-8s %(message)s"
 
 LOG_FORMAT = "%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s"
-THREAD_LOG_FORMAT = (
-    "%(asctime)-15s [%(thread)08d] %(levelname)-3s %(name)-8s %(message)s"
-)
+THREAD_LOG_FORMAT = "%(asctime)-15s [%(thread)08d] %(levelname)-3s %(name)-8s %(message)s"
 
 
 class StdIORedirector:
@@ -82,9 +80,7 @@ class RotatingFileHandler(TimedRotatingFileHandler):
         utc         - if using UTC time
         """
 
-        TimedRotatingFileHandler.__init__(
-            self, filename, when, interval, backup_count, encoding, delay, utc
-        )
+        TimedRotatingFileHandler.__init__(self, filename, when, interval, backup_count, encoding, delay, utc)
         self.maxBytes = max_bytes
 
     def shouldRollover(self, record):
@@ -198,15 +194,11 @@ def init_logger(
         backup_count = 5000
 
         # debug log
-        debug_handle = create_file_handler(
-            debug_log, formatter, logging.DEBUG, backup_count, 1280 * 1024 * 1024
-        )
+        debug_handle = create_file_handler(debug_log, formatter, logging.DEBUG, backup_count, 1280 * 1024 * 1024)
         logger.addHandler(debug_handle)
 
         # access log
-        access_handle = create_file_handler(
-            access_log, formatter, ACCESS, backup_count, 512 * 1024 * 1024
-        )
+        access_handle = create_file_handler(access_log, formatter, ACCESS, backup_count, 512 * 1024 * 1024)
 
         access_filter = LevelFilter(ACCESS, "access_filter")
         access_handle.addFilter(access_filter)
@@ -214,9 +206,7 @@ def init_logger(
         logger.addHandler(access_handle)
 
         # monitor log
-        monitor_handler = create_file_handler(
-            monitor_log, formatter, logging.CRITICAL, backup_count, 128 * 1024 * 1024
-        )
+        monitor_handler = create_file_handler(monitor_log, formatter, logging.CRITICAL, backup_count, 128 * 1024 * 1024)
         logger.addHandler(monitor_handler)
 
         if redirect_stdio:

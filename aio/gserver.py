@@ -78,12 +78,8 @@ class SimpleServer(ObjectWithLogger):
         self.load_server_config()
         Global.set_config(self.config)
 
-        self.full_server_name = gproc.get_process_id(
-            self.SERVICE_NAME, int(self.options.instance)
-        )
-        self.unique_server_name = gproc.get_process_unique_id(
-            self.SERVICE_NAME, int(self.options.instance)
-        )
+        self.full_server_name = gproc.get_process_id(self.SERVICE_NAME, int(self.options.instance))
+        self.unique_server_name = gproc.get_process_unique_id(self.SERVICE_NAME, int(self.options.instance))
 
     @property
     def service_name(self):
@@ -97,10 +93,7 @@ class SimpleServer(ObjectWithLogger):
         #     parser.error('No arguments needed.')
         if self.options.service:
             if self.options.service != self.SERVICE_NAME:
-                parser.error(
-                    "bad service name. expected: %s, got: %s."
-                    % (self.SERVICE_NAME, self.options.service)
-                )
+                parser.error("bad service name. expected: %s, got: %s." % (self.SERVICE_NAME, self.options.service))
         else:
             self.options.service = self.SERVICE_NAME
 

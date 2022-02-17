@@ -5,9 +5,7 @@ from gcommon.utils.gglobal import Global
 
 
 def server_external_base():
-    return Global.config.get("external_address.base_url") + Global.config.get(
-        "service.web.base_url"
-    )
+    return Global.config.get("external_address.base_url") + Global.config.get("service.web.base_url")
 
 
 def server_external_url(uri_config_name):

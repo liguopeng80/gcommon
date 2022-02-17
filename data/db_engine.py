@@ -30,9 +30,7 @@ def create_db_engine(db_config: JsonObject, module, logger=None, **kwargs):
 
 
 def create_sqlite_db_engine(db_config, logger, module):
-    db_file = gfile.join_path(
-        Global.config.service.service_root, db_config.sqlite_dbfile
-    )
+    db_file = gfile.join_path(Global.config.service.service_root, db_config.sqlite_dbfile)
     engine = SqliteDbEngine.create_engine(db_file, module._metadata)
     logger = logger or logging.getLogger("db")
     engine.set_logger(logger)

@@ -38,9 +38,7 @@ class WebConst(object):
     GCOMMON_DETAIL_RESPONSE_LOG = "_gcommon_detail_response_log"
 
 
-def set_options_methods(
-    request, post=False, get=False, put=False, delete=False, allowed_methods=None
-):
+def set_options_methods(request, post=False, get=False, put=False, delete=False, allowed_methods=None):
     methods = ["OPTIONS"]
     if post:
         methods.append("POST")

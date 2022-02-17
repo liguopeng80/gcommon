@@ -176,9 +176,7 @@ def _zip_a_folder(z, path):
 
         for dn in dirs:
             abs_fn = os.path.join(root, dn)
-            zfn = (
-                base_path + abs_fn[len(path) + len(os.sep) :] + "\\"
-            )  # XXX: relative path
+            zfn = base_path + abs_fn[len(path) + len(os.sep) :] + "\\"  # XXX: relative path
 
             zfi = ZipInfo(zfn)
             zfi.external_attr = 48

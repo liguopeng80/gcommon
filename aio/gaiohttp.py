@@ -117,9 +117,7 @@ async def handle_bad_request(e):
     if isinstance(e, GExcept):
         resp = web_exception_response(e)
     else:
-        resp = web_error_response(
-            GErrors.gen_server_internal, desc=str(e) or str(type(e))
-        )
+        resp = web_error_response(GErrors.gen_server_internal, desc=str(e) or str(type(e)))
 
     if type(e) == NotFound:
         pass
@@ -217,8 +215,7 @@ class RequestFormatter(logging.Formatter):
 
 
 request_formatter = RequestFormatter(
-    "%(asctime)-15s %(levelname)-3s %(name)-8s %(remote_addr)s"
-    " requested %(url)s %(message)s"
+    "%(asctime)-15s %(levelname)-3s %(name)-8s %(remote_addr)s" " requested %(url)s %(message)s"
 )
 
 

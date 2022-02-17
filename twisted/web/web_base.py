@@ -105,9 +105,7 @@ class HttpWebBase(resource.Resource):
         else:
             real_ip = str(request.client.host)
 
-        logger.info(
-            "process request from %s:%s: %s", real_ip, request.client.port, path
-        )
+        logger.info("process request from %s:%s: %s", real_ip, request.client.port, path)
 
         # Process request
         try:
@@ -116,9 +114,7 @@ class HttpWebBase(resource.Resource):
             d.addCallback(pass_through_cb(self._app.serve, path, request, method))
             return NOT_DONE_YET
         except TypeError as e:
-            result = HttpWebBase.return_result(
-                GErrors.gen_bad_request, error_message=e.message
-            )
+            result = HttpWebBase.return_result(GErrors.gen_bad_request, error_message=e.message)
         except NotImplementedError:
             result = HttpWebBase.return_result(GErrors.gen_bad_request)
         except GExcept as e:

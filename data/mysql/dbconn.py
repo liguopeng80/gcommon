@@ -19,9 +19,7 @@ class MysqlDB(object):
     def connect_to_db(self, db_name):
         # "mysql+pymysql://root:@localhost:3306/testdb"
         url = "mysql+pymysql://{}:{}@{}:{}/{}"
-        url = url.format(
-            self.username, self.password, self.server_addr, self.server_port, db_name
-        )
+        url = url.format(self.username, self.password, self.server_addr, self.server_port, db_name)
 
         # The return value of create_engine() is our connection object
         # db_conn = sqlalchemy.create_engine(url, echo=True, client_encoding=self.DEFAULT_ENCODING)

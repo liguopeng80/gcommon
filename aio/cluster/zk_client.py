@@ -65,9 +65,7 @@ class ZookeeperObserver(object):
 
     def on_connection_status_changed(self, state):
         """在 ZK 的独立线程中调用（禁止在主线程调用）"""
-        logger.debug(
-            "connection status changed from %s to %s", self._zk_conn_status, state
-        )
+        logger.debug("connection status changed from %s to %s", self._zk_conn_status, state)
         self._zk_conn_status = state
 
         if state == KazooState.CONNECTED:
@@ -184,9 +182,7 @@ class KazooLock(object):
         self._locked = False
 
     async def acquire(self):
-        result = self._kazoo_client.create(
-            self._node_path, b"", makepath=True, ephemeral=True, sequence=True
-        )
+        result = self._kazoo_client.create(self._node_path, b"", makepath=True, ephemeral=True, sequence=True)
         event = gasync.AsyncEvent()
 
         @gasync.callback_run_in_main_thread

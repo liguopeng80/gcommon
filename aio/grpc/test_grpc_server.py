@@ -23,9 +23,7 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
         # await asyncio.sleep(0.01)
         logging.info("Sleep completed, responding")
 
-        return helloworld_pb2.HelloReply(
-            message=f"Hello, {request.name} - {datetime.now()}! "
-        )
+        return helloworld_pb2.HelloReply(message=f"Hello, {request.name} - {datetime.now()}! ")
 
 
 async def serve() -> None:

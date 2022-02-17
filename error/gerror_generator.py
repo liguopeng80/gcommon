@@ -43,9 +43,7 @@ def generate_error_defines_for_thrift(filename, prefix="Gcommon"):
 
         f.write("/* error_define.thrift\n")
         f.write(" * This is auto generated error codes (by gcommon)\n")
-        f.write(
-            " * Generated on '{createDate}'\n".format(createDate=datetime.date.today())
-        )
+        f.write(" * Generated on '{createDate}'\n".format(createDate=datetime.date.today()))
         f.write(" */\n\n")
 
         f.write("namespace cpp error_define\n")
@@ -59,11 +57,7 @@ def generate_error_defines_for_thrift(filename, prefix="Gcommon"):
             if domain != d:
                 d = domain
                 f.write("\n")
-            f.write(
-                "\t{desc} = {err_code},\n".format(
-                    desc=description, err_code=domain.value * Domain_Base + code
-                )
-            )
+            f.write("\t{desc} = {err_code},\n".format(desc=description, err_code=domain.value * Domain_Base + code))
         f.write("}\n\n/* End of File */\n")
 
 
@@ -169,12 +163,8 @@ def main(all_args, prefix="Gcommon"):
     usage_param = {"error": all_args[0]}
     parser.set_usage(usage_text % usage_param)
 
-    parser.add_option(
-        "-f", "--filename", dest="filename", action="store", default="default"
-    )
-    parser.add_option(
-        "-p", "--prefix", dest="prefix", action="store", default="Gcommon"
-    )
+    parser.add_option("-f", "--filename", dest="filename", action="store", default="default")
+    parser.add_option("-p", "--prefix", dest="prefix", action="store", default="Gcommon")
 
     all_args = all_args[1:]
     options, args = parser.parse_args(all_args)

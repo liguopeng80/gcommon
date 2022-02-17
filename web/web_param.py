@@ -50,32 +50,12 @@ class WebParams(object):
 
         return self
 
-    def parse_required(
-        self,
-        param_name,
-        attr_name=None,
-        default=None,
-        validator=None,
-        **validator_params
-    ):
+    def parse_required(self, param_name, attr_name=None, default=None, validator=None, **validator_params):
         return self.parse(
-            param_name,
-            attr_name=attr_name,
-            required=True,
-            default=default,
-            validator=validator,
-            **validator_params
+            param_name, attr_name=attr_name, required=True, default=default, validator=validator, **validator_params
         )
 
-    def parse(
-        self,
-        param_name,
-        attr_name=None,
-        required=False,
-        default=None,
-        validator=None,
-        **validator_params
-    ):
+    def parse(self, param_name, attr_name=None, required=False, default=None, validator=None, **validator_params):
         param_value = self._get_attribute(param_name)
         if param_value:
             if validator:

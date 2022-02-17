@@ -25,9 +25,7 @@ class SqliteDbEngine(ObjectWithLogger):
         if self.is_debug:
             from sqlalchemy.pool import AssertionPool
 
-            self.db_engine = create_engine(
-                db_conn_str, poolclass=AssertionPool, pool_recycle=3600, echo=True
-            )
+            self.db_engine = create_engine(db_conn_str, poolclass=AssertionPool, pool_recycle=3600, echo=True)
         else:
             self.db_engine = create_engine(db_conn_str)
 
@@ -52,9 +50,7 @@ class SqliteDbEngine(ObjectWithLogger):
         else:
             try:
                 sess.commit()
-                self.logger.debug(
-                    "[%x] - db session commit - %s", threading.get_ident(), sess
-                )
+                self.logger.debug("[%x] - db session commit - %s", threading.get_ident(), sess)
 
                 if expunge:
                     sess.expunge_all()
@@ -69,9 +65,7 @@ class SqliteDbEngine(ObjectWithLogger):
                 sess.rollback()
                 raise
         finally:
-            self.logger.debug(
-                "[%x] - db session close - %s", threading.get_ident(), sess
-            )
+            self.logger.debug("[%x] - db session close - %s", threading.get_ident(), sess)
             sess.close()
 
     @staticmethod

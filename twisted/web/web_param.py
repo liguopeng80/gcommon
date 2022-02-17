@@ -28,9 +28,7 @@ class WebParams(object):
 
         return self
 
-    def parse(
-        self, param_name, attr_name=None, required=False, default=None, validator=None
-    ):
+    def parse(self, param_name, attr_name=None, required=False, default=None, validator=None):
         param_value = self._get_attribute(param_name)
         if param_value:
             if validator:

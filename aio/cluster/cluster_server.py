@@ -34,9 +34,7 @@ class SimpleClusterServer(SimpleServer):
         # self._working_root = zk_helper.get_path_to_working_service(self.service_name)
         # self._alive_root = zk_helper.get_path_to_alive_service(self.service_name)
 
-        self._cluster_config = ClusterConfig.parse(
-            self.config.get("service.cluster"), self.service_name
-        )
+        self._cluster_config = ClusterConfig.parse(self.config.get("service.cluster"), self.service_name)
         self._event_zk_ready = gasync.AsyncEvent()
 
         self.cluster_id = self.full_server_name.replace(".", "-")
@@ -114,9 +112,7 @@ class SimpleClusterServer(SimpleServer):
             self._kazoo_client.ensure_path(self._cluster_config.alive_root)
 
             # 监听服务节点变化
-            self._kazoo_client.ChildrenWatch(
-                self._cluster_config.working_root, self._on_cluster_nodes_changed
-            )
+            self._kazoo_client.ChildrenWatch(self._cluster_config.working_root, self._on_cluster_nodes_changed)
 
             # 把当前节点注册到 zookeeper
             node_path = f"{self._cluster_config.working_root}/{self.cluster_id}."
@@ -144,8 +140,7 @@ class SimpleClusterServer(SimpleServer):
         if self.cluster_id not in node_names:
             # 当前节点还需要继续排队
             logger.debug(
-                f"{self.service_name} cluster nodes changed, "
-                f"but current service instance need wait for working "
+                f"{self.service_name} cluster nodes changed, " f"but current service instance need wait for working "
             )
             return
 
@@ -179,9 +174,7 @@ class SimpleClusterServer(SimpleServer):
             values[node_index] = node_names[index]
         # 服务在 cluster 中的索引，用于消息路由
         service_index_in_cluster = values.index("")
-        zk_helper.update_node_data(
-            self._kazoo_client, current_node_path, str(service_index_in_cluster)
-        )
+        zk_helper.update_node_data(self._kazoo_client, current_node_path, str(service_index_in_cluster))
 
     async def _service_main(self):
         try:

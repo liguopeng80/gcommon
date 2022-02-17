@@ -213,9 +213,7 @@ class SocketServerFactory(Factory):
 
 
 def create(port, cmd_parser, cmd_handler):
-    reactor.listenTCP(
-        port, SocketServerFactory(cmd_parser, cmd_handler)
-    )  # @UndefinedVariable
+    reactor.listenTCP(port, SocketServerFactory(cmd_parser, cmd_handler))  # @UndefinedVariable
 
 
 def start_socket_server(port):

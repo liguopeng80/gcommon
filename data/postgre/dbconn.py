@@ -19,9 +19,7 @@ class DatabaseManager(object):
 
     def connect_to_db(self, db_name):
         url = "postgresql://{}:{}@{}:{}/{}"
-        url = url.format(
-            self.username, self.password, self.server_addr, self.server_port, db_name
-        )
+        url = url.format(self.username, self.password, self.server_addr, self.server_port, db_name)
 
         # The return value of create_engine() is our connection object
         db_conn = sqlalchemy.create_engine(

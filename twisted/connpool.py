@@ -52,9 +52,7 @@ class MessageQueue:
             # too much pending requests...
             if self._policy == self.DropOld:
                 old_req = self.dequeue()
-                logger.error(
-                    "Queue is full, drop the oldest request: %s" % str(old_req)
-                )
+                logger.error("Queue is full, drop the oldest request: %s" % str(old_req))
             else:
                 # Queue full, reject new request
                 logger.error("Queue is full, reject current request: %s" % str(req))
@@ -133,12 +131,8 @@ class ConnectionPool:
         # connecting status).
         self._new_connections = 0
         self._max_connections = config.get_int("postman.connection.max_connections")
-        self._max_request_in_one_fetch = config.get_int(
-            "postman.connection.max_request_in_one_fetch"
-        )
-        self._connection_retry_timeout = config.get_int(
-            "postman.connection.retry_timeout"
-        )
+        self._max_request_in_one_fetch = config.get_int("postman.connection.max_request_in_one_fetch")
+        self._connection_retry_timeout = config.get_int("postman.connection.retry_timeout")
 
         self._max_failed_connections = 20
         self._count_failed_connections = 0
@@ -160,10 +154,7 @@ class ConnectionPool:
     def _do_consume(self):
         """Try get a new request and an idle connection to process the request."""
 
-        logger.info(
-            "try sending more requests. requests in queue: %d"
-            % self._queue_producer.size()
-        )
+        logger.info("try sending more requests. requests in queue: %d" % self._queue_producer.size())
 
         while self._idle_connections and self._queue_producer.size():
             reqs = self._queue_producer.fetch_head(self._max_request_in_one_fetch)
@@ -188,8 +179,7 @@ class ConnectionPool:
 
             if self._block_times > 20:
                 logger.monitor.critical(
-                    "cannot connect to server: %s, blocked times: %d"
-                    % (self.server_name, self._block_times)
+                    "cannot connect to server: %s, blocked times: %d" % (self.server_name, self._block_times)
                 )
 
             wait_time = pow(1.1, self._block_times)
@@ -286,10 +276,7 @@ class ConnectionPool:
     def on_request_processed(self, conn):
         """A request is just processed by conn, return it to connection pool."""
 
-        logger.info(
-            "request has been processed! %s on %s"
-            % (str(conn.current_request()), str(conn))
-        )
+        logger.info("request has been processed! %s on %s" % (str(conn.current_request()), str(conn)))
 
         conn.set_idle()
         self._idle_connections.append(conn)

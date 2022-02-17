@@ -95,9 +95,7 @@ class SimpleWebApi(WebApiBase):
         for key, value in params:
             # 处理嵌套的 json 对象
             if type(value) == list:
-                value = json.dumps(
-                    value, sort_keys=True, ensure_ascii=False, separators=(",", ":")
-                )
+                value = json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
             param_strings.append(f"{key}:{value}")
 
         params = "|".join(param_strings)

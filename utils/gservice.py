@@ -60,9 +60,7 @@ class BaseServer(object):
         if schedule_mode == "cron":
             hour = self.server_config.get("schedule.cron.hour")
 
-            self.scheduler.add_job(
-                self.run, "cron", day_of_week="0-6", hour=hour, minute=30
-            )
+            self.scheduler.add_job(self.run, "cron", day_of_week="0-6", hour=hour, minute=30)
             self.scheduler.add_listener(self.on_failure, EVENT_JOB_ERROR)
             self.scheduler.start()
         else:

@@ -48,9 +48,7 @@ class FileTailer(object):
         self._event_sink = event_sink
 
     def start(self):
-        reactor.spawnProcess(
-            self.proc_tail, "tail", ["-c +10000", "-c10", "-F", self.filename]
-        )
+        reactor.spawnProcess(self.proc_tail, "tail", ["-c +10000", "-c10", "-F", self.filename])
 
     def stop(self):
         reactor.stop()

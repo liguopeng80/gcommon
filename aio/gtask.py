@@ -31,9 +31,7 @@ class ScheduledTask(object):
         self.status = self.Started
 
         loop = asyncio.get_event_loop()
-        self._delayed_call = loop.call_later(
-            self.seconds, self._on_timeout
-        )  # @UndefinedVariable
+        self._delayed_call = loop.call_later(self.seconds, self._on_timeout)  # @UndefinedVariable
 
         return self
 

@@ -177,9 +177,7 @@ class MqttListener(object):
         pass
 
     def on_connect(self, client, userdata, flags, rc):
-        logger.info(
-            "Connected with result code: %s, msg: %s", str(rc), mqtt.error_string(rc)
-        )
+        logger.info("Connected with result code: %s, msg: %s", str(rc), mqtt.error_string(rc))
 
         if rc == mqtt.MQTT_ERR_CONN_REFUSED:
             return
@@ -196,13 +194,9 @@ class MqttListener(object):
             self._do_subscribe(topic, qos, options, properties)
 
     def on_disconnect(self, client, userdata, rc):
-        logger.error(
-            "disconnected with result code: %s, msg: %s", str(rc), mqtt.error_string(rc)
-        )
+        logger.error("disconnected with result code: %s, msg: %s", str(rc), mqtt.error_string(rc))
 
-        if self._future_disconnected and (
-            self._future_disconnected.done() or self._future_disconnected.cancelled()
-        ):
+        if self._future_disconnected and (self._future_disconnected.done() or self._future_disconnected.cancelled()):
             self._future_disconnected.set_result(rc)
             self._future_disconnected = None
 

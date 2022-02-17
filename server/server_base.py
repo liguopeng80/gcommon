@@ -96,9 +96,7 @@ def _get_log_folder(options):
     return log_folder
 
 
-def init_logger(
-    options, *, thread_logger=False, formatter=None, file_handler=True, level_names=None
-):
+def init_logger(options, *, thread_logger=False, formatter=None, file_handler=True, level_names=None):
     log_folder = _get_log_folder(options)
     # TODO: stdio_handler should be False in production environment
     glogger.init_logger(

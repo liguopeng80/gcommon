@@ -44,9 +44,7 @@ class WsJsonClientProtocol(WebSocketClientProtocol):
 
     def onMessage(self, payload, isBinary):
         message = JsonObject.loads(payload)
-        logger.debug(
-            "[%06x], message received: %s", self.client_id, message.dumps(indent=4)
-        )
+        logger.debug("[%06x], message received: %s", self.client_id, message.dumps(indent=4))
 
         try:
             self._on_message_received(message)

@@ -158,9 +158,7 @@ class AsyncTimer(object):
             self.status = self.Timed_Out
             # await self.timeout_handler(*self._args, **self._kwargs)
             try:
-                await gasync.maybe_async(
-                    self.timeout_handler, *self._args, **self._kwargs
-                )
+                await gasync.maybe_async(self.timeout_handler, *self._args, **self._kwargs)
             except:
                 logger.error(
                     "timer handler error, timer: %s, exception: %s",

@@ -85,9 +85,7 @@ class KafkaConsumer(object):
 
     Message_Content_Is_Json = True
 
-    def __init__(
-        self, kafka_config: KafkaConfig, callback: KafkaConsumerCallback = None
-    ):
+    def __init__(self, kafka_config: KafkaConfig, callback: KafkaConsumerCallback = None):
         self.config = kafka_config
 
         if callback:
@@ -157,9 +155,7 @@ class KafkaConsumer(object):
         if self.Message_Content_Is_Json:
             content = JsonObject.loads(content)
 
-        await gasync.maybe_async(
-            self._on_kafka_message, message.topic, event_id, event_time, content
-        )
+        await gasync.maybe_async(self._on_kafka_message, message.topic, event_id, event_time, content)
 
 
 class KafkaProducer(object):

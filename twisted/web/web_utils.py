@@ -30,9 +30,7 @@ class WebConst(object):
     MIME_TYPE_JSON = "application/json"
 
 
-def set_options_methods(
-    request, post=False, get=False, put=False, delete=False, allowed_methods=None
-):
+def set_options_methods(request, post=False, get=False, put=False, delete=False, allowed_methods=None):
     methods = ["OPTIONS"]
     if post:
         methods.append("POST")

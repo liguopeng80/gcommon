@@ -104,9 +104,7 @@ class TwistedTaskPool(ObjectWithLogger):
                 self._do_work(worker)
             except Exception as e:
                 twisted_call(self.__on_task_failed, task, e)
-                self.logger.error(
-                    "failed on task %s with error: \n%s", task, traceback.format_exc()
-                )
+                self.logger.error("failed on task %s with error: \n%s", task, traceback.format_exc())
             else:
                 self.logger.debug("worker, task processed: %s", task)
 

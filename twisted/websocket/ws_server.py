@@ -71,9 +71,7 @@ class ServerProtocol(WebSocketServerProtocol):
     def onMessage(self, payload, is_binary):
         """Server received a payload from client."""
         if is_binary:
-            logger.debug(
-                "[%06x] - incoming binary msg, size: %s.", self.client_id, len(payload)
-            )
+            logger.debug("[%06x] - incoming binary msg, size: %s.", self.client_id, len(payload))
         else:
             logger.debug(
                 "[%06x] - incoming text msg, size: %s, content: %s.",
@@ -86,9 +84,7 @@ class ServerProtocol(WebSocketServerProtocol):
             self._client_handler.on_message(payload)
         except:
             stack = traceback.format_exc()
-            logger.error(
-                "[%06x] - error in onMessage: %s.", self.client_id, "".join(stack)
-            )
+            logger.error("[%06x] - error in onMessage: %s.", self.client_id, "".join(stack))
 
     def send_binary_message(self, payload):
         ServerProtocol._message_seq.next_value()
@@ -140,9 +136,7 @@ class ServerProtocol(WebSocketServerProtocol):
 
     @classmethod
     def create_server(cls, port, func_create_client_handler, debug=False):
-        ServerProtocol._Client_Handler_Factory = staticmethod(
-            func_create_client_handler
-        )
+        ServerProtocol._Client_Handler_Factory = staticmethod(func_create_client_handler)
 
         factory = WebSocketServerFactory()
         factory.protocol = cls

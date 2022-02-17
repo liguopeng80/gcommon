@@ -20,9 +20,7 @@ class DatabaseManager(object):
     logger = logging.getLogger("db")
     logger.setLevel(logging.INFO)
 
-    def __init__(
-        self, username, password, db_name, server_addr="localhost", server_port=5432
-    ):
+    def __init__(self, username, password, db_name, server_addr="localhost", server_port=5432):
         self.username = username
         self.password = password
 
@@ -31,19 +29,13 @@ class DatabaseManager(object):
         self.db_conn = None
 
         url = "postgresql+asyncpg://{}:{}@{}:{}/{}"
-        url = url.format(
-            self.username, self.password, self.server_addr, self.server_port, db_name
-        )
+        url = url.format(self.username, self.password, self.server_addr, self.server_port, db_name)
 
         dsn_template = "postgresql://{}:{}@{}:{}/{}"
-        self.dsn = dsn_template.format(
-            self.username, self.password, self.server_addr, self.server_port, db_name
-        )
+        self.dsn = dsn_template.format(self.username, self.password, self.server_addr, self.server_port, db_name)
 
         # The return value of create_engine() is our connection object
-        db_engine = create_async_engine(
-            url, echo=self.ECHO, pool_pre_ping=True, pool_recycle=10 * 60
-        )
+        db_engine = create_async_engine(url, echo=self.ECHO, pool_pre_ping=True, pool_recycle=10 * 60)
 
         # return db_conn
         self.db_engine = db_engine
@@ -55,9 +47,7 @@ class DatabaseManager(object):
         return db_meta
 
     def async_session(self):
-        async_session_factory = sessionmaker(
-            self.db_engine, expire_on_commit=False, class_=AsyncSession
-        )
+        async_session_factory = sessionmaker(self.db_engine, expire_on_commit=False, class_=AsyncSession)
 
         return async_session_factory()
 
@@ -65,13 +55,9 @@ class DatabaseManager(object):
         return self.async_session()
 
     async def _async_session(self):
-        async_session_factory = sessionmaker(
-            self.db_engine, expire_on_commit=False, class_=AsyncSession
-        )
+        async_session_factory = sessionmaker(self.db_engine, expire_on_commit=False, class_=AsyncSession)
 
-        async_session_cls = async_scoped_session(
-            async_session_factory, scopefunc=current_task
-        )
+        async_session_cls = async_scoped_session(async_session_factory, scopefunc=current_task)
         sess = async_session_cls()
 
         self.logger.debug("db session create - %s", sess)
@@ -86,9 +72,7 @@ class DatabaseManager(object):
                 self.logger.debug("db session commit - %s", sess)
                 await sess.commit()
             except Exception as e:
-                self.logger.error(
-                    "db session or app error - %s - exception: %s", sess, e
-                )
+                self.logger.error("db session or app error - %s - exception: %s", sess, e)
                 await sess.rollback()
                 raise
         finally:

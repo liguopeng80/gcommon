@@ -97,13 +97,9 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
         help="instance sequence",
     )
 
-    parser.add_option(
-        "--log-folder", dest="log_folder", action="store", default="", help="log folder"
-    )
+    parser.add_option("--log-folder", dest="log_folder", action="store", default="", help="log folder")
 
-    parser.add_option(
-        "-l", "--log-base", dest="log_base", action="store", default="", help="log base"
-    )
+    parser.add_option("-l", "--log-base", dest="log_base", action="store", default="", help="log base")
 
     parser.add_option(
         "--log-line-no",
@@ -113,9 +109,7 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
         help="log file name and line no",
     )
 
-    parser.add_option(
-        "--sid", dest="service_id", action="store", default="", help="service ID"
-    )
+    parser.add_option("--sid", dest="service_id", action="store", default="", help="service ID")
 
     parser.add_option(
         "-d",
@@ -237,9 +231,7 @@ def get_secret_config_file(options, default_config: JsonObject):
         return default_config.secret_config_file
 
     if default_config.secret_config_dir:
-        return os.path.join(
-            default_config.secret_config_dir, DEFAULT_SECRET_CONFIG_FILE
-        )
+        return os.path.join(default_config.secret_config_dir, DEFAULT_SECRET_CONFIG_FILE)
 
     # 默认配置
     project_cfg_dir = genv.get_relative_folder(__file__, PROJECT_SECRET_CONFIG_DIR)
@@ -247,11 +239,7 @@ def get_secret_config_file(options, default_config: JsonObject):
 
 
 def init_main(
-    *,
-    service_name="",
-    default_config: dict = None,
-    thread_logger=False,
-    parse_service_options=None
+    *, service_name="", default_config: dict = None, thread_logger=False, parse_service_options=None
 ) -> YamlConfigParser:
     """加载进程的基本配置，并初始化日志等设置"""
     if not service_name:
@@ -265,9 +253,7 @@ def init_main(
 
     # 解析命令行参数
     parser = optparse.OptionParser()
-    options, args = parse_command_line(
-        service_name, parser, sys.argv, parse_service_options=parse_service_options
-    )
+    options, args = parse_command_line(service_name, parser, sys.argv, parse_service_options=parse_service_options)
 
     # 初始化日志服务
     log_folder = get_log_folder(options, default_config)

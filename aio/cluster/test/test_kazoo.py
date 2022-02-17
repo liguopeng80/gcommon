@@ -57,10 +57,7 @@ class MyObserver(ZookeeperObserver):
 
     @gasync.callback_run_in_main_thread
     def on_data_changed(self, data, stat, event):
-        logger.debug(
-            "data changed - version: %s, data: %s"
-            % (stat.version, data.decode("utf-8"))
-        )
+        logger.debug("data changed - version: %s, data: %s" % (stat.version, data.decode("utf-8")))
 
     def _on_conn_lost(self):
         pass
@@ -97,10 +94,7 @@ class MyObserver(ZookeeperObserver):
             logger.debug("-- app data changed without data")
             return
 
-        logger.debug(
-            "-- app data changed - version: %s, data: %s"
-            % (stat.version, data.decode("utf-8"))
-        )
+        logger.debug("-- app data changed - version: %s, data: %s" % (stat.version, data.decode("utf-8")))
 
     def _gen_test_data(self):
         # path = PATH + '/' + str(time.time())

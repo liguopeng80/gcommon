@@ -163,18 +163,14 @@ class YamlConfigParser(ConfigParser):
         options = self._parse_group(file_options, params)
         self._options = JsonObject(options)
 
-    def load_module(
-        self, module_name, filename, params=None, encoding="utf-8", defaults=None
-    ):
+    def load_module(self, module_name, filename, params=None, encoding="utf-8", defaults=None):
         config = YamlConfigParser(defaults=defaults)
         config.read(filename, params, encoding)
 
         self._options[module_name] = config._options
         self._defaults[module_name] = config._defaults
 
-    def load_module_in_config_folder(
-        self, module_name, filename="", params=None, encoding="utf-8", defaults=None
-    ):
+    def load_module_in_config_folder(self, module_name, filename="", params=None, encoding="utf-8", defaults=None):
         config = YamlConfigParser(defaults=defaults)
 
         filename = filename or (module_name + ".yaml")

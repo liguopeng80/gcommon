@@ -30,9 +30,7 @@ class ClusterClient(object):
         self._cluster_config = cluster_config
         # self._working_root = zk_helper.get_path_to_working_service(self.service_name)
         # self._alive_root = zk_helper.get_path_to_alive_service(self.service_name)
-        self._node_manager = NodeManager(
-            self.service_name, ModuloAllocator(cluster_config)
-        )
+        self._node_manager = NodeManager(self.service_name, ModuloAllocator(cluster_config))
 
     @property
     def service_name(self):
@@ -63,9 +61,7 @@ class ClusterClient(object):
         self._kazoo_client.ensure_path(self._cluster_config.alive_root)
 
         # 监听服务节点变化
-        self._kazoo_client.ChildrenWatch(
-            self._cluster_config.working_root, self._on_cluster_nodes_changed
-        )
+        self._kazoo_client.ChildrenWatch(self._cluster_config.working_root, self._on_cluster_nodes_changed)
 
     @gasync.callback_run_in_main_thread
     def _on_cluster_nodes_changed(self, nodes):
@@ -93,40 +89,26 @@ class ClusterClient(object):
         # 增加新节点
         for new_name in new_node_names:
             if new_name not in old_node_names:
-                logger.info(
-                    f"service {self.service_name} - add cluster node {new_name}"
-                )
+                logger.info(f"service {self.service_name} - add cluster node {new_name}")
                 node_path = new_nodes[new_name]
-                self._kazoo_client.DataWatch(
-                    node_path, partial(self._on_working_node_data_changed, new_name)
-                )
-                self._node_manager.allocator.add_server_nodes(
-                    (new_name, NodeManager.Invalid_Node_Index)
-                )
+                self._kazoo_client.DataWatch(node_path, partial(self._on_working_node_data_changed, new_name))
+                self._node_manager.allocator.add_server_nodes((new_name, NodeManager.Invalid_Node_Index))
 
     @gasync.callback_run_in_main_thread
     def _on_working_node_data_changed(self, node_name, data, stat, event):
         if not data:
-            logger.debug(
-                f"service {self.service_name} - {node_name} has no data, waiting for it..."
-            )
+            logger.debug(f"service {self.service_name} - {node_name} has no data, waiting for it...")
             return
 
         if not self._node_manager.is_node_managed(node_name):
-            logger.warning(
-                f"service {self.service_name} - {node_name} is not managed any more."
-            )
+            logger.warning(f"service {self.service_name} - {node_name} is not managed any more.")
             return
 
         try:
             index = int(data)
         except:
-            logger.fatal(
-                f"service {self.service_name} - {node_name} updated invalid data: {data}!!"
-            )
+            logger.fatal(f"service {self.service_name} - {node_name} updated invalid data: {data}!!")
             return
 
-        logger.debug(
-            f"service {self.service_name} - {node_name} enters working mode on index: {index}."
-        )
+        logger.debug(f"service {self.service_name} - {node_name} enters working mode on index: {index}.")
         self._node_manager.allocator.update_node(node_name, index)

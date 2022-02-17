@@ -98,9 +98,7 @@ class AsyncLock(object):
         释放锁
         :return:
         """
-        logger.debug(
-            ">>> AsyncLock.release, self.waiting_clients:%s", self.waiting_clients
-        )
+        logger.debug(">>> AsyncLock.release, self.waiting_clients:%s", self.waiting_clients)
         assert self.locked, "Tried to release an unlocked lock"
 
         self.locked = False
@@ -330,10 +328,7 @@ class AsyncQueue(object):
             return succeed(self.queue.pop(0))
         else:
 
-            if (
-                self.max_count_of_clients is None
-                or len(self.waiting_clients) < self.max_count_of_clients
-            ):
+            if self.max_count_of_clients is None or len(self.waiting_clients) < self.max_count_of_clients:
                 d = AsyncTimer.wait(timeout_seconds)
                 logger.debug("--- AsyncQueue.get, wait d: %s", d)
 

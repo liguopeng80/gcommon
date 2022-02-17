@@ -76,9 +76,7 @@ class WebSocketConnection(object):
             await gasync.maybe_async(self._handle_ws_message, cmd_id, cmd, payload)
         except:
             stack = traceback.format_exc()
-            logger.error(
-                "[%06x] - error in onMessage: %s.", self.client_id, "".join(stack)
-            )
+            logger.error("[%06x] - error in onMessage: %s.", self.client_id, "".join(stack))
             raise
 
     @abstractmethod

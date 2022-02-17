@@ -76,9 +76,7 @@ class JsonObject(dict):
         return JsonObject({name: getattr(obj, name) for name in names})
 
     def dumps(self, indent=None, ensure_ascii=True, sort_keys=False):
-        result = json.dumps(
-            self, ensure_ascii=ensure_ascii, indent=indent, sort_keys=False
-        )
+        result = json.dumps(self, ensure_ascii=ensure_ascii, indent=indent, sort_keys=False)
 
         # if isinstance(result, str):
         #    result = result.encode('utf-8')
@@ -172,9 +170,7 @@ if __name__ == "__main__":
 class JsonField(object):
     """可转化成 Json 字段的属性"""
 
-    def __init__(
-        self, name="", default_value=None, *, validator=None, desc="", allow_blank=False
-    ):
+    def __init__(self, name="", default_value=None, *, validator=None, desc="", allow_blank=False):
         self.name = name
         self.default_value = default_value
         self.validator = validator
@@ -193,9 +189,7 @@ class JsonField(object):
 
 
 class IntegerJsonField(JsonField):
-    def __init__(
-        self, name="", default_value=None, *, validator=None, desc="", allow_blank=False
-    ):
+    def __init__(self, name="", default_value=None, *, validator=None, desc="", allow_blank=False):
         JsonField.__init__(
             self,
             name=name,
@@ -265,11 +259,7 @@ class JSONable(object):
         fields = gobject.get_instances_of(JsonField, self.__class__)
 
         for field_name, field in fields:
-            json_name = (
-                field_name
-                if not self._enable_snake_to_camel
-                else gstr.snakeToCamel(field_name)
-            )
+            json_name = field_name if not self._enable_snake_to_camel else gstr.snakeToCamel(field_name)
             json_value = data.get(json_name, None)
 
             if json_value is None:

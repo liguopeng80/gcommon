@@ -68,12 +68,8 @@ class SimpleServer(ObjectWithLogger):
         # 加载配置项
         self.load_server_config()
 
-        self.full_server_name = gproc.get_process_id(
-            self.SERVICE_NAME, int(self.options.instance)
-        )
-        self.unique_server_name = gproc.get_process_unique_id(
-            self.SERVICE_NAME, int(self.options.instance)
-        )
+        self.full_server_name = gproc.get_process_id(self.SERVICE_NAME, int(self.options.instance))
+        self.unique_server_name = gproc.get_process_unique_id(self.SERVICE_NAME, int(self.options.instance))
 
     def parse_service_options(self, parser: optparse.OptionParser):
         pass
@@ -83,10 +79,7 @@ class SimpleServer(ObjectWithLogger):
         #     parser.error('No arguments needed.')
         if self.options.service:
             if self.options.service != self.SERVICE_NAME:
-                parser.error(
-                    "bad service name. expected: %s, got: %s."
-                    % (self.SERVICE_NAME, self.options.service)
-                )
+                parser.error("bad service name. expected: %s, got: %s." % (self.SERVICE_NAME, self.options.service))
         else:
             self.options.service = self.SERVICE_NAME
 

@@ -103,9 +103,7 @@ class HTTPClient(object):
                 data = data.dumps()
             body_producer = self._body_producer(data)
 
-        d = self._agent.request(
-            method, url, headers=headers, bodyProducer=body_producer
-        ).addCallback(HTTPResponse)
+        d = self._agent.request(method, url, headers=headers, bodyProducer=body_producer).addCallback(HTTPResponse)
         return d
 
 

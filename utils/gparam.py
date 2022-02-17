@@ -24,14 +24,10 @@ def param_integer(name, value, max_value=None, min_value=None):
         raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not int" % (name, value))
 
     if max_value is not None and value > max_value:
-        raise GExcept(
-            GErrors.gen_bad_request, "%s (v=%s) > max (%s)" % (name, value, max_value)
-        )
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) > max (%s)" % (name, value, max_value))
 
     if min_value is not None and value < min_value:
-        raise GExcept(
-            GErrors.gen_bad_request, "%s (v=%s) < max (%s)" % (name, value, max_value)
-        )
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) < max (%s)" % (name, value, max_value))
 
     return value
 
@@ -43,14 +39,10 @@ def param_date(name, value, max_value=None, min_value=None):
         raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not date" % (name, value))
 
     if max_value is not None and value > max_value:
-        raise GExcept(
-            GErrors.gen_bad_request, "%s (v=%s) > max (%s)" % (name, value, max_value)
-        )
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) > max (%s)" % (name, value, max_value))
 
     if min_value is not None and value < min_value:
-        raise GExcept(
-            GErrors.gen_bad_request, "%s (v=%s) < max (%s)" % (name, value, max_value)
-        )
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) < max (%s)" % (name, value, max_value))
 
     return value
 
@@ -62,14 +54,10 @@ def param_simple_date(name, value, max_value=None, min_value=None):
         raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not date" % (name, value))
 
     if max_value is not None and value > max_value:
-        raise GExcept(
-            GErrors.gen_bad_request, "%s (v=%s) > max (%s)" % (name, value, max_value)
-        )
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) > max (%s)" % (name, value, max_value))
 
     if min_value is not None and value < min_value:
-        raise GExcept(
-            GErrors.gen_bad_request, "%s (v=%s) < max (%s)" % (name, value, max_value)
-        )
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) < max (%s)" % (name, value, max_value))
 
     return value
 
@@ -78,19 +66,13 @@ def param_timestamp(name, value, max_value=None, min_value=None):
     try:
         value = gtime.timestamp_to_date((int(value) / 1000))
     except:
-        raise GExcept(
-            GErrors.gen_bad_request, "%s (v=%s) is not timestamp" % (name, value)
-        )
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not timestamp" % (name, value))
 
     if max_value is not None and value > max_value:
-        raise GExcept(
-            GErrors.gen_bad_request, "%s (v=%s) > max (%s)" % (name, value, max_value)
-        )
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) > max (%s)" % (name, value, max_value))
 
     if min_value is not None and value < min_value:
-        raise GExcept(
-            GErrors.gen_bad_request, "%s (v=%s) < max (%s)" % (name, value, max_value)
-        )
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) < max (%s)" % (name, value, max_value))
 
     return value
 
@@ -120,9 +102,7 @@ def param_digital(name, value: str, max_length=0, min_length=0):
         raise GExcept(GErrors.gen_bad_request, f"min length: {min_length}")
 
     if not value.isdigit():
-        raise GExcept(
-            GErrors.gen_bad_request, "%s (v=%s) is not a digital string" % (name, value)
-        )
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not a digital string" % (name, value))
 
     return value
 
@@ -132,8 +112,6 @@ def param_alnum(name, value: str):
         return
 
     if not value.isalnum():
-        raise GExcept(
-            GErrors.gen_bad_request, "%s (v=%s) is not a digital string" % (name, value)
-        )
+        raise GExcept(GErrors.gen_bad_request, "%s (v=%s) is not a digital string" % (name, value))
 
     return value

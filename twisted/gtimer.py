@@ -65,9 +65,7 @@ class Timer(object):
             return None
 
         self.status = self.Started
-        self._delayed_call = reactor.callLater(
-            self.seconds, self._on_timeout
-        )  # @UndefinedVariable
+        self._delayed_call = reactor.callLater(self.seconds, self._on_timeout)  # @UndefinedVariable
 
         return self
 

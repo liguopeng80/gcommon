@@ -15,9 +15,7 @@ from gcommon.aio.grpc.proto import helloworld_pb2_grpc
 
 class Greeter(helloworld_pb2_grpc.GreeterServicer):
     def __init__(self):
-        self._proxy = GrpcProxyHelper(
-            helloworld_pb2_grpc.GreeterStub, server="localhost:50051"
-        )
+        self._proxy = GrpcProxyHelper(helloworld_pb2_grpc.GreeterStub, server="localhost:50051")
         self._proxy.set_proxy(self)
 
 
