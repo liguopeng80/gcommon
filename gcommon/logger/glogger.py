@@ -11,7 +11,7 @@ from logging.handlers import TimedRotatingFileHandler
 VERBOSE = logging.DEBUG - 5
 ACCESS = logging.INFO + 5
 
-Default_Log_Root = "."
+Default_Log_Root = "log"
 
 logger = logging.getLogger()
 
@@ -151,7 +151,9 @@ def init_logger(
     # log_folder = config.get_str('d.logging.accesslog_dir')
 
     if not log_folder:
-        log_folder = Default_Log_Root
+        log_folder = os.path.join(os.getcwd(), Default_Log_Root)
+        if not os.path.isdir(log_folder):
+            os.makedirs(log_folder)
 
     if stdio_handler:
         redirect_stdio = False

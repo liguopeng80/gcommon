@@ -143,7 +143,8 @@ class SimpleServer(ObjectWithLogger):
 
         service_root = genv.get_env(gmain.ENV_PROJECT_ROOT)
         if not service_root:
-            service_root = genv.get_relative_folder(__file__, gmain.PROJECT_ROOT)
+            # service_root = genv.get_relative_folder(__file__, gmain.PROJECT_ROOT)
+            service_root = gmain.get_project_root()
 
         params = {
             "SERVICE": self.options.service,

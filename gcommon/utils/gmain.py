@@ -13,13 +13,14 @@ from gcommon.utils import genv
 from gcommon.utils.gjsonobj import JsonObject
 from gcommon.utils.gyaml import YamlConfigParser
 
-DEFAULT_CONFIG_FILE = "default.yaml"
-DEFAULT_SECRET_CONFIG_FILE = "secret.default.yaml"
+DEFAULT_CONFIG_DIR = "deploy"
+DEFAULT_CONFIG_FILE = "config.yaml"
+DEFAULT_SECRET_CONFIG_FILE = "secret.config.yaml"
 
-PROJECT_ROOT = "../../../"
-PROJECT_LOG_DIR = "../../../log/"
-PROJECT_CONFIG_DIR = "../../../deploy/"
-PROJECT_SECRET_CONFIG_DIR = "../../../deploy/"
+# PROJECT_ROOT = "../../../"
+PROJECT_LOG_DIR = "log"
+# PROJECT_CONFIG_DIR = "../../../deploy/"
+# PROJECT_SECRET_CONFIG_DIR = "../../../deploy/"
 
 ENV_PROJECT_ROOT = "G_PROJECT_ROOT"
 ENV_CONFIG_FILE = "G_COMMON_CONFIG_FILE"
@@ -27,7 +28,6 @@ ENV_CONFIG_DIR = "G_COMMON_CONFIG_DIR"
 ENV_SECRET_CONFIG_FILE = "G_COMMON_SECRET_CONFIG_FILE"
 ENV_SECRET_CONFIG_DIR = "G_COMMON_SECRET_CONFIG_DIR"
 ENV_LOG_DIR = "G_COMMON_LOG_DIR"
-
 
 ENV_LOG_FORMAT = "G_COMMON_LOG_FORMAT"
 ENV_LOG_NOT_TO_FILE = "G_COMMON_LOG_NOT_TO_FILE"
@@ -156,7 +156,8 @@ def get_log_folder(options, default_config: JsonObject):
             log_base = default_config.log_base
         else:
             # 完全没有配置
-            log_base = genv.get_relative_folder(__file__, PROJECT_LOG_DIR)
+            project_root = get_project_root()
+            log_base = genv.get_relative_folder(project_root, PROJECT_LOG_DIR)
 
     # log/
     # log/my-service/
@@ -197,15 +198,22 @@ def get_config_file(options, default_config: JsonObject):
     if default_config.config_dir:
         return os.path.join(default_config.config_dir, DEFAULT_CONFIG_FILE)
 
+
+def get_default_config_file(options, default_config: JsonObject):
     # 默认配置
-    project_cfg_dir = genv.get_relative_folder(__file__, PROJECT_CONFIG_DIR)
+    project_cfg_dir = genv.get_relative_folder(os.getcwd(), DEFAULT_CONFIG_DIR)
+    # project_cfg_dir = genv.get_relative_folder(__file__, PROJECT_CONFIG_DIR)
+
     return os.path.join(project_cfg_dir, DEFAULT_CONFIG_FILE)
 
 
 def get_project_root():
     project_root = genv.get_env(ENV_PROJECT_ROOT)
-    if not project_root:
-        project_root = genv.get_relative_folder(__file__, PROJECT_ROOT)
+    if project_root:
+        project_root = os.path.abspath(project_root)
+    else:
+        # project_root = genv.get_relative_folder(__file__, PROJECT_ROOT)
+        project_root = os.path.join(os.getcwd(),)
 
     return project_root
 
@@ -233,7 +241,9 @@ def get_secret_config_file(options, default_config: JsonObject):
         return os.path.join(default_config.secret_config_dir, DEFAULT_SECRET_CONFIG_FILE)
 
     # 默认配置
-    project_cfg_dir = genv.get_relative_folder(__file__, PROJECT_SECRET_CONFIG_DIR)
+    # project_cfg_dir = genv.get_relative_folder(__file__, PROJECT_SECRET_CONFIG_DIR)
+    project_cfg_dir = genv.get_relative_folder(os.getcwd(), DEFAULT_CONFIG_DIR)
+
     return os.path.join(project_cfg_dir, DEFAULT_SECRET_CONFIG_FILE)
 
 
@@ -259,13 +269,29 @@ def init_main(
     glogger.init_logger(log_folder, thread_logger=thread_logger or options.multi_thread)
 
     # 加载进程配置（default_config 同样用作配置参数）
-    config_file = get_config_file(options, default_config)
     config = YamlConfigParser(default_config)
-    config.read(config_file, default_config)
+
+    import logging
+    logger = logging.getLogger("gcommon")
+
+    config_file = get_config_file(options, default_config)
+    if config_file and os.path.exists(config_file):
+        logger.info("load config from: %s", config_file)
+        config.read(config_file, default_config)
+    else:
+        config_file = get_default_config_file(options, default_config)
+        if os.path.exists(config_file):
+            logger.info("load config from: %s", config_file)
+            config.read(config_file, default_config)
+        else:
+            logger.info("default config file not found: %s", config_file)
 
     secret_config_file = get_secret_config_file(options, default_config)
     if os.path.exists(secret_config_file):
+        logger.info("load secret config from: %s", config_file)
         config.load_module("secret", secret_config_file)
+    else:
+        logger.info("secret config file not found: %s", secret_config_file)
 
     config.args = args
     config.options = options
