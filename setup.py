@@ -12,7 +12,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setuptools.setup(
     name="gcommon",
-    version="1.0.1",
+    version="1.0.2",
 
     description="Common Pytohn Library for server and client application.",
     long_description=README,

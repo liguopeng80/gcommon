@@ -14,8 +14,8 @@ from gcommon.utils.gjsonobj import JsonObject
 from gcommon.utils.gyaml import YamlConfigParser
 
 DEFAULT_CONFIG_DIR = "deploy"
-DEFAULT_CONFIG_FILE = "config.yaml"
-DEFAULT_SECRET_CONFIG_FILE = "secret.config.yaml"
+DEFAULT_CONFIG_FILE = "default.yaml"
+DEFAULT_SECRET_CONFIG_FILE = "secret.default.yaml"
 
 # PROJECT_ROOT = "../../../"
 PROJECT_LOG_DIR = "log"
@@ -197,6 +197,8 @@ def get_config_file(options, default_config: JsonObject):
 
     if default_config.config_dir:
         return os.path.join(default_config.config_dir, DEFAULT_CONFIG_FILE)
+
+    return get_default_config_file(options, default_config)
 
 
 def get_default_config_file(options, default_config: JsonObject):
