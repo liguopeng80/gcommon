@@ -16,7 +16,7 @@ setuptools.setup(
 
     description="Common Pytohn Library for server and client application.",
     long_description=README,
-    long_description_content_type="text/x-markdown",
+    long_description_content_type="text/markdown",
 
     author="Guo Peng Li",
     author_email="liguopeng@liguopeng.net",
