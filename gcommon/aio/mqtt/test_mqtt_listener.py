@@ -5,17 +5,17 @@ import asyncio
 import logging
 import sys
 
-from gcommon.aio.mqtt.mqtt_listener import MqttConfig, MqttListener, MqttObserverBase
+from gcommon.aio.mqtt.mqtt_listener import MqttConfig, MqttListener, MqttObserver
 from gcommon.logger.glogger import init_basic_config
 from gcommon.logger.log_util import log_callback
 
 logger = logging.getLogger("iot")
 
 
-class MyObserver(MqttObserverBase):
+class MyObserver(MqttObserver):
     @log_callback(logger)
     def on_mqtt_connected(self, client, userdata, flags, rc):
-        self.mqtt_listener.subscribe("guli/test")
+        self._mqtt_listener.subscribe("guli/test")
 
     @log_callback(logger)
     def on_mqtt_message(self, client, userdata, message):

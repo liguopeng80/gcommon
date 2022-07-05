@@ -14,7 +14,7 @@ from gcommon.utils import gtime
 from gcommon.utils.gcounter import Sequence
 from gcommon.utils.gjsonobj import JsonObject
 
-logger = logging.getLogger("websock")
+logger = logging.getLogger("gcommon.websock")
 
 
 class WebSocketConnection(object):

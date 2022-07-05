@@ -14,7 +14,7 @@ class DatabaseManager(object):
     DEFAULT_ENCODING = "utf8"
     ECHO = False
 
-    logger = logging.getLogger("db")
+    logger = logging.getLogger("gcommon.db")
     logger.setLevel(logging.INFO)
 
     def __init__(self, username, password, db_name, server_addr="localhost", server_port=5432):

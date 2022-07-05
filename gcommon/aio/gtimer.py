@@ -13,7 +13,7 @@ from datetime import datetime
 from gcommon.aio import gasync
 from gcommon.utils import gregister
 
-logger = logging.getLogger("timer")
+logger = logging.getLogger("gcommon.timer")
 
 
 class AsyncWait(object):

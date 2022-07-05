@@ -12,7 +12,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setuptools.setup(
     name="gcommon",
-    version="1.0.2",
+    version="1.1.0",
 
     description="Common Pytohn Library for server and client application.",
     long_description=README,
@@ -31,6 +31,12 @@ setuptools.setup(
 
     packages=setuptools.find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     python_requires=">=3.7, <4",
+
+    entry_points={
+        'console_scripts': [
+            'gcommon=gcommon.helpers:main',
+        ],
+    },
 
     install_requires = [
         "aiofiles==0.8.0",

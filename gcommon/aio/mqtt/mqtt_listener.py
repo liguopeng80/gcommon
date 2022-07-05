@@ -15,7 +15,7 @@ from gcommon.aio import gasync
 from gcommon.server.server_config import ServerConfig
 from gcommon.utils import gtime
 
-logger = logging.getLogger("mqtt")
+logger = logging.getLogger("gcommon.mqtt")
 
 
 class MqttConfig(ServerConfig):
@@ -23,10 +23,24 @@ class MqttConfig(ServerConfig):
 
 
 class MqttObserverBase(object):
-    mqtt_listener = None
+    @abstractmethod
+    def on_mqtt_connected(self, _client, _user_data, _flags, rc):
+        logger.debug(_client)
+
+    @abstractmethod
+    def on_mqtt_disconnected(self, _client, _userdata, _rc):
+        logger.debug(_client)
+
+    @abstractmethod
+    def on_mqtt_message(self, _client, _user_data, message):
+        logger.debug(message.payload)
+
+
+class MqttObserver(MqttObserverBase):
+    _mqtt_listener = None
 
     def set_mqtt_listener(self, listener):
-        self.mqtt_listener = listener
+        self._mqtt_listener = listener
 
     @abstractmethod
     def on_mqtt_connected(self, _client, _user_data, _flags, rc):
@@ -41,7 +55,7 @@ class MqttObserverBase(object):
         logger.debug(message.payload)
 
     def send_message(self, topic, message, qos=0) -> mqtt.MQTTMessageInfo:
-        return self.mqtt_listener.send_message(topic, message, qos)
+        return self._mqtt_listener.send_message(topic, message, qos)
 
 
 class AsyncioHelper:
@@ -97,12 +111,14 @@ class AsyncioHelper:
 
 
 class MqttListener(object):
-    def __init__(self, config: MqttConfig, observer: MqttObserverBase):
+    def __init__(self, config: MqttConfig, observer: MqttObserverBase, client_id=""):
         self.observer = observer
 
         self.config = config
 
-        client_id = "rcs" + gtime.date_str_by_minute()
+        if not client_id:
+            client_id = f"gcommon-{gtime.local_time_str()}"
+
         self.client = mqtt.Client(client_id=client_id)
 
         self.client.on_connect = self.on_connect

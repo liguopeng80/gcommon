@@ -16,7 +16,7 @@ from gcommon.utils.gglobal import Global
 from gcommon.utils.gjsonobj import JsonObject
 from gcommon.web.web_utils import WebConst
 
-logger = logging.getLogger("http")
+logger = logging.getLogger("gcommon.http")
 
 
 PASSTHROUGH_HTTP_ERROR = True

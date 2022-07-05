@@ -10,7 +10,7 @@ import time
 import traceback
 from asyncio import Future
 
-logger = logging.getLogger("asyncio")
+logger = logging.getLogger("gcommon.asyncio")
 
 
 class AsyncTask(object):

@@ -9,7 +9,7 @@ from functools import wraps
 
 from gcommon.utils.gcounter import Counter, Gauge, Timer
 
-logger = logging.getLogger("monitor")
+logger = logging.getLogger("gcommon.monitor")
 
 
 def monitor(name=None):

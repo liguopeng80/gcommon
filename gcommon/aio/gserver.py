@@ -135,7 +135,7 @@ class SimpleServer(ObjectWithLogger):
             formatter=formatter,
             level_names=level_names,
         )
-        self.logger = logging.getLogger(self.SERVICE_NAME)
+        self.logger = logging.getLogger(f"gcommon.{self.SERVICE_NAME}")
 
     def get_config_params(self):
         cfg_root = genv.get_folder(self.config_file)

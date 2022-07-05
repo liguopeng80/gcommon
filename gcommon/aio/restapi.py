@@ -5,7 +5,7 @@ import logging
 
 import aiohttp
 
-logger = logging.getLogger("webclient")
+logger = logging.getLogger("gcommon.webclient")
 
 
 async def get(url, **kwargs):

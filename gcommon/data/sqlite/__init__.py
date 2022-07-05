@@ -18,7 +18,7 @@ from .. import BaseManager
 class SqliteDbEngine(ObjectWithLogger):
     is_debug = False
 
-    logger = logging.getLogger("db")
+    logger = logging.getLogger("gcommon.db")
     logger.setLevel(logging.INFO)
 
     def __init__(self, db_conn_str, pool_size=15):

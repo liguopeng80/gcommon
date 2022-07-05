@@ -13,7 +13,7 @@ from gcommon.aio import gasync
 from gcommon.utils import gerrors, gtime
 from gcommon.utils.gjsonobj import JsonObject
 
-logger = logging.getLogger("kafka")
+logger = logging.getLogger("gcommon.kafka")
 
 
 class KafkaConfig(object):

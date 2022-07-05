@@ -10,7 +10,7 @@ import shlex
 import socket
 import subprocess
 
-logger = logging.getLogger("proc")
+logger = logging.getLogger("gcommon.proc")
 
 
 def _hostname():

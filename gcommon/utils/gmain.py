@@ -18,7 +18,7 @@ DEFAULT_CONFIG_FILE = "default.yaml"
 DEFAULT_SECRET_CONFIG_FILE = "secret.default.yaml"
 
 # PROJECT_ROOT = "../../../"
-PROJECT_LOG_DIR = "log"
+DEFAULT_LOG_DIR = "log"
 # PROJECT_CONFIG_DIR = "../../../deploy/"
 # PROJECT_SECRET_CONFIG_DIR = "../../../deploy/"
 
@@ -157,7 +157,7 @@ def get_log_folder(options, default_config: JsonObject):
         else:
             # 完全没有配置
             project_root = get_project_root()
-            log_base = genv.get_relative_folder(project_root, PROJECT_LOG_DIR)
+            log_base = genv.get_relative_folder(project_root, DEFAULT_LOG_DIR)
 
     # log/
     # log/my-service/
@@ -209,7 +209,12 @@ def get_default_config_file(options, default_config: JsonObject):
     return os.path.join(project_cfg_dir, DEFAULT_CONFIG_FILE)
 
 
+def get_default_log_folder(options, default_config: JsonObject):
+    return genv.get_relative_folder(os.getcwd(), DEFAULT_LOG_DIR)
+
+
 def get_project_root():
+    """1. ENV, 2. CWD"""
     project_root = genv.get_env(ENV_PROJECT_ROOT)
     if project_root:
         project_root = os.path.abspath(project_root)
@@ -308,7 +313,7 @@ if __name__ == "__main__":
     default_demo_config = {"config_file": "test/demo_data.yaml"}
     demo_config = init_main(service_name="demo", default_config=default_demo_config)
 
-    logger = logging.getLogger("test")
+    logger = logging.getLogger("gcommon.test")
     logger.debug(demo_config)
 
     pass

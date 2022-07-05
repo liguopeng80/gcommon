@@ -12,7 +12,7 @@ import paho.mqtt.client as mqtt
 from gcommon.server.server_config import ServerConfig
 from gcommon.utils import gtime
 
-logger = logging.getLogger("mqtt")
+logger = logging.getLogger("gcommon.mqtt")
 
 
 class MqttConfig(ServerConfig):
