@@ -99,6 +99,8 @@ class SimpleServer(ObjectWithLogger):
 
         if not self.options.instance:
             self.options.instance = self.INSTANCE
+        else:
+            self.INSTANCE = self.options.instance = int(self.options.instance)
 
         pass
 
