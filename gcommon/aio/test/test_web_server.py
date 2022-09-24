@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # created: 2021-08-19
 # creator: liguopeng@liguopeng.net
-
-from quart import Quart, request, websocket
+from quart import Quart
+from quart import request
+from quart import websocket
 
 app = Quart(__name__)
 

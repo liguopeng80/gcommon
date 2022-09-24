@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # created: 2021-08-04
 # creator: liguopeng@liguopeng.net
-
-from gcommon.utils.gstr import SnakeToCamel, camel_to_snake, snakeToCamel
+from gcommon.utils.gstr import camel_to_snake
+from gcommon.utils.gstr import SnakeToCamel
+from gcommon.utils.gstr import snakeToCamel
 
 
 def test_camel_to_snake():

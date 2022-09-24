@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-05-06
-
 """应用服务器集群"""
 import abc
 import logging

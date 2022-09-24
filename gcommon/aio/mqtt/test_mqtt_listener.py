@@ -5,7 +5,9 @@ import asyncio
 import logging
 import sys
 
-from gcommon.aio.mqtt.mqtt_listener import MqttConfig, MqttListener, MqttObserver
+from gcommon.aio.mqtt.mqtt_listener import MqttConfig
+from gcommon.aio.mqtt.mqtt_listener import MqttListener
+from gcommon.aio.mqtt.mqtt_listener import MqttObserver
 from gcommon.logger.glogger import init_basic_config
 from gcommon.logger.log_util import log_callback
 

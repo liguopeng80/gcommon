@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 import os
 import platform
 import sys
@@ -49,7 +48,7 @@ def insert_python_source_folder(newt_src_folder):
 def get_folder(fullname):
     """返回路径所对应的目录（去除文件名）。"""
     fullname = fullname or ""
-    
+
     if os.path.isdir(fullname):
         folder = fullname
     else:

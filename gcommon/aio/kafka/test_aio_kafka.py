@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 # created: 2021-08-02
 # creator: liguopeng@liguopeng.net
-
 """
 https://aiokafka.readthedocs.io/en/stable/
 """
-
 import asyncio
 
-from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
+from aiokafka import AIOKafkaConsumer
+from aiokafka import AIOKafkaProducer
 
 
 async def consume():

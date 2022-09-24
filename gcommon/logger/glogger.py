@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 """Provide logging module."""
-
 import logging
 import os
 import sys
@@ -46,7 +44,7 @@ class StdIORedirector:
             return
 
         msg = self._buffer[:pos]
-        self._buffer = self._buffer[pos + 1:]
+        self._buffer = self._buffer[pos + 1 :]
 
         if self._level == self.STD_OUT:
             logger.debug(msg)

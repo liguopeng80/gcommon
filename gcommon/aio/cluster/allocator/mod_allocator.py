@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # created: 2021-11-21
 # creator: liguopeng@liguopeng.net
-
 """基于整数取余的分配方式"""
 from gcommon.aio.cluster.cluster_config import ClusterConfig
-from gcommon.aio.cluster.cluster_manager import ClusterAllocationType, NodeAllocator
+from gcommon.aio.cluster.cluster_manager import ClusterAllocationType
+from gcommon.aio.cluster.cluster_manager import NodeAllocator
 
 
 class NodeDesc(object):

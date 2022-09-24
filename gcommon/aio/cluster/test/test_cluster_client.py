@@ -7,7 +7,8 @@ from gcommon.aio import gasync
 from gcommon.aio.cluster.cluster_client import ClusterClient
 from gcommon.aio.cluster.cluster_config import ClusterConfig
 from gcommon.aio.cluster.zk_service import ZookeeperService
-from gcommon.utils import genv, gmain
+from gcommon.utils import genv
+from gcommon.utils import gmain
 from gcommon.utils.gglobal import Global
 
 

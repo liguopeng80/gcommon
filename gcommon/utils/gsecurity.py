@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-05-19
-
 import base64
 import binascii
 import datetime

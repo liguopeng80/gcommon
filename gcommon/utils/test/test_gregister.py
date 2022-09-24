@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # created: 2021-04-18
 # creator: liguopeng@liguopeng.net
-from gcommon.utils.gregister import Registry, RegistryItemNotExisting
+from gcommon.utils.gregister import Registry
+from gcommon.utils.gregister import RegistryItemNotExisting
 
 
 class DemoBase(object):

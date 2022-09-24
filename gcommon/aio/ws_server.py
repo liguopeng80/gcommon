@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 """WebSocket Server."""
-
 import logging
 import traceback
 from abc import abstractmethod

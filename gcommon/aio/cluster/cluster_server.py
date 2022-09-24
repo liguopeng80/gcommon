@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-05-04
-
 import logging
 import traceback
 

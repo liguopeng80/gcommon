@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # created: 2021-06-29
 # creator: liguopeng@liguopeng.net
-
 from copy import copy
 
 from gcommon.utils.gjsonobj import JsonObject

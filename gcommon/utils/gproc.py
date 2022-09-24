@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-02-27
-
 """进程辅助工具。"""
-
 import logging
 import os
 import shlex

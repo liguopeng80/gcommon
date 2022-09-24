@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: '2015-01-29'
-
-
 """错误码和错误描述定义生成器"""
 import optparse
 import os

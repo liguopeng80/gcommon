@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-05-04
-
 """服务器状态监控和管理"""
 import logging
 from enum import Enum

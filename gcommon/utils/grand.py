@@ -2,9 +2,7 @@
 #
 # author: Guopeng Li
 # created: 27 Aug 2008
-
 """Util to create random data (string, int, etc)."""
-
 import random
 import string
 import threading

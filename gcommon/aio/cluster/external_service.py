@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-05-05
-
 """应用服务器所以来的外部服务"""
-
 import logging
 from enum import Enum
 

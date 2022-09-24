@@ -4,7 +4,8 @@
 import asyncio
 import time
 
-from gcommon.aio.kafka.gkafka import KafkaConfig, KafkaConsumer
+from gcommon.aio.kafka.gkafka import KafkaConfig
+from gcommon.aio.kafka.gkafka import KafkaConsumer
 from gcommon.utils.gmain import init_main
 
 

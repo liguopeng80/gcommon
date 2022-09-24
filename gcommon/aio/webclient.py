@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2016-01-18
-
 import aiohttp
 
 Content_Type_XML = "application/xml"

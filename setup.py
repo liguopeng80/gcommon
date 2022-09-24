@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 import pathlib
+
 import setuptools
 
 
@@ -13,32 +15,26 @@ README = (HERE / "README.md").read_text()
 setuptools.setup(
     name="gcommon",
     version="1.1.1",
-
     description="Common Pytohn Library for server and client application.",
     long_description=README,
     long_description_content_type="text/markdown",
-
     author="Guo Peng Li",
     author_email="liguopeng@liguopeng.net",
     url="https://github.com/liguopeng80/gcommon",
-
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Topic :: Utilities",
         "Programming Language :: Python",
     ],
-
     packages=setuptools.find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     python_requires=">=3.7, <4",
-
     entry_points={
-        'console_scripts': [
-            'gcommon=gcommon.helpers:main',
+        "console_scripts": [
+            "gcommon=gcommon.helpers:main",
         ],
     },
-
-    install_requires = [
+    install_requires=[
         "aiofiles==0.8.0",
         "aiohttp==3.8.1",
         "aiosignal==1.2.0",

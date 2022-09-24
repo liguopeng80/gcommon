@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 # created: 23 Oct 2012
 # author: "Li Guo Peng" <roc.lee.80@gmail.com>
-
 import json
 
-from gcommon.utils import gobject, gstr
+from gcommon.utils import gobject
+from gcommon.utils import gstr
 
 
 class JsonAttributeError(AttributeError):

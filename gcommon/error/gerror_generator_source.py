@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: '2015-02-01'
-
-from gcommon.utils.genum import Enum, EnumItem
+from gcommon.utils.genum import Enum
+from gcommon.utils.genum import EnumItem
 
 Domain = Enum(
     general=100,

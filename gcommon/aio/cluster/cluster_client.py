@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 # created: 2015-05-13
 # creator: liguopeng@liguopeng.net
-
 """集群服务的调用者，监控集群的工作状态，选择合适的节点发送请求"""
-
-
 import logging
 from functools import partial
 

@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 # created: 2021-04-27
 # creator: liguopeng@liguopeng.net
-
 import logging
 import os
 import threading
 from contextlib import contextmanager
 
-from sqlalchemy import MetaData, create_engine
+from sqlalchemy import create_engine
+from sqlalchemy import MetaData
 from sqlalchemy.orm import sessionmaker
 
-from gcommon.utils.gobject import ObjectWithLogger
-
 from .. import BaseManager
+from gcommon.utils.gobject import ObjectWithLogger
 
 
 class SqliteDbEngine(ObjectWithLogger):

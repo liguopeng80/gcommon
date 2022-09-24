@@ -20,7 +20,6 @@ greeter = Greeter()
 proxy = GrpcProxyHelper(helloworld_pb2_grpc.GreeterStub, server="localhost:50051")
 proxy.set_proxy(greeter)
 """
-
 import grpc
 
 

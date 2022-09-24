@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # created: 2021-08-04
 # creator: liguopeng@liguopeng.net
-
 """使用 JSONable 构造序列化对象"""
-from gcommon.utils.gjsonobj import JsonField, JsonListField, JsonObject, JsonObjectField
+from gcommon.utils.gjsonobj import JsonField
+from gcommon.utils.gjsonobj import JsonListField
+from gcommon.utils.gjsonobj import JsonObject
+from gcommon.utils.gjsonobj import JsonObjectField
 
 
 class MyJob(JsonObjectField):

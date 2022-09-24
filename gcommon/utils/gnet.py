@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 # created: 2015-05-12
 # creator: liguopeng@liguopeng.net
-
 """网络相关的基础函数、基础类型"""
-
 from enum import Enum
 
 

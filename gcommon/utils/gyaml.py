@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 # created: 30 Dec 2014
 # author: "Guo Peng Li" <liguopeng@liguopeng.net>
-
 """Parse server config file(s)."""
-
 import os
 import platform
 import re

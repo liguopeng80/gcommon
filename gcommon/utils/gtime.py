@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-01-14
-
 """Utils for date and time.
 
 约定：任何不带时区的日期对象，均采用本地时间（而不是 UTC 时间）。
@@ -18,11 +17,11 @@
 
 5. 在 time.mktime 只接收本地时间，但输出 UTC 时间。
 """
-
 import calendar
 import platform
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 
 from dateutil import parser
 

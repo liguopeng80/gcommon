@@ -12,7 +12,7 @@
 *.db
 
 ################################
-# log files 
+# log files
 ################################
 
 *.log
@@ -22,7 +22,7 @@ monitor.log*
 nohup.out
 
 ################################
-# temp folders 
+# temp folders
 ################################
 tmp/
 temp/
@@ -33,7 +33,7 @@ ftp/
 .svn/text-base/readme.txt.svn-base
 
 ################################
-# compiled source 
+# compiled source
 ################################
 *.com
 *.class
@@ -42,7 +42,7 @@ ftp/
 *.suo
 
 ################################
-# binary/compressed packages 
+# binary/compressed packages
 ################################
 
 # it's better to unpack these files and commit the raw source
@@ -59,7 +59,7 @@ ftp/
 
 
 ################################
-# Python 
+# Python
 ################################
 
 *.py[co]
@@ -83,7 +83,7 @@ develop-eggs/
 .tox/
 
 ################################
-# C\C++ 
+# C\C++
 ################################
 
 # Compiled Object files

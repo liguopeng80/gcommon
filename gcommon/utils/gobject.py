@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
 # Utility for objects management.
-
 import inspect
 import logging
 

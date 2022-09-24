@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 # created: 2021-04-16
 # creator: liguopeng@liguopeng.net
-
 """Moved from SlimServer (server_base.py)"""
-
 import optparse
 import os
 import sys
@@ -220,7 +218,9 @@ def get_project_root():
         project_root = os.path.abspath(project_root)
     else:
         # project_root = genv.get_relative_folder(__file__, PROJECT_ROOT)
-        project_root = os.path.join(os.getcwd(),)
+        project_root = os.path.join(
+            os.getcwd(),
+        )
 
     return project_root
 
@@ -279,6 +279,7 @@ def init_main(
     config = YamlConfigParser(default_config)
 
     import logging
+
     logger = logging.getLogger("gcommon")
 
     config_file = get_config_file(options, default_config)

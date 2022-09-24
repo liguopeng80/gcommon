@@ -1,15 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-04-29
-
 import logging
 import threading
 import time
 
-from kazoo.protocol.states import KazooState, KeeperState
+from kazoo.protocol.states import KazooState
+from kazoo.protocol.states import KeeperState
 
 from gcommon.aio import gasync
-from gcommon.aio.cluster.zk_client import ZookeeperClient, ZookeeperObserver
+from gcommon.aio.cluster.zk_client import ZookeeperClient
+from gcommon.aio.cluster.zk_client import ZookeeperObserver
 from gcommon.utils.gmain import init_main
 
 formatter = "%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s"

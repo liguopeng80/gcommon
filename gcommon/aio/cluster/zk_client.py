@@ -1,16 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-04-22
-
 """ZooKeeper 客户端"""
-
 import logging
 import threading
 from queue import Queue
 
 from kazoo.client import KazooClient
 from kazoo.handlers.threading import KazooTimeoutError
-from kazoo.protocol.states import KazooState, KeeperState
+from kazoo.protocol.states import KazooState
+from kazoo.protocol.states import KeeperState
 
 from gcommon.aio import gasync
 from gcommon.utils.gnet import ConnectionStatus

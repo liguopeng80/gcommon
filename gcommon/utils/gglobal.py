@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # created: 2021-06-28
 # creator: liguopeng@liguopeng.net
-
 from gcommon.utils.gyaml import YamlConfigParser
 
 

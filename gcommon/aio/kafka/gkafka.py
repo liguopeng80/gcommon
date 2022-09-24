@@ -4,13 +4,16 @@
 import logging
 from copy import copy
 from datetime import datetime
-from typing import Any, Callable
+from typing import Any
+from typing import Callable
 
-from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
+from aiokafka import AIOKafkaConsumer
+from aiokafka import AIOKafkaProducer
 from kafka.errors import KafkaError
 
 from gcommon.aio import gasync
-from gcommon.utils import gerrors, gtime
+from gcommon.utils import gerrors
+from gcommon.utils import gtime
 from gcommon.utils.gjsonobj import JsonObject
 
 logger = logging.getLogger("gcommon.kafka")

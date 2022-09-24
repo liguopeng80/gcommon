@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 # created: 2021-01-7
 # creator: liguopeng@liguopeng.net
-
-
-from datetime import datetime, timezone
+from datetime import datetime
+from datetime import timezone
 
 import sqlalchemy as sa
-from sqlalchemy import BigInteger, Boolean, Column, ForeignKey, Integer, String, Text, func
+from sqlalchemy import BigInteger
+from sqlalchemy import Boolean
+from sqlalchemy import Column
+from sqlalchemy import ForeignKey
+from sqlalchemy import func
+from sqlalchemy import Integer
+from sqlalchemy import String
+from sqlalchemy import Text
 
 
 class TimeStamp(sa.types.TypeDecorator):

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # created: 2021-11-21
 # creator: liguopeng@liguopeng.net
-
 from gcommon.aio.cluster.cluster_manager import ClusterAllocationType
 from gcommon.utils import gobject
 from gcommon.utils.gjsonobj import JsonObject

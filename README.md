@@ -8,7 +8,7 @@
 
 ```shell script
 git clone https://github.com/liguopeng80/gcommon.git
-pip install -e gcommon 
+pip install -e gcommon
 ```
 
 ## Usage ##
@@ -29,7 +29,7 @@ class DemoServer(SimpleServer):
 
     async def init_server(self):
         # parse configuration and init any dependencies to start service.
-        # "init_server" can be async or not async. 
+        # "init_server" can be async or not async.
         """do whatever you want"""
         import demo_service
 
@@ -40,7 +40,7 @@ class DemoServer(SimpleServer):
         demo_service.init_service()
 
     def start_server(self):
-        # "start_server" can be async or not async. 
+        # "start_server" can be async or not async.
         """do whatever you want"""
         from web.webapp import app
 
@@ -77,7 +77,7 @@ last_monday = DateUtil.last_monday(datetime).now()
 
 ### Configuration
 
-For server and client applications, gcommon will load configuration from "deploy/default.yaml" by default. 
+For server and client applications, gcommon will load configuration from "deploy/default.yaml" by default.
 
 ```yaml
 # deploy/default.yaml
@@ -89,7 +89,7 @@ service:
 ```
 ### Secret Configuration
 
-You can also have a secret config file which will not be committed to git repository. 
+You can also have a secret config file which will not be committed to git repository.
 
 ```yaml
 # deploy/secret.default.yaml

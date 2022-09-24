@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 # created: 2015-04-22
 # creator: liguopeng@liguopeng.net
-
 import logging
 import threading
 
 from kazoo.protocol.states import KazooState
 
 from gcommon.aio import gasync
-from gcommon.aio.cluster.zk_client import ZookeeperClient, ZookeeperObserver
+from gcommon.aio.cluster.zk_client import ZookeeperClient
+from gcommon.aio.cluster.zk_client import ZookeeperObserver
 
 format = "%(asctime)-15s %(levelname)-3s %(name)-8s %(message)s"
 logging.basicConfig(format=format, level=logging.DEBUG)

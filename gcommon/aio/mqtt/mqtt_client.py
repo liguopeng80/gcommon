@@ -1,15 +1,16 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # created: 2022-07-05
 # creator: liguopeng@liguopeng.net
-
 import abc
 import asyncio
 import logging
 
 from paho.mqtt.client import MQTTMessageInfo
 
-from gcommon.aio.mqtt.mqtt_listener import MqttConfig, MqttListener, MqttObserverBase
+from gcommon.aio.mqtt.mqtt_listener import MqttConfig
+from gcommon.aio.mqtt.mqtt_listener import MqttListener
+from gcommon.aio.mqtt.mqtt_listener import MqttObserverBase
 from gcommon.logger.log_util import log_callback
 from gcommon.utils.gjsonobj import JsonObject
 

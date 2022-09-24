@@ -2,11 +2,12 @@
 #
 # author: Guopeng Li
 # created: 27 Aug 2008
-
 import glob
 import os
 import shutil
-from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
+from zipfile import ZIP_DEFLATED
+from zipfile import ZipFile
+from zipfile import ZipInfo
 
 
 def remove_trailing_slash(path):
@@ -96,7 +97,7 @@ def copy_files_ext(src_pat, dest):
 
         if os.path.isdir(filename):
             # copy a folder
-            dir_name = os.path.join(dest, filename[len(src_pat) - 1:])
+            dir_name = os.path.join(dest, filename[len(src_pat) - 1 :])
             if not os.path.exists(dir_name):
                 os.mkdir(dir_name)
                 pass
@@ -170,12 +171,12 @@ def _zip_a_folder(z, path):
         # NOTE: ignore empty directories
         for fn in files:
             abs_fn = os.path.join(root, fn)
-            zfn = base_path + abs_fn[len(path) + len(os.sep):]  # XXX: relative path
+            zfn = base_path + abs_fn[len(path) + len(os.sep) :]  # XXX: relative path
             z.write(abs_fn, zfn)
 
         for dn in dirs:
             abs_fn = os.path.join(root, dn)
-            zfn = base_path + abs_fn[len(path) + len(os.sep):] + "\\"  # XXX: relative path
+            zfn = base_path + abs_fn[len(path) + len(os.sep) :] + "\\"  # XXX: relative path
 
             zfi = ZipInfo(zfn)
             zfi.external_attr = 48

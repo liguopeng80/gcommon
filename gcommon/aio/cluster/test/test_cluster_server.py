@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # created: 2021-11-23
 # creator: liguopeng@liguopeng.net
-
 from gcommon.aio.cluster.cluster_server import SimpleClusterServer
-from gcommon.utils import genv, gmain
+from gcommon.utils import genv
+from gcommon.utils import gmain
 
 
 class DemoClusterServer(SimpleClusterServer):

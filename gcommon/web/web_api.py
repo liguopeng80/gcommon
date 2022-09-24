@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # created: 2021-08-18
 # creator: liguopeng@liguopeng.net
-
 """用于同步、异步的 Web API 基类
 
 API 通常需要验证签名。主流验证方法有 json 签名、URL 参数签名、body 签名等三种。

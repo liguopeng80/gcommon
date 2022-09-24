@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 # created: 2021-11-19
 # creator: liguopeng@liguopeng.net
-
 """基于一致性哈希的分配方式"""
-
-
 from uhashring import HashRing
 
-from gcommon.aio.cluster.cluster_manager import ClusterAllocationType, NodeAllocator
+from gcommon.aio.cluster.cluster_manager import ClusterAllocationType
+from gcommon.aio.cluster.cluster_manager import NodeAllocator
 
 
 class HashRingAllocator(NodeAllocator):

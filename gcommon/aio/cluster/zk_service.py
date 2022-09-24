@@ -1,13 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-05-05
-
 """管理 Zookeeper 服务"""
 import logging
 
 from gcommon.aio import gasync
 from gcommon.aio.cluster.external_service import ExternalService
-from gcommon.aio.cluster.zk_client import KazooLock, ZookeeperClient, ZookeeperObserver
+from gcommon.aio.cluster.zk_client import KazooLock
+from gcommon.aio.cluster.zk_client import ZookeeperClient
+from gcommon.aio.cluster.zk_client import ZookeeperObserver
 from gcommon.utils.gnet import ConnectionStatus
 
 logger = logging.getLogger("zookeeper")

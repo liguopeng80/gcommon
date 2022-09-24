@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-03-09
-
 import logging
 
 from kazoo.exceptions import NoNodeError

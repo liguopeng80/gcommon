@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-08-19
-
 """计数器、计时器、序号发生器等。"""
 import time
 from contextlib import contextmanager

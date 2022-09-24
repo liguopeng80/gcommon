@@ -1,14 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-05-04
-
 import logging
 import optparse
 import os
 import sys
 
 from gcommon.logger import glogger
-from gcommon.utils import genv, gmain
+from gcommon.utils import genv
+from gcommon.utils import gmain
 from gcommon.utils.gconfig import DefaultConfigParser
 from gcommon.utils.gjsonobj import JsonObject
 

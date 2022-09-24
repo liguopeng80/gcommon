@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # created: 2021-12-09
 # creator: liguopeng@liguopeng.net
-
 from collections import deque
 
 

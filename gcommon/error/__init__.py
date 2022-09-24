@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2014-12-02
-
-from .gerror_define import GErrorCodes, GErrors
+from .gerror_define import GErrorCodes
+from .gerror_define import GErrors
 
 __all__ = ["GErrors", "GErrorCodes"]
 
