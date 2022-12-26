@@ -2,6 +2,11 @@
 #
 # author: Guopeng Li
 # created: 27 Aug 2008
+"""文件和文件夹操作
+
+部分函数解决了某些系统下一些历史性的 bug。
+部分函数提供常用的快捷文件操作（某些函数已经可以被库函数取代）。
+"""
 import glob
 import os
 import shutil
@@ -11,24 +16,28 @@ from zipfile import ZipInfo
 
 
 def remove_trailing_slash(path):
+    """删除路径最后的斜杠（目录标记）"""
     if path.endswith("/"):
         path = path[:-1]
 
     return path
 
 
-def write_file(filename, content):
-    with open(filename, "w+") as f:
+def write_file(filename, content, encoding="utf-8"):
+    """以文本方式写入文件"""
+    with open(filename, "w+", encoding=encoding) as f:
         f.write(content)
 
 
-def read_file(filename):
-    with open(filename) as f:
+def read_file(filename, encoding="utf-8"):
+    """读取文本文件"""
+    with open(filename, encoding=encoding) as f:
         content = f.read()
         return content
 
 
 def join_path(*paths):
+    """合并多个路径，然后返回 abspath"""
     path = os.path.join(*paths)
     return os.path.abspath(path)
 
@@ -41,8 +50,6 @@ def empty_folder(folder_path):
 
     if os.path.isdir(abspath):
         shutil.rmtree(abspath)
-    else:
-        """wrong"""
 
 
 def delete_file(filename):
@@ -55,9 +62,10 @@ def delete_file(filename):
     """
     if not os.path.exists(filename):
         return
+
     try:
         os.remove(filename)
-    except:
+    except PermissionError:
         # os.chmod(file, stat.S_IWRITE)
         os.chmod(filename, 0x80)
         os.remove(filename)
@@ -100,7 +108,7 @@ def copy_files_ext(src_pat, dest):
             dir_name = os.path.join(dest, filename[len(src_pat) - 1 :])
             if not os.path.exists(dir_name):
                 os.mkdir(dir_name)
-                pass
+
             copy_files_ext(filename + "/*", dir_name)
         else:
             # copy a source file
@@ -108,45 +116,44 @@ def copy_files_ext(src_pat, dest):
 
 
 def delete_folder(folder_path):
+    """如果目标路径存在，且是文件夹类型，则删除该文件夹"""
     abspath = os.path.abspath(folder_path)
     if abspath.endswith(os.path.sep):
         abspath = abspath[:-1]
 
     if os.path.isdir(abspath):
         shutil.rmtree(abspath)
-    else:
-        """wrong"""
 
 
-def make_directories(folders):
-    """make_directories(folders)
+def make_directories(*folders, mode=0o700):
+    """创建参数中的所有文件夹，包括这些文件夹以来的父文件夹。
+
+    如果目标文件夹已经存在，直接忽略该文件夹，不返回错误。
 
     Create directories listed in the folders. If the parent of one new folder
     is not existed, a exception will be thrown out.
     """
     for folder in folders:
-        make_dir(folder)
+        make_dir(folder, mode=mode)
 
 
-def make_dir(path):
+def make_dir(path, mode=0o700):
+    """make target dir (and its parent dir as well)"""
     if not os.path.exists(path):
-        os.mkdir(path)
+        os.makedirs(path, mode=mode)
 
 
-def zip(archive_name, *targets):
+def zip_targets(archive_name, *targets):
     """Create a zip file and add all targets into it.
 
     zip('c:/temp/test.zip', 'c:/guli.py', 'c:/guli', 'd:/guli/test/')
     """
-    z = ZipFile(archive_name, "w", ZIP_DEFLATED)
-
-    for path in targets:
-        if os.path.isdir(path):
-            _zip_a_folder(z, path)
-        else:
-            _zip_a_file(z, path)
-
-    z.close()
+    with ZipFile(archive_name, "w", ZIP_DEFLATED) as z:
+        for path in targets:
+            if os.path.isdir(path):
+                _zip_a_folder(z, path)
+            else:
+                _zip_a_file(z, path)
 
 
 def _zip_a_folder(z, path):
@@ -171,12 +178,12 @@ def _zip_a_folder(z, path):
         # NOTE: ignore empty directories
         for fn in files:
             abs_fn = os.path.join(root, fn)
-            zfn = base_path + abs_fn[len(path) + len(os.sep) :]  # XXX: relative path
+            zfn = base_path + abs_fn[len(path) + len(os.sep) :]
             z.write(abs_fn, zfn)
 
         for dn in dirs:
             abs_fn = os.path.join(root, dn)
-            zfn = base_path + abs_fn[len(path) + len(os.sep) :] + "\\"  # XXX: relative path
+            zfn = base_path + abs_fn[len(path) + len(os.sep) :] + "\\"
 
             zfi = ZipInfo(zfn)
             zfi.external_attr = 48
@@ -184,7 +191,7 @@ def _zip_a_folder(z, path):
 
 
 def _zip_a_file(z, path):
-    # put the file into the root directory of the zip file
+    """put the file into the root directory of the zip file"""
     assert os.path.isfile(path)
 
     _, filename = os.path.split(path)
