@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Setup gcommon package"""
 import pathlib
 
 import setuptools
@@ -14,8 +15,8 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setuptools.setup(
     name="gcommon",
-    version="1.1.1",
-    description="Common Pytohn Library for server and client application.",
+    version="1.1.2",
+    description="Common Python Library for server and client application.",
     long_description=README,
     long_description_content_type="text/markdown",
     author="Guo Peng Li",
