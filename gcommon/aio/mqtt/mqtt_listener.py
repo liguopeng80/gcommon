@@ -29,6 +29,18 @@ logger = logging.getLogger("gcommon.mqtt")
 class MqttConfig(ServerConfig):
     """MQTT 服务器配置"""
 
+    client_cert = None
+    client_key = None
+    client_key_password = None
+    server_ca_cert = None
+
+    def _load_extra_config(self, config):
+        """派生类自定义的配置属性"""
+        self.client_cert = config.client_cert
+        self.client_key = config.client_key
+        self.client_key_password = config.client_key_password
+        self.server_ca_cert = config.server_ca_cert
+
 
 class MqttObserverBase:
     """监听 mqtt 状态变化（建立连接、断开连接、收到消息）"""
@@ -145,7 +157,15 @@ class MqttListener:
         self._init_mqtt_client()
 
         if self.config.enable_ssl:
-            self.client.tls_set()
+            if config.client_cert and config.client_key:
+                self.client.tls_set(
+                    certfile=config.client_cert,
+                    keyfile=config.client_key,
+                    keyfile_password=config.client_key_password,
+                    ca_certs=config.server_ca_cert,
+                )
+            else:
+                self.client.tls_set(ca_certs=config.server_ca_cert)
 
         # pass
         self._subscribes = {}

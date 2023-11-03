@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # created: 2022-07-05
 # creator: liguopeng@liguopeng.net
+"""Mqtt Client - Auto connection and manage subscriptions"""
 import abc
 import asyncio
 import logging
@@ -19,11 +20,18 @@ logger = logging.getLogger("gcommon.mqtt")
 
 
 class MqttClient(MqttObserverBase):
+    """Mqtt Client - manage connection, subscriptions and message callback"""
+
     def __init__(self, config: JsonObject, client_id=""):
         self._mqtt_server_config = MqttConfig.load(config)
         self._mqtt_listener = MqttListener(self._mqtt_server_config, self, client_id)
 
         self.connected_future = asyncio.Future()
+        self._is_connected = False
+
+    def will_set(self, topic, payload=None, qos=0, retain=False):
+        """设置 will message，必须在 connect 之前调用"""
+        self._mqtt_listener.client.will_set(topic, payload, qos, retain)
 
     def start(self):
         """连接到服务器并启动监听"""
@@ -39,21 +47,35 @@ class MqttClient(MqttObserverBase):
     @abc.abstractmethod
     def _process_mqtt_message(self, topic, timestamp, payload: JsonObject):
         """处理 mqtt 消息，由派生类继承并调用"""
-        pass
+
+    @property
+    def is_connected(self):
+        """Is the connection is established"""
+        return self._is_connected
 
     @log_callback(logger)
     def on_mqtt_disconnected(self, client, userdata, rc):
         """和服务器之间的连接断开"""
+        self._is_connected = False
         self.connected_future = None
+        self._on_disconnected()
 
     @log_callback(logger)
     def on_mqtt_connected(self, _client, _user_data, _flags, rc):
         """和 mqtt 服务器之间断开连接"""
         # self.mqtt_listener.subscribe()
+        self._is_connected = True
         if not self.connected_future:
             self.connected_future = asyncio.Future()
 
         self.connected_future.set_result(True)
+        self._on_connected()
+
+    def _on_disconnected(self):
+        pass
+
+    def _on_connected(self):
+        pass
 
     async def wait_for_connected(self):
         """等待 mqtt 连接到服务器"""
