@@ -15,7 +15,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setuptools.setup(
     name="gcommon",
-    version="1.1.2",
+    version="1.1.3",
     description="Common Python Library for server and client application.",
     long_description=README,
     long_description_content_type="text/markdown",
