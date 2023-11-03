@@ -17,6 +17,7 @@
 
 5. 在 time.mktime 只接收本地时间，但输出 UTC 时间。
 """
+# pylint: disable=missing-module-docstring,missing-class-docstring,missing-function-docstring
 import calendar
 import platform
 import time
@@ -31,7 +32,7 @@ def today():
     return datetime.now().date()
 
 
-class Timestamp(object):
+class Timestamp:
     @staticmethod
     def seconds():
         """UTC 时间，10 字节时间戳"""
@@ -55,10 +56,30 @@ class Timestamp(object):
         """
         dt = parser.isoparse(value)
         if dt.tzinfo is not None:
-            """转换成本地时间，然后删除时区"""
+            # 转换成本地时间，然后删除时区
             dt = dt.astimezone().replace(tzinfo=None)
 
         return dt
+
+    @staticmethod
+    def seconds_to_datetime(seconds):
+        """将秒数转换成日期对象"""
+        return datetime.fromtimestamp(seconds)
+
+    @staticmethod
+    def milliseconds_to_datetime(milliseconds):
+        """将毫秒数转换成日期对象"""
+        return datetime.fromtimestamp(milliseconds / 1000)
+
+    @staticmethod
+    def datetime_to_seconds(dt):
+        """将日期对象转换成秒数"""
+        return int(dt.timestamp())
+
+    @staticmethod
+    def datetime_to_milliseconds(dt):
+        """将日期对象转换成毫秒数"""
+        return int(dt.timestamp() * 1000)
 
 
 def local_timestamp(in_milliseconds=False):
@@ -69,8 +90,8 @@ def local_timestamp(in_milliseconds=False):
     """
     if in_milliseconds:
         return int(time.time() * 1000)
-    else:
-        return int(time.time())
+
+    return int(time.time())
 
 
 def is_naive_datetime(dt: datetime):
@@ -148,11 +169,11 @@ def has_expired(expiration_time: datetime):
     """指定的时间是否已过期"""
     if expiration_time.tzinfo is None:
         return datetime.now() > expiration_time
-    else:
-        return datetime.now().astimezone() > expiration_time
+
+    return datetime.now().astimezone() > expiration_time
 
 
-class TimeHelper(object):
+class TimeHelper:
     """计算 context 的执行时间"""
 
     start = 0
@@ -173,8 +194,8 @@ class TimeHelper(object):
 
         if not exc_type:
             return False
-        else:
-            return True
+
+        return True
 
 
 def days_before(days, dt=None):
@@ -208,7 +229,7 @@ def utc_time_str(dt=None):
 
     millisecond = int(dt.microsecond / 1000)
 
-    date_str = date_format % (
+    date_s = date_format % (
         dt.year,
         dt.month,
         dt.day,
@@ -218,7 +239,7 @@ def utc_time_str(dt=None):
         millisecond,
     )
 
-    return date_str
+    return date_s
 
 
 def utc_time_second_str(dt=None):
@@ -228,9 +249,9 @@ def utc_time_second_str(dt=None):
     if not dt:
         dt = datetime.utcnow()
 
-    date_str = date_format % (dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
+    date_s = date_format % (dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
 
-    return date_str
+    return date_s
 
 
 def local_time_str(dt=None):
@@ -242,7 +263,7 @@ def local_time_str(dt=None):
 
     millisecond = int(dt.microsecond / 1000)
 
-    date_str = date_format % (
+    date_s = date_format % (
         dt.year,
         dt.month,
         dt.day,
@@ -252,10 +273,10 @@ def local_time_str(dt=None):
         millisecond,
     )
 
-    return date_str
+    return date_s
 
 
-class DateUtil(object):
+class DateUtil:
     TIME_DAY_START = " 00:00:00"
     TIME_DAY_END = " 23:59:59"
 
@@ -320,7 +341,7 @@ class DateUtil(object):
         return dt - timedelta(days=1)
 
 
-class DateDelta(object):
+class DateDelta:
     @staticmethod
     def seconds_later(seconds):
         """数秒以后"""
@@ -375,6 +396,5 @@ def date_str_by_minute(dt: datetime = None):
 # Test Codes
 if __name__ == "__main__":
     max_timestamp = max_timestamp()
-    print("Done: %s" % max_timestamp)
-
+    print(f"Done: {max_timestamp}")
     print(utc_time_str())
