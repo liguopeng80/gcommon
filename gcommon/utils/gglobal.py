@@ -59,3 +59,31 @@ class Global:
     def set_config(cls, config: YamlConfigParser):
         """设置配置信息（全局配置）"""
         cls.config = config
+
+    @classmethod
+    def init(cls, logger=None):
+        """初始化"""
+        if hasattr(cls, "initializers"):
+            for name, initializer in cls.initializers.items():
+                if logger:
+                    logger.info("Initializing config %s...", name)
+
+                initializer()
+
+    @staticmethod
+    def register_initializer(func, name=None):
+        """装饰器，用于注册初始化函数"""
+        if name:
+            Global._register_initializer(name, func)
+        else:
+            Global._register_initializer(func.__name__, func)
+
+        return func
+
+    @classmethod
+    def _register_initializer(cls, name, initializer):
+        """注册初始化函数"""
+        if not hasattr(cls, "initializers"):
+            cls.initializers = {}
+
+        cls.initializers[name] = initializer
