@@ -40,7 +40,6 @@ setuptools.setup(
         "aiohttp==3.8.1",
         "aiosignal==1.2.0",
         "async-timeout==4.0.2",
-        "asyncpg==0.25.0",
         "attrs==21.4.0",
         "blinker==1.4",
         "certifi==2020.6.20",
