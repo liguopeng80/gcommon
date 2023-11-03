@@ -2,10 +2,7 @@
 #
 # author: Guopeng Li
 # created: 27 Aug 2008
-from apscheduler.events import EVENT_JOB_ERROR
-from apscheduler.schedulers.blocking import BlockingScheduler
-
-from gcommon.utils import gmain
+# pylint: disable=missing-module-docstring,missing-class-docstring,missing-function-docstring
 
 _Stopped = 0
 _Stopping = 1
@@ -13,7 +10,7 @@ _Starting = 2
 _Started = 3
 
 
-class ServiceStatus(object):
+class ServiceStatus:
     def __init__(self, enabled=False, status=_Stopped):
         self._enabled = enabled
         self._status = status
@@ -51,24 +48,36 @@ class ServiceStatus(object):
         return self._status
 
 
-class BaseServer(object):
-    def __init__(self):
-        self.server_config = gmain.init_main()
-        self.scheduler = BlockingScheduler()
+class BaseServer:
+    SERVICE_NAME = "undefined"
+    IS_MULTI_THREAD = False
+    INSTANCE = 0
 
-    def start(self):
-        schedule_mode = self.server_config.get("schedule.mode")
-        if schedule_mode == "cron":
-            hour = self.server_config.get("schedule.cron.hour")
+    # Adding nosec since this fails bandit B104: Possible binding to all interfaces
+    VERSION = "0.0.0.0"  # nosec
 
-            self.scheduler.add_job(self.run, "cron", day_of_week="0-6", hour=hour, minute=30)
-            self.scheduler.add_listener(self.on_failure, EVENT_JOB_ERROR)
-            self.scheduler.start()
-        else:
-            self.run()
+    DEFAULT_CONFIG = {}
 
-    def run(self):
-        raise NotImplementedError()
+    # @abc.abstractmethod
+    # def start(self):
+    #     pass
 
-    def on_failure(self, event):
-        raise NotImplementedError()
+    # @abc.abstractmethod
+    # def run(self):
+    #     pass
+
+    # @abc.abstractmethod
+    # def on_failure(self, event):
+    #     pass
+
+    @property
+    def is_server(self):
+        return False
+
+    @property
+    def is_standalone(self):
+        return False
+
+    @property
+    def is_testing(self):
+        return False

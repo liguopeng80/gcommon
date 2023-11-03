@@ -2,7 +2,8 @@
 # created: 2021-04-16
 # creator: liguopeng@liguopeng.net
 """Moved from SlimServer (server_base.py)"""
-import optparse
+# pylint: disable=missing-module-docstring,missing-class-docstring,missing-function-docstring
+import argparse
 import os
 import sys
 
@@ -13,7 +14,9 @@ from gcommon.utils.gyaml import YamlConfigParser
 
 DEFAULT_CONFIG_DIR = "deploy"
 DEFAULT_CONFIG_FILE = "default.yaml"
-DEFAULT_SECRET_CONFIG_FILE = "secret.default.yaml"
+
+# Adding nosec since this fails bandit B105, 'Possible hardcoded password'.
+DEFAULT_SECRET_CONFIG_FILE = "secret.default.yaml"  # nosec
 
 # PROJECT_ROOT = "../../../"
 DEFAULT_LOG_DIR = "log"
@@ -23,8 +26,11 @@ DEFAULT_LOG_DIR = "log"
 ENV_PROJECT_ROOT = "G_PROJECT_ROOT"
 ENV_CONFIG_FILE = "G_COMMON_CONFIG_FILE"
 ENV_CONFIG_DIR = "G_COMMON_CONFIG_DIR"
-ENV_SECRET_CONFIG_FILE = "G_COMMON_SECRET_CONFIG_FILE"
-ENV_SECRET_CONFIG_DIR = "G_COMMON_SECRET_CONFIG_DIR"
+
+# Adding nosec since this fails bandit B105, 'Possible hardcoded password'.
+ENV_SECRET_CONFIG_FILE = "G_COMMON_SECRET_CONFIG_FILE"  # nosec
+ENV_SECRET_CONFIG_DIR = "G_COMMON_SECRET_CONFIG_DIR"  # nosec
+
 ENV_LOG_DIR = "G_COMMON_LOG_DIR"
 
 ENV_LOG_FORMAT = "G_COMMON_LOG_FORMAT"
@@ -55,11 +61,14 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
         "service": service_name,
     }
 
-    print(usage_param)
-    parser.set_usage(usage_text % usage_param)
+    # print(usage_param)
+    # parser.set_usage(usage_text % usage_param)
+    parser.usage = usage_text % usage_param
+
+    parser.add_argument("args", nargs="*")
 
     # add arguments
-    parser.add_option(
+    parser.add_argument(
         "-c",
         "--config-file",
         dest="config_file",
@@ -68,7 +77,7 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
         help="server config file",
     )
 
-    parser.add_option(
+    parser.add_argument(
         "--secret-config",
         dest="secret_config_file",
         action="store",
@@ -76,7 +85,7 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
         help="server secret config file",
     )
 
-    parser.add_option(
+    parser.add_argument(
         "-s",
         "--service",
         dest="service",
@@ -85,7 +94,7 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
         help="service name",
     )
 
-    parser.add_option(
+    parser.add_argument(
         "-i",
         "--instance",
         dest="instance",
@@ -94,11 +103,11 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
         help="instance sequence",
     )
 
-    parser.add_option("--log-folder", dest="log_folder", action="store", default="", help="log folder")
+    parser.add_argument("--log-folder", dest="log_folder", action="store", default="", help="log folder")
 
-    parser.add_option("-l", "--log-base", dest="log_base", action="store", default="", help="log base")
+    parser.add_argument("-l", "--log-base", dest="log_base", action="store", default="", help="log base")
 
-    parser.add_option(
+    parser.add_argument(
         "--log-line-no",
         dest="log_line_no",
         action="store_true",
@@ -106,9 +115,9 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
         help="log file name and line no",
     )
 
-    parser.add_option("--sid", dest="service_id", action="store", default="", help="service ID")
+    parser.add_argument("--sid", dest="service_id", action="store", default="", help="service ID")
 
-    parser.add_option(
+    parser.add_argument(
         "-d",
         "--debug",
         dest="debug",
@@ -117,7 +126,7 @@ def parse_command_line(service_name, parser, all_args, *, parse_service_options=
         help="enable debug",
     )
 
-    parser.add_option(
+    parser.add_argument(
         "--multi-thread",
         dest="multi_thread",
         action="store_true",
@@ -149,7 +158,8 @@ def get_log_folder(options, default_config: JsonObject):
         if default_config.log_folder:
             # 从缺省配置加载
             return default_config.log_folder
-        elif default_config.log_base:
+
+        if default_config.log_base:
             # 从缺省配置加载
             log_base = default_config.log_base
         else:
@@ -165,7 +175,7 @@ def get_log_folder(options, default_config: JsonObject):
     elif not options.instance:
         log_folder = os.path.join(log_base, options.service)
     else:
-        log_folder = os.path.join(log_base, options.service, "%s" % options.instance)
+        log_folder = os.path.join(log_base, options.service, f"{options.instance}")
 
     # create if the log folder is not existed
     if not os.path.isdir(log_folder):
@@ -255,9 +265,20 @@ def get_secret_config_file(options, default_config: JsonObject):
 
 
 def init_main(
-    *, service_name="", default_config: dict = None, thread_logger=False, parse_service_options=None
+    *,
+    service_name="",
+    default_config: dict = None,
+    thread_logger=False,
+    parse_service_options=None,
+    init_db=True,
+    init_redis=True,
+    init_rabbitmq=True,
+    init_kafka=True,
+    init_grpc=True,
+    set_global_config=True,
 ) -> YamlConfigParser:
     """加载进程的基本配置，并初始化日志等设置"""
+    # pylint: disable=too-many-locals,import-outside-toplevel
     if not service_name:
         full_service_name = sys.argv[0]
         _path, filename = os.path.split(full_service_name)
@@ -268,16 +289,30 @@ def init_main(
         default_config.service = service_name
 
     # 解析命令行参数
-    parser = optparse.OptionParser()
-    options, args = parse_command_line(service_name, parser, sys.argv, parse_service_options=parse_service_options)
+    prog = service_name or None
+    parser = argparse.ArgumentParser(prog=prog)
+    options = parse_command_line(service_name, parser, sys.argv, parse_service_options=parse_service_options)
 
+    # 加载进程配置（default_config 同样用作配置参数）
+    config = _init_config_and_logger(options.args, options, default_config, thread_logger)
+    if set_global_config:
+        from gcommon.utils.gglobal import Global
+
+        Global.config = config
+
+    return config
+
+
+def _init_config_and_logger(args, options, default_config, thread_logger):
+    """加载进程的基本配置，并初始化日志等设置"""
+    # pylint: disable=import-outside-toplevel
     # 初始化日志服务
     log_folder = get_log_folder(options, default_config)
     glogger.init_logger(log_folder, thread_logger=thread_logger or options.multi_thread)
 
-    # 加载进程配置（default_config 同样用作配置参数）
     config = YamlConfigParser(default_config)
 
+    # note: 不要提前加载 logging 模块
     import logging
 
     logger = logging.getLogger("gcommon")
@@ -308,7 +343,8 @@ def init_main(
     return config
 
 
-if __name__ == "__main__":
+def demo():
+    # pylint: disable=import-outside-toplevel
     import logging
 
     default_demo_config = {"config_file": "test/demo_data.yaml"}
@@ -317,4 +353,6 @@ if __name__ == "__main__":
     logger = logging.getLogger("gcommon.test")
     logger.debug(demo_config)
 
-    pass
+
+if __name__ == "__main__":
+    demo()

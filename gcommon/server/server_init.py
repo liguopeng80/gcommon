@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 # created: 2015-05-04
+"""服务初始化所需要的初始化函数和常量设置。"""
+# pylint: disable=missing-module-docstring,missing-class-docstring,missing-function-docstring
+import argparse
 import logging
-import optparse
 import os
 import sys
 
@@ -97,11 +99,11 @@ def init_logger(options, *, thread_logger=False, formatter=None, file_handler=Tr
 def server_init(parse_command_line, DEFAULT_CONFIG=None):
     """辅助函数，解析命令行，初始化日志目录"""
     # 1. 解析命令行
-    parser = optparse.OptionParser()
-    options, args = parse_command_line(parser, sys.argv)
+    parser = argparse.ArgumentParser()
+    options = parse_command_line(parser, sys.argv)
 
     # 2. 检查命令行参数
-    check_command_line(options, args, parser)
+    check_command_line(options, options.args, parser)
 
     # 3. 初始化 logger
     init_logger(options)
