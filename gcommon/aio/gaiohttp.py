@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 # created: 2021-06-23
 # creator: liguopeng@liguopeng.net
+"""
+This module provides a set of utilities for handling HTTP requests and responses in an asynchronous manner.
+It includes functionality for wrapping responses in a standard format, handling pagination, and logging.
+"""
 import logging
 import traceback
 from functools import wraps
@@ -26,10 +30,12 @@ from gcommon.web.web_utils import WebConst
 logger = logging.getLogger("gcommon.http")
 
 
+# A flag indicating whether HTTP errors should be passed through or handled by the module
 PASSTHROUGH_HTTP_ERROR = True
 
 
 def web_response(result, *args, **kws):
+    """Wraps the result of a HTTP request in a standard format."""
     r = JsonObject()
 
     r.code = result.code
@@ -60,14 +66,17 @@ def web_response(result, *args, **kws):
 
 
 def web_response_ok(*args, **kws):
+    """Wraps response in a standard format."""
     return web_response(GErrors.ok, *args, **kws)
 
 
 def web_response_paginator(paginator, *args, **kws):
+    """Wraps response with paginator in a standard format."""
     return web_response(GErrors.ok, *args, paginator=paginator, **kws)
 
 
 def web_exception_response(error: GExcept, **kwargs):
+    """Wraps exception result in a standard format."""
     r = JsonObject()
 
     r.code = error.cmd_error
@@ -79,6 +88,7 @@ def web_exception_response(error: GExcept, **kwargs):
 
 
 def web_error_response(error: GError, desc="", **kwargs):
+    """Wraps error response a standard format."""
     r = JsonObject()
 
     r.code = error.code
@@ -90,32 +100,43 @@ def web_error_response(error: GError, desc="", **kwargs):
 
 
 def web_assert(cond, error: GError, desc="", **kwargs):
+    """Raises a GExcept if a condition is NOT true."""
     if not cond:
         raise GExcept(error, desc, **kwargs)
 
 
 def web_if(cond, error: GError, desc="", **kwargs):
+    """Raises a GExcept if a condition is true."""
     if cond:
         raise GExcept(error, desc, **kwargs)
 
 
-class ExceptionMiddleware(object):
+class ExceptionMiddleware:
+    """middleware to catpure exception and wrap it to except/error web response"""
+
+    # pylint: disable=too-few-public-methods
+
     def __init__(self, app):
         self.app = app
 
     async def __call__(self, scope, receive, send):
+        """"""
         try:
             resp = await self.app(scope, receive, send)
         except GExcept as ge:
+            # known exceptions thrown by application service
             resp = web_exception_response(ge)
-        except:
+        except:  # noqa: E722 - bare except
+            # runtime exceptions
             resp = web_error_response(GErrors.gen_server_internal)
         finally:
-            logger.info("---- with response: %s", request.path, resp)
-            return resp
+            logger.info("---- %s, with response: %s", request.path, resp)
+
+        return resp
 
 
 async def handle_bad_request(e):
+    """log http request and response with error/exception result"""
     if PASSTHROUGH_HTTP_ERROR and isinstance(e, HTTPException):
         return e
 
@@ -124,7 +145,7 @@ async def handle_bad_request(e):
     else:
         resp = web_error_response(GErrors.gen_server_internal, desc=str(e) or str(type(e)))
 
-    if type(e) == NotFound:
+    if isinstance(e, NotFound):
         pass
     else:
         logger.error(
@@ -140,8 +161,8 @@ async def handle_bad_request(e):
 
 
 async def log_request_and_response(response):
-    """web 服务器的 access log"""
-    if type(request.routing_exception) == NotFound:
+    """log http request and response"""
+    if isinstance(request.routing_exception, NotFound):
         logger.access(
             "404 - request (from %s): %s %s",
             request.remote_addr,
@@ -158,7 +179,9 @@ async def log_request_and_response(response):
 
     detail_response_log = getattr(request, WebConst.GCOMMON_DETAIL_RESPONSE_LOG, True)
 
-    if not detail_response_log:
+    if response.content_length is None:
+        response_body = "chunked ..."
+    elif not detail_response_log:
         response_body = "..."
     elif FlaskLogManager.should_ignore_response_body(request.path):
         response_body = "..."
@@ -184,6 +207,7 @@ async def log_request_and_response(response):
 
 
 async def read_json_request():
+    """read json paylaod from http request"""
     data = await request.get_json()
     return JsonObject(data)
 
@@ -196,6 +220,8 @@ def create_quart_blueprint(name, import_name=""):
 
 def create_quart_app(name, static_url_path="", static_folder=""):
     """创建 quart app，并注入 middleware"""
+    # pylint: disable=global-statement
+
     global PASSTHROUGH_HTTP_ERROR
     PASSTHROUGH_HTTP_ERROR = Global.config.get("common.http.passthrough_http_error")
 
@@ -208,7 +234,10 @@ def create_quart_app(name, static_url_path="", static_folder=""):
 
 
 class RequestFormatter(logging.Formatter):
+    """logging formatter for HTTP request"""
+
     def format(self, record):
+        """format HTTP url"""
         if has_request_context():
             record.url = request.url
             record.remote_addr = request.remote_addr
@@ -220,7 +249,7 @@ class RequestFormatter(logging.Formatter):
 
 
 request_formatter = RequestFormatter(
-    "%(asctime)-15s %(levelname)-3s %(name)-8s %(remote_addr)s" " requested %(url)s %(message)s"
+    "%(asctime)-15s %(levelname)-3s %(name)-8s %(remote_addr)s requested %(url)s %(message)s"
 )
 
 
@@ -240,7 +269,9 @@ def disable_detail_response_log(f):
     return wrap
 
 
-class FlaskLogManager(object):
+class FlaskLogManager:
+    """Flask日志管理器"""
+
     _path_without_detail_response_log = set()
 
     @classmethod
